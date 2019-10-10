@@ -2,7 +2,8 @@
 Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 
 ## Resources k praci
-- https://arxiv.org/abs/1809.07454 (Nova prace TasNet - 2019 - zlepseny popis modelu atd.)
+- https://arxiv.org/abs/1809.07454v1 (v1 - puvodni prace)
+- https://arxiv.org/abs/1809.07454 (Nova prace TasNet - 2019 (v3) - zlepseny popis modelu atd.)
 - http://www.jzus.zju.edu.cn/oldversion/opentxt.php?doi=10.1631/FITEE.1700814
 - NN kurz https://www.coursera.org/learn/neural-networks-deep-learning
 
