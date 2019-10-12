@@ -1,0 +1,11 @@
+https://www.sanyamkapoor.com/
+http://book.pythontips.com/en/latest/enumerate.html
+https://arxiv.org/pdf/1809.07454.pdf
+https://pytorch.org
+https://arxiv.org/pdf/1801.04381.pdf
+https://blog.algorithmia.com/convolutional-neural-nets-in-pytorch/
+https://www.premiumbeat.com/blog/when-to-use-wav-files-when-to-use-mp3-files-what-is-the-difference-between-the-two-formats/
+http://aqibsaeed.github.io/2016-09-03-urban-sound-classification-part-1/
+http://torch.ch/blog/2016/02/04/resnets.html
+
+

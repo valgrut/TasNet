@@ -1,0 +1,27 @@
+zeptat se na prednasce jestli je mozny do site nacitat zvuk po kouskach. - jestli tomu predam celou nahravku a ona si to bude brat po kouskach, nebo to musim udelat nejak rucne
+
+- prepis mluvene reci na text
+
+
+
+-Mozna:
+delka filtru 20, stride 20 pokud bych tomu predaval celou nahravku
+v pripade toho mztho reseni tak mozna by stacila jen Linear layer misto te konvoluce
+// 20*pocet sementu * batchsize jak vstup
+
+MINI-BATCH SIZE:
+	ZVETSIT - zkusit 400, 800
+
+
+-oddelat biasy
+
+- kouknout se na dalsi zdrojaky
+- projit si znova poradne tu praci
+- projit si dokumentaci k pytorch a zjistit dostupne veci
+
+- funkce na narrow, nemit to 3x jak kokot zkurvenej do pice
+- pri spusteni mit moznost zadat pocet audio a epoch - v tom cyklu na zacatku
+
+
+
+

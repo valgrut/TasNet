@@ -1,0 +1,300 @@
+from scipy.io import wavfile as wav
+import matplotlib.pyplot as plt
+from torch.autograd import Variable
+import torchvision.transforms as transforms
+import IPython.display as ipd
+import numpy as np
+import torch
+import torch.utils.data as data_utils
+from torch._six import int_classes as _int_classes
+import signal
+import sys
+from os import listdir
+from os.path import isfile, join
+import torch.optim as optim
+import torch.nn as nn
+import torch.nn.functional as fc
+
+######################################################################
+
+def signal_handler(sig, frame):
+    plt.plot(graph_x, graph_y)        
+    plt.show()
+    exit(0)
+    
+def signal_plot(sig, frame):
+    plt.plot(audio_x, audio_y)
+    plt.show()
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGUSR1, signal_plot)
+
+#######################################################################
+# SETTING and PARAMETERS
+
+MINIBATCH_SIZE  = 10
+SEGMENT_LENGTH  = 100 # 20
+
+optim_SGD       = True
+opt_lr          = 0.001    # 0.001
+opt_momentum    = 0.4  # 0.9
+
+bias_enabled    = True
+
+transposed      = True
+if not transposed:
+    padd        = 19 # 19 for conv, 0 for transposed
+else:
+    padd        = 0
+
+epochs          = 5
+audios_in_epoch = 500 # kolik zpracovat nahravek v jedne epose
+print_frequency = 1000 # za kolik segmentu (minibatchu) vypisovat loss
+
+######################################################################
+# Separation - base
+#
+class Net(nn.Module):
+
+    def __init__(self):
+        super(Net, self).__init__()
+        self.conv1 = nn.Conv1d(1, 256, 20, bias=bias_enabled, padding=padd) # padding=20 ?
+        if transposed:
+            self.deconv = nn.ConvTranspose1d(256, 1, 20, bias=bias_enabled) # padding = 20?
+        else:
+            self.deconv = nn.Conv1d(256, 1, 20, bias=bias_enabled) # padding=20 ?
+        torch.nn.init.xavier_uniform_(self.conv1.weight)
+        torch.nn.init.xavier_uniform_(self.deconv.weight)
+        
+        #self.deconv = nn.Linear(256*20, 1, bias=False) 
+
+    def forward(self, input_data):
+        input_data = self.conv1(input_data);
+        input_data = fc.relu(input_data);
+        input_data = self.deconv(input_data)
+        return input_data
+
+###################################################################
+"""
+AudioDataset
+"""
+class AudioDataset(data_utils.Dataset):
+    """
+    Dataset of speech mixtures for speech separation. 
+    """
+    def __init__(self, path, transform=None):
+        super(AudioDataset, self).__init__()
+        self.path = path
+        #self.mixtures_path = self.path + "mix/"
+        self.mixtures_path = self.path + "s1/"
+        self.source1_path  = self.path + "s1/"
+        self.source2_path  = self.path + "s2/"
+        # self.mixtures je vektor, kde jsou ulozeny nazvy vsech audio nahravek urcenych k uceni site.
+        self.mixtures = [f for f in listdir(self.mixtures_path) if isfile(join(self.mixtures_path, f))]
+        self.transform = transform
+        self.generator = self.generate_segment()
+
+        self.current_mixture = ""
+        self.audioindex = 0
+        self.loadNextAudio()
+
+    def init(self):
+        self.current_mixture = ""
+        self.audioindex = 0
+        self.loadNextAudio()
+
+    def __len__(self):
+        """
+        Vraci delku aktualne zpracovavane smesi ve vzorcich
+        """
+        return len(self.current_mixture)
+
+
+    def __getitem__(self, index):
+        #print("f: __getitem__")
+        """
+        v2: transformovane a nachystane audio, ale pouze jeden segment v podobe tensoru
+        """
+        segment = self.getSegment(self.current_mixture) 
+        return segment
+
+    def loadNextAudio(self):
+        #print("f: load_next : " + self.mixtures[self.audioindex])
+        """
+        Hlavni funkce, ktera vypise nazev aktualne zpracovavane audio nahravky.
+        Po zavolani vypise index, ktery udava, jak jsme daleko ve zpracovani uciciho datasetu.
+        """
+        #print("["+str(self.audioindex) + "/" + str(len(self.mixtures))+"]")
+        self.current_mixture = self.getAudioSamples(self.mixtures_path + self.mixtures[self.audioindex])
+        self.audioindex += 1
+        self.generator = self.generate_segment() # reinitialisation of generator
+        self.segmentPointer = 0 # segment step counter
+        if self.audioindex > len(self.mixtures):
+            print(str(self.audioindex) + " > " + str(len(self.mixtures)))
+            return
+
+    def getAudioSamples(self, audio_file_path):
+        #print("f: get_audio_samples")
+        """
+        Precte a vrati vsechny vzorky zadaneho audio souboru
+        """
+        rate, samples = wav.read(audio_file_path)
+        return samples 
+
+    def prepare(self, samples):
+        """
+        Funkce prevede vstupni vzorky na numpy array a nasledne na tensor.
+        """
+        # normalisation - zero mean & jednotkova variance (unit variation)
+        numpy = np.array(samples)
+        numpy = np.interp(numpy, (numpy.min(), numpy.max()), (-1, +1))
+        tensor = torch.as_tensor(numpy)
+        tensor_float32 = torch.tensor(tensor, dtype=torch.float32)
+        return tensor_float32
+
+    def getSegment(self, path):
+        #print("f: get_segment")
+        """
+        Nacte dalsi segment pomoci generatoru, aplikuje funkci prepare a posle na vystup.
+        """
+        next_segment = next(self.generator)
+        return self.prepare(next_segment)
+
+    def generate_segment(self):
+        #print("f: generate_segments")
+        """
+        Funkce bere postupne z aktualne zpracovavane audio smesi 40 vzorku a posle je ven ke zpracovani
+        jako jeden segment.
+        """
+        samples = self.current_mixture
+        segment = []
+        segment_length = SEGMENT_LENGTH #(constant L) tohle je hodnota, ktera by se mohla menit, tohle nejsou minibatches...
+        current_mixture_len = len(self.current_mixture)
+        # cyklus postupne vraci segmenty nahravky o delce segment_length,dokud nedojde na konec nahravky
+        for self.segmentPointer in range(0, current_mixture_len, segment_length):
+            if (self.segmentPointer + segment_length) > current_mixture_len:
+                break # kontrola, jestli i neni mimo pole
+            #print("index i: " + str(self.segmentPointer)+"/"+str(self.__len__()))
+            segment = [self.current_mixture[self.segmentPointer] for self.segmentPointer in range(self.segmentPointer, self.segmentPointer + segment_length)]
+            yield [segment]
+
+        # jiz neni co zpracovavat (aktualni nahravka je zpracovana), takze nacte ke zpracovani dalsi nahravku
+        self.loadNextAudio() 
+
+####################################################
+
+# Vytvoreni instance neuronove site
+autoencoderNN = Net()
+
+train_data_path = "/home/valgrut/Documents/full/min/tr/"
+trainset = AudioDataset(train_data_path) # __len__ vraci pocet samplu v aktualne zpracovavane mixture
+dataloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False) # batch_size === mini_batch
+
+#####################################
+# Priklad vystupu
+#iterator = iter(dataloader)
+#print("Cyklus:")
+#for i in range (1, 10):
+#    minibatch = iterator.next()
+#    print(minibatch)
+#exit(1)
+########################################################################################
+
+### Criterion and optimizer ###
+criterion = nn.MSELoss()
+
+if optim_SGD:
+    optimizer = optim.SGD(autoencoderNN.parameters(), lr = opt_lr, momentum = opt_momentum)
+else:
+    optimizer = optim.Adam(autoencoderNN.parameters(), lr = opt_lr)
+
+audio_x = []
+audio_y = []
+
+graph_x = []
+graph_y = []
+
+print_counter = 0
+
+debug = False
+
+speech = []
+# Pres dataset budeme iterovat vicekrat
+global_segment_counter = 0 # aby se graf nevykresloval pres sebe
+for epoch in range(epochs): 
+    audio_cnt = 0
+
+    # V cyklu se postupne zpracovava jedna nahravka za druhou
+    for audio in range(audios_in_epoch):
+        audio_cnt += 1
+        running_loss = 0.0
+        speech = []
+       
+        # V cyklu se zpracovavaji segmenty jedne nahravky (resp minibatche)
+        # (real_processed = len(segment) * mini_batch_size)
+        for segment_cnt, segments in enumerate(dataloader, 0): # hazi mini-batche segmentuuu 
+            global_segment_counter += 1
+            # Nacteni vstupu
+            #print("training " + str(segments.shape))
+            #print("Segment cnt: " + str(segment_cnt) + "Audio n." + str(audio_cnt) +  " epoch: " + str(epoch))
+            
+            inputs = segments
+            targets = segments.clone()
+
+            # Zero the parameter gradients
+            optimizer.zero_grad()
+
+            # Prozeneme data siti
+            outputs = autoencoderNN(inputs)
+            
+            # Appending of processed sequence (segment) to final audio reconstruction
+            
+            lists = outputs.tolist()
+            for seg in lists:
+                speech += seg[0]
+            
+                audio_x += [idx for idx in range(len(audio_y), len(audio_y)+SEGMENT_LENGTH)]
+                audio_y += seg[0]
+
+
+            loss = criterion(outputs, targets)
+            
+            loss.backward()
+            optimizer.step()
+    
+            running_loss += loss.item()
+            
+            #if segment_cnt % print_frequency == print_frequency-1:
+            if global_segment_counter % print_frequency == print_frequency-1:
+                #print('[%d, %5d] loss: %.4f' % (audio_cnt + 1, segment_cnt + 1, running_loss / print_frequency))
+                #print('[%d, %4d] loss: %.6f' % (epoch, audio_cnt, running_loss / print_frequency))
+                print('[%d, %4d] loss: %.6f' % (epoch, audio_cnt, loss.item()))
+                graph_x.append(global_segment_counter)
+                graph_y.append(running_loss/print_frequency)
+                print_counter += 1
+                running_loss = 0.0
+
+        # All segments are processed of current audio file, so write down the reconstructed audio.
+        # Save reconstructed audio
+        speech_prep = np.array(speech)
+        wav.write("/home/valgrut/Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+".wav", 8000, speech_prep)
+        
+        # emptying of reconstructed speech vector for saving of wav
+        speech = []
+        speech_prep = []
+ 
+        # emptying of reconstructed graph speech for plot
+        audio_x = []
+        audio_y = []
+    
+    # new epoch
+    trainset.init()
+
+
+print('Finished Training')
+
+plt.plot(graph_x, graph_y)        
+plt.show()
+
+exit(0)
+
