@@ -24,8 +24,14 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
   - vyhody a nevyhody
     - klikani, omezena doba trenovani, snazsi pristup, lze rozdelit zdrojak a data na git a drive, etc.
     - ssh, automatizace, nutne opravneni k pristupu, pracuje nezavisle na pc, etc.
-- domluva na pravidelnych schuzkach - **Utery - 18 hod**
+- domluva na pravidelnych schuzkach - **Utery - cca 18 hod**
 - Dalsi kroky:
   - vyzkouset google colab
   - upravit zadani
   - udelat tento zaznam
+
+### ut 15. 10. 2019 - Konzultace
+- pozvanka na git
+- debata o nove verzi prace
+- rady ohledne psani textu (citace, bib)
+- dalsi konzultace ve **Stredu 23. 10. v 17 hodin**
