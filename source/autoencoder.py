@@ -1,3 +1,4 @@
+import tkinter
 from scipy.io import wavfile as wav
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
@@ -18,10 +19,10 @@ import torch.nn.functional as fc
 ######################################################################
 
 def signal_handler(sig, frame):
-    plt.plot(graph_x, graph_y)        
+    plt.plot(graph_x, graph_y)
     plt.show()
     exit(0)
-    
+
 def signal_plot(sig, frame):
     plt.plot(audio_x, audio_y)
     plt.show()
@@ -32,12 +33,22 @@ def signal_plot(sig, frame):
 #######################################################################
 # SETTING and PARAMETERS
 
+# class Parameters(object):
+#     _enableBias = True
+#     _padding = 10
+
+#     _epochs = 5
+#     _data_in_epoch = 500
+#     _print_frequency = 50
+#     def __init__(self):
+#         """TODO: to be defined. """
+
 MINIBATCH_SIZE  = 1
 
 optim_SGD       = False   # Adam / SGD
-opt_lr          = 0.01    # 0.0001 pro adama
+opt_lr          = 0.001    # 0.0001 pro adama, jinak 0.01
 
-bias_enabled    = True
+bias_enabled    = False
 
 padd = 10  # 20 nebo 10?      (parametry nahovno: 20, lr=0,0001)
 
@@ -50,17 +61,17 @@ class ResBlock(nn.Module):
     def __init__(self, in_channels, dilation):
         super(ResBlock, self).__init__()
         self.dilation = dilation
-        
+
         self.conv1 = nn.Conv1d(256, 512, kernel_size=1)
         self.D_conv = nn.Conv1d(512, 512, kernel_size=3, padding=self.dilation, groups=512, dilation=self.dilation)
         self.conv2 = nn.Conv1d(512, 256, kernel_size=1)
-        
+
         self.batch1 = nn.BatchNorm1d(512)
         self.batch2 = nn.BatchNorm1d(512)
-     
+
         self.prelu1 = nn.PReLU(512)
         self.prelu2 = nn.PReLU(512)
-    
+
     def forward(self, input_data):
         #print("shape start:", input_data.shape)
         x = self.conv1(input_data)
@@ -88,7 +99,7 @@ class Net(nn.Module):
         self.conv1 = nn.Conv1d(1, 256, 20, bias=bias_enabled, stride=20, padding=padd)
         #self.deconv = nn.ConvTranspose1d(256, 2, 20, padding=padd, bias=bias_enabled, stride=20)
         self.deconv = nn.ConvTranspose1d(512, 2, 20, padding=padd, bias=bias_enabled, stride=20, groups=2)
-        
+
         #self.layer_norm = nn.LayerNorm(256)
         self.bottleneck1 = nn.Conv1d(256, 256, 1) #TODO padding, stride???
         self.bottleneck2 = nn.Conv1d(256, 512, 1) #TODO 512 = NxC
@@ -108,20 +119,19 @@ class Net(nn.Module):
 
         torch.nn.init.xavier_uniform_(self.conv1.weight)
         torch.nn.init.xavier_uniform_(self.deconv.weight)
-        
 
     def forward(self, input_data):
         input_data = self.conv1(input_data)
         input_data = fc.relu(input_data)
 
         data = self.bottleneck1(input_data)
- 
+
         data = self.resblock1(data)
         data = self.resblock2(data)
         data = self.resblock3(data)
         data = self.resblock4(data)
         data = self.resblock5(data)
-        
+
         data = self.resblock11(data)
         data = self.resblock12(data)
         data = self.resblock13(data)
@@ -142,7 +152,7 @@ AudioDataset
 """
 class AudioDataset(data_utils.Dataset):
     """
-    Dataset of speech mixtures for speech separation. 
+    Dataset of speech mixtures for speech separation.
     """
     def __init__(self, path, transform=None):
         super(AudioDataset, self).__init__()
@@ -200,17 +210,18 @@ class AudioDataset(data_utils.Dataset):
 # Vytvoreni instance neuronove site
 autoencoderNN = Net()
 
-train_data_path = "/home/valgrut/Documents/full/min/tr/"
-test_data_path  = "/home/valgrut/Documents/full/min/tt/"
-valid_data_path = "/home/valgrut/Documents/full/min/cv/"
+BASE_PATH="/root/"
+train_data_path = BASE_PATH+"Documents/full/min/tr/"
+test_data_path  = BASE_PATH+"Documents/full/min/tt/"
+valid_data_path = BASE_PATH+"Documents/full/min/cv/"
 
-trainset = AudioDataset(train_data_path) 
-testset  = AudioDataset(test_data_path) 
-validset = AudioDataset(valid_data_path) 
+trainset = AudioDataset(train_data_path)
+testset  = AudioDataset(test_data_path)
+validset = AudioDataset(valid_data_path)
 
-trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False) 
-testloader  = data_utils.DataLoader(testset, batch_size = MINIBATCH_SIZE, shuffle=False) 
-validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False) 
+trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
+testloader  = data_utils.DataLoader(testset, batch_size = MINIBATCH_SIZE, shuffle=False)
+validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False)
 
 ### Criterion and optimizer ###
 criterion = nn.MSELoss()
@@ -220,7 +231,7 @@ best_validation_result = 42
 action = ""
 while action not in ["quit", "q"]:
     action = input("Choose an action (train/tr, test/te, quit/q): ")
-    
+
     if action in ["train", "tr"]:
         graph_x = []
         graph_y = []
@@ -230,7 +241,7 @@ while action not in ["quit", "q"]:
             for audio_cnt, data in enumerate(trainloader, 0):
                 if audio_cnt > audios_in_epoch:
                     break #TODO pak oddelat
-                
+
                 global_audio_cnt += 1
                 #if audio_cnt % 100 == 0:
                 print(epoch, audio_cnt)
@@ -239,10 +250,10 @@ while action not in ["quit", "q"]:
                 target_source1 = data[1]
                 target_source2 = data[2]
 
-                optimizer.zero_grad()
+                # optimizer.zero_grad()
                 separated_sources = autoencoderNN(input_mixture)
 
-                #print(outputs.shape, target.shape) 
+                #print(outputs.shape, target.shape)
                 #if target.shape[2] != outputs.shape[2]:
                 #    target = target.narrow(2, 0, outputs.shape[2])
 
@@ -252,12 +263,16 @@ while action not in ["quit", "q"]:
                 target_source2 = target_source2.narrow(2, 0, smallest)
                 separated_sources = separated_sources.narrow(2, 0, smallest)
 
+                ### TODO pozn.: nemel bych tady ten Criterion volat zvlast pro kazdy target_source? Protoze ja oba target source concatenuju a to porovnavam se separated sources, ale jeslti bych nemel proste prvni separated s prvnim referencnim, a druhy separated s druhym referencnim.
+
                 # spojeni sources do jedne matice
                 target_sources = torch.cat((target_source1, target_source2), 1)
 
                 loss = criterion(separated_sources, target_sources)
+                optimizer.zero_grad() #ze by to tady bylo lepsi?
                 loss.backward()
                 optimizer.step()
+                ###...
 
                 # average
                 running_loss += loss.item()
@@ -267,16 +282,16 @@ while action not in ["quit", "q"]:
                     graph_x.append(print_frequency)
                     graph_y.append(running_loss/print_frequency)
                     running_loss = 0.0
-                        
+
                 # ulozeni pouze prvni nahravky pro porovnani epoch
-                #if audio_cnt == 0: 
-                if audio_cnt % 10 == 0: 
+                #if audio_cnt == 0:
+                if audio_cnt % 10 == 0:
                     mixture_prep = input_mixture.detach().numpy()
                     source1_prep = separated_sources[0][0].detach().numpy()
                     source2_prep = separated_sources[0][1].detach().numpy()
-                    wav.write("/home/valgrut/Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s1.wav", 8000, source1_prep)
-                    wav.write("/home/valgrut/Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s2.wav", 8000, source2_prep)
-                    wav.write("/home/valgrut/Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_mix.wav", 8000, mixture_prep)
+                    wav.write(BASE_PATH+"Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s1.wav", 8000, source1_prep)
+                    wav.write(BASE_PATH+"Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s2.wav", 8000, source2_prep)
+                    wav.write(BASE_PATH+"Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_mix.wav", 8000, mixture_prep)
 
             # === validation na konci epochy ===
             print("")
@@ -313,10 +328,10 @@ while action not in ["quit", "q"]:
                 if audio_cnt % print_frequency == print_frequency-1:
                     print('[%5d] loss: %.4f' % (audio_cnt+1, running_loss/print_frequency))
                     running_loss = 0.0
-            
+
 
             # vyhodnoceni validace
-            current_validation_result /= valid_audio_cnt # prumer 
+            current_validation_result /= valid_audio_cnt # prumer
             print(current_validation_result, " ", best_validation_result)
             if current_validation_result >= best_validation_result:
                 opt_lr /= 2
@@ -328,16 +343,13 @@ while action not in ["quit", "q"]:
 
         print('Finished Training')
 
-        plt.plot(graph_x, graph_y)        
+        plt.plot(graph_x, graph_y)
         plt.show()
-    
+
 
     elif action in ["test","te"]:
         global_audio_cnt = 0
         #running_loss = 0.0
-
-
-
 
         for audio_cnt, source1 in enumerate(testloader, 0):
             global_audio_cnt += 1
@@ -349,7 +361,7 @@ while action not in ["quit", "q"]:
 
             if target.shape[2] != outputs.shape[2]:
                 target = target.narrow(2, 0, outputs.shape[2])
-                #print("Reshaped:", outputs.shape, target.shape) 
+                #print("Reshaped:", outputs.shape, target.shape)
 
             loss = criterion(outputs, target)
 
@@ -357,10 +369,10 @@ while action not in ["quit", "q"]:
             if audio_cnt % print_frequency == print_frequency-1:
                 print('[%5d] loss: %.4f' % (audio_cnt+1, running_loss/print_frequency))
                 running_loss = 0.0
-                    
+
             speech_prep = outputs.detach().numpy()
-            wav.write("/home/valgrut/Documents/testdata_recon/speech_a"+str(audio_cnt)+".wav", 8000, speech_prep)
-     
+            wav.write(BASE_PATH+"Documents/testdata_recon/speech_a"+str(audio_cnt)+".wav", 8000, speech_prep)
+
         print('Finished Testing')
 
 
