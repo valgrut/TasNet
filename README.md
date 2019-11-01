@@ -38,3 +38,23 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - debata o nove verzi prace
 - rady ohledne psani textu (citace, bib)
 - dalsi konzultace ve **Stredu 23. 10. v 17 hodin**
+
+### st 23. 10. 2019 - Konzultace
+- skipped
+
+### 28. 10. 2019 - Konzultace
+- rozjel jsem Google colab + Google Drive a GPU notebook
+- Error Index out of bound: nalezena chyba u zpracovani nahravky cca cislo. 2900 neco a souvisejici collate_fn
+- vysledky dosavadniho trenovani: zatim dost nanic
+- loss funkce pro moznost sledovat vizualne progress trenovani
+- zobrazeni rekonstruovanych nahravek v programu Audacity
+
+- Dalsi kroky:
+    - extrahovat jednotlive tridy do vlastnich souboru a parametrizovat instanciaci pro snazsi volani site v ruznych konfiguracich
+    - **Error:** zpustit sit na vsech nahravkach !bez trenovani!, abych mohl jednoduse opravit tu chybu se zpracovanim nahravek kolem c.2900
+    - **Batch:** size batch > 1 -definovat collate_fn funkci
+    - **zero padding** uplne na zacatku trenovani - jeste pred ResBlocky, protoze pokud budu mit vetsi batche, tak nahravky budou ruzne dlouhe, a to by zpusobovalo problemy s rozmery jako nyni, takze je potrebe je zarovnat na delku nejdelsi nahravky v batchi.
+    - **loss funkce:** ukladat si hodnoty loss nekam do souboru s moznosti to kdykoli vykreslit a pro perzistentnost techto dat. Ulozit tam i aktualni konfiguraci site (mozna do nazvu).
+    - vypsat vsechny rozmery tensoru skrze sit v prubehu zpracovani a trenovani nahravek a zjistit, jestli tvary odpovidaji tem ve studii a jestli se vsude deje to, co se dit ma.
+    - viz. ../konzultace_poznamky.txt
+

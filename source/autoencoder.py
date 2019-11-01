@@ -1,4 +1,5 @@
 import tkinter
+from datetime import datetime
 from scipy.io import wavfile as wav
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
@@ -18,6 +19,19 @@ import torch.nn.functional as fc
 
 ######################################################################
 
+# TODO pozn.: nemel bych tady ten Criterion volat zvlast pro kazdy target_source? Protoze ja oba target source concatenuju a to porovnavam se separated sources, ale jeslti bych nemel proste prvni separated s prvnim referencnim, a druhy separated s druhym referencnim.
+
+######################################################################
+
+# --load-from=load_network_file.pt
+# --save-to=saveNetwork.pt
+# --train  --validate --test
+# --epochs=xyz   --audio-in-epoch=500
+
+# TODO Moznost spustit  pak jiz naucenou sit a moct ji predhazovat nahravky k separaci.
+
+######################################################################
+
 def signal_handler(sig, frame):
     plt.plot(graph_x, graph_y)
     plt.show()
@@ -27,8 +41,8 @@ def signal_plot(sig, frame):
     plt.plot(audio_x, audio_y)
     plt.show()
 
-#signal.signal(signal.SIGINT, signal_handler)
-#signal.signal(signal.SIGUSR1, signal_plot)
+# signal.signal(signal.SIGINT, signal_handler)
+# signal.signal(signal.SIGUSR1, signal_plot)
 
 #######################################################################
 # SETTING and PARAMETERS
@@ -43,18 +57,21 @@ def signal_plot(sig, frame):
 #     def __init__(self):
 #         """TODO: to be defined. """
 
-MINIBATCH_SIZE  = 1
+### HYPERPARAMETERS ###
+MINIBATCH_SIZE  = 10       # TODO Problem s rozmerama pri hodnote > 1
 
 optim_SGD       = False   # Adam / SGD
-opt_lr          = 0.001    # 0.0001 pro adama, jinak 0.01
+learning_rate   = 0.0001
+opt_decay       = 0       # 0.0001
 
-bias_enabled    = False
-
-padd = 10  # 20 nebo 10?      (parametry nahovno: 20, lr=0,0001)
+bias_enabled    = True
+padd            = 10       # 20 nebo 10?? (parametry nahovno: 20, lr=0,0001)
+nn_stride       = 20
 
 epochs          = 5
-audios_in_epoch = 500 # kolik zpracovat nahravek v jedne epose
+audios_in_epoch = 1000 # kolik zpracovat nahravek v jedne epose
 print_frequency = 50 # za kolik segmentu (minibatchu) vypisovat loss
+
 
 ######################################################################
 class ResBlock(nn.Module):
@@ -93,12 +110,11 @@ class ResBlock(nn.Module):
 # Separation - base
 #
 class Net(nn.Module):
-
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv1d(1, 256, 20, bias=bias_enabled, stride=20, padding=padd)
+        self.conv1 = nn.Conv1d(1, 256, 20, bias=bias_enabled, stride=nn_stride, padding=padd)
         #self.deconv = nn.ConvTranspose1d(256, 2, 20, padding=padd, bias=bias_enabled, stride=20)
-        self.deconv = nn.ConvTranspose1d(512, 2, 20, padding=padd, bias=bias_enabled, stride=20, groups=2)
+        self.deconv = nn.ConvTranspose1d(512, 2, 20, padding=padd, bias=bias_enabled, stride=nn_stride, groups=2)
 
         #self.layer_norm = nn.LayerNorm(256)
         self.bottleneck1 = nn.Conv1d(256, 256, 1) #TODO padding, stride???
@@ -110,12 +126,16 @@ class Net(nn.Module):
         self.resblock3 = ResBlock(256, 4)
         self.resblock4 = ResBlock(256, 8)
         self.resblock5 = ResBlock(256, 16)
+        self.resblock6 = ResBlock(256, 32)
+        self.resblock7 = ResBlock(256, 64)
 
         self.resblock11 = ResBlock(256, 1)
         self.resblock12 = ResBlock(256, 2)
         self.resblock13 = ResBlock(256, 4)
         self.resblock14 = ResBlock(256, 8)
         self.resblock15 = ResBlock(256, 16)
+        self.resblock16 = ResBlock(256, 32)
+        self.resblock17 = ResBlock(256, 64)
 
         torch.nn.init.xavier_uniform_(self.conv1.weight)
         torch.nn.init.xavier_uniform_(self.deconv.weight)
@@ -131,12 +151,16 @@ class Net(nn.Module):
         data = self.resblock3(data)
         data = self.resblock4(data)
         data = self.resblock5(data)
+        data = self.resblock6(data)
+        data = self.resblock7(data)
 
         data = self.resblock11(data)
         data = self.resblock12(data)
         data = self.resblock13(data)
         data = self.resblock14(data)
         data = self.resblock15(data)
+        data = self.resblock16(data)
+        data = self.resblock17(data)
 
         data = self.bottleneck2(data)
         data = torch.reshape(data, (1, 256, 2, -1,))
@@ -158,7 +182,6 @@ class AudioDataset(data_utils.Dataset):
         super(AudioDataset, self).__init__()
         self.path = path
         self.mixtures_path = self.path + "mix/"
-        #self.mixtures_path = self.path + "s1/"
         self.sources1_path  = self.path + "s1/"
         self.sources2_path  = self.path + "s2/"
         # self.mixtures je vektor, kde jsou ulozeny nazvy vsech audio nahravek urcenych k uceni site.
@@ -168,7 +191,7 @@ class AudioDataset(data_utils.Dataset):
 
     def __len__(self):
         """
-        Vraci pocet celkovy dat, ktere jsou zpracovavane
+        Vraci celkovy pocet dat, ktere jsou zpracovavane
         """
         return len(self.mixtures)
 
@@ -205,179 +228,179 @@ class AudioDataset(data_utils.Dataset):
         tensor_float32 = torch.tensor(tensor, dtype=torch.float32)
         return tensor_float32
 
-####################################################
+##########################################################################
+##########################################################################
 
-# Vytvoreni instance neuronove site
-autoencoderNN = Net()
+if __name__== "__main__":
+    # Vytvoreni instance neuronove site
+    autoencoderNN = Net()
 
-BASE_PATH="/root/"
-train_data_path = BASE_PATH+"Documents/full/min/tr/"
-test_data_path  = BASE_PATH+"Documents/full/min/tt/"
-valid_data_path = BASE_PATH+"Documents/full/min/cv/"
+    BASE_DATA_PATH="/root/Documents/"
+    train_data_path = BASE_DATA_PATH+"full/min/tr/"
+    test_data_path  = BASE_DATA_PATH+"full/min/tt/"
+    valid_data_path = BASE_DATA_PATH+"full/min/cv/"
 
-trainset = AudioDataset(train_data_path)
-testset  = AudioDataset(test_data_path)
-validset = AudioDataset(valid_data_path)
+    trainset = AudioDataset(train_data_path)
+    testset  = AudioDataset(test_data_path)
+    validset = AudioDataset(valid_data_path)
 
-trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
-testloader  = data_utils.DataLoader(testset, batch_size = MINIBATCH_SIZE, shuffle=False)
-validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False)
+    trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True)
+    testloader  = data_utils.DataLoader(testset, batch_size = MINIBATCH_SIZE, shuffle=False)
+    validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False)
 
-### Criterion and optimizer ###
-criterion = nn.MSELoss()
-optimizer = optim.Adam(autoencoderNN.parameters(), lr = opt_lr)
+    ### Criterion and optimizer ###
+    criterion = nn.MSELoss()
+    optimizer = optim.Adam(autoencoderNN.parameters(), lr = learning_rate, weight_decay=opt_decay)
 
-best_validation_result = 42
-action = ""
-while action not in ["quit", "q"]:
-    action = input("Choose an action (train/tr, test/te, quit/q): ")
+    best_validation_result = 42
+    action = ""
+    while action not in ["quit", "q"]:
+        action = input("Choose an action (train/tr, test/te, quit/q): ")
 
-    if action in ["train", "tr"]:
-        graph_x = []
-        graph_y = []
-        global_audio_cnt = 0
-        for epoch in range(epochs):
-            running_loss = 0.0
-            for audio_cnt, data in enumerate(trainloader, 0):
-                if audio_cnt > audios_in_epoch:
-                    break #TODO pak oddelat
+        if action in ["train", "tr"]:
+            graph_x = []
+            graph_y = []
+            global_audio_cnt = 0
+            for epoch in range(epochs):
+                running_loss = 0.0
+                for audio_cnt, data in enumerate(trainloader, 0):
+                    if audio_cnt > audios_in_epoch:
+                        break #TODO pak oddelat
 
+                    global_audio_cnt += 1
+                    #if audio_cnt % 100 == 0:
+                    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
+
+                    input_mixture  = data[0]
+                    target_source1 = data[1]
+                    target_source2 = data[2]
+
+                    optimizer.zero_grad()
+                    separated_sources = autoencoderNN(input_mixture)
+
+                    #print(outputs.shape, target.shape)
+                    #if target.shape[2] != outputs.shape[2]:
+                    #    target = target.narrow(2, 0, outputs.shape[2])
+
+                    ## zkraceni nahravek tak, aby vsechny byly stejne dlouho - pocet samplu stejny
+                    smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
+                    input_mixture = input_mixture.narrow(2, 0, smallest)
+                    target_source1 = target_source1.narrow(2, 0, smallest)
+                    target_source2 = target_source2.narrow(2, 0, smallest)
+                    separated_sources = separated_sources.narrow(2, 0, smallest)
+
+                    # spojeni sources do jedne matice
+                    target_sources = torch.cat((target_source1, target_source2), 1)
+
+                    loss = criterion(separated_sources, target_sources)
+                    # optimizer.zero_grad() #ze by to tady bylo lepsi?
+                    loss.backward()
+                    optimizer.step()
+
+                    # calculate average loss
+                    running_loss += loss.item()
+                    if audio_cnt % print_frequency == print_frequency-1:
+                        print('[%d, %5d] loss: %.5f' % (epoch, audio_cnt, running_loss/print_frequency))
+                        #graph_x.append(epoch) #TODO
+                        graph_x.append(print_frequency)
+                        graph_y.append(running_loss/print_frequency)
+                        running_loss = 0.0
+
+                    # ulozeni pouze prvni nahravky pro porovnani epoch
+                    #if audio_cnt == 0:
+                    # ulozit kazdou 10 rekonstrukci pro moznost jejiho prehrati a zjisteni, jak to zni.
+                    if audio_cnt % 10 == 0:
+                        mixture_prep = input_mixture.detach().numpy()
+                        source1_prep = separated_sources[0][0].detach().numpy()
+                        source2_prep = separated_sources[0][1].detach().numpy()
+                        wav.write(BASE_DATA_PATH+"reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s1.wav", 8000, source1_prep)
+                        wav.write(BASE_DATA_PATH+"reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s2.wav", 8000, source2_prep)
+                        wav.write(BASE_DATA_PATH+"reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_mix.wav", 8000, mixture_prep)
+
+                # === validation na konci epochy ===
+                print("")
+                print("Validace")
+                valid_audio_cnt = 0
+                running_loss = 0.0
+                current_validation_result = 0
+
+                for audio_cnt, data in enumerate(validloader, 0):
+                    if valid_audio_cnt > 500:
+                        break #TODO pak oddelat
+                    valid_audio_cnt += 1
+
+                    input_mixture  = data[0]
+                    target_source1 = data[1]
+                    target_source2 = data[2]
+
+                    optimizer.zero_grad()
+                    separated_sources = autoencoderNN(input_mixture)
+
+                    smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
+                    input_mixture = input_mixture.narrow(2, 0, smallest)
+                    target_source1 = target_source1.narrow(2, 0, smallest)
+                    target_source2 = target_source2.narrow(2, 0, smallest)
+                    separated_sources = separated_sources.narrow(2, 0, smallest)
+
+                    # spojeni sources do jedne matice
+                    target_sources = torch.cat((target_source1, target_source2), 1)
+
+                    loss = criterion(separated_sources, target_sources)
+
+                    current_validation_result += loss.item()
+                    running_loss += loss.item()
+                    if audio_cnt % print_frequency == print_frequency-1:
+                        print('[%5d] loss: %.4f' % (audio_cnt+1, running_loss/print_frequency))
+                        running_loss = 0.0
+
+
+                # vyhodnoceni validace
+                current_validation_result /= valid_audio_cnt # prumer
+                print(current_validation_result, " ", best_validation_result)
+                if current_validation_result >= best_validation_result:
+                    learning_rate /= 2
+                else:
+                    best_validation_result = current_validation_result
+                print('Finished Validating')
+                print('')
+
+
+            print('Finished Training')
+
+            plt.plot(graph_x, graph_y)
+            plt.show()
+
+
+        elif action in ["test","te"]:
+            global_audio_cnt = 0
+            #running_loss = 0.0
+
+            for audio_cnt, source1 in enumerate(testloader, 0):
                 global_audio_cnt += 1
-                #if audio_cnt % 100 == 0:
-                print(epoch, audio_cnt)
-
-                input_mixture  = data[0]
-                target_source1 = data[1]
-                target_source2 = data[2]
-
-                # optimizer.zero_grad()
-                separated_sources = autoencoderNN(input_mixture)
-
-                #print(outputs.shape, target.shape)
-                #if target.shape[2] != outputs.shape[2]:
-                #    target = target.narrow(2, 0, outputs.shape[2])
-
-                smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
-                input_mixture = input_mixture.narrow(2, 0, smallest)
-                target_source1 = target_source1.narrow(2, 0, smallest)
-                target_source2 = target_source2.narrow(2, 0, smallest)
-                separated_sources = separated_sources.narrow(2, 0, smallest)
-
-                ### TODO pozn.: nemel bych tady ten Criterion volat zvlast pro kazdy target_source? Protoze ja oba target source concatenuju a to porovnavam se separated sources, ale jeslti bych nemel proste prvni separated s prvnim referencnim, a druhy separated s druhym referencnim.
-
-                # spojeni sources do jedne matice
-                target_sources = torch.cat((target_source1, target_source2), 1)
-
-                loss = criterion(separated_sources, target_sources)
-                optimizer.zero_grad() #ze by to tady bylo lepsi?
-                loss.backward()
-                optimizer.step()
-                ###...
-
-                # average
-                running_loss += loss.item()
-                if audio_cnt % print_frequency == print_frequency-1:
-                    print('[%d, %5d] loss: %.5f' % (epoch, audio_cnt, running_loss/print_frequency))
-                    #graph_x.append(epoch) #TODO
-                    graph_x.append(print_frequency)
-                    graph_y.append(running_loss/print_frequency)
-                    running_loss = 0.0
-
-                # ulozeni pouze prvni nahravky pro porovnani epoch
-                #if audio_cnt == 0:
-                if audio_cnt % 10 == 0:
-                    mixture_prep = input_mixture.detach().numpy()
-                    source1_prep = separated_sources[0][0].detach().numpy()
-                    source2_prep = separated_sources[0][1].detach().numpy()
-                    wav.write(BASE_PATH+"Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s1.wav", 8000, source1_prep)
-                    wav.write(BASE_PATH+"Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s2.wav", 8000, source2_prep)
-                    wav.write(BASE_PATH+"Documents/reconstruction/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_mix.wav", 8000, mixture_prep)
-
-            # === validation na konci epochy ===
-            print("")
-            print("Validace")
-            valid_audio_cnt = 0
-            running_loss = 0.0
-            current_validation_result = 0
-
-            for audio_cnt, data in enumerate(validloader, 0):
-                if valid_audio_cnt > 500:
-                    break #TODO pak oddelat
-                valid_audio_cnt += 1
-
-                input_mixture  = data[0]
-                target_source1 = data[1]
-                target_source2 = data[2]
+                inputs = source1
+                target = inputs.clone()
 
                 optimizer.zero_grad()
-                separated_sources = autoencoderNN(input_mixture)
+                outputs = autoencoderNN(inputs)
 
-                smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
-                input_mixture = input_mixture.narrow(2, 0, smallest)
-                target_source1 = target_source1.narrow(2, 0, smallest)
-                target_source2 = target_source2.narrow(2, 0, smallest)
-                separated_sources = separated_sources.narrow(2, 0, smallest)
+                if target.shape[2] != outputs.shape[2]:
+                    target = target.narrow(2, 0, outputs.shape[2])
+                    #print("Reshaped:", outputs.shape, target.shape)
 
-                # spojeni sources do jedne matice
-                target_sources = torch.cat((target_source1, target_source2), 1)
+                loss = criterion(outputs, target)
 
-                loss = criterion(separated_sources, target_sources)
-
-                current_validation_result += loss.item()
                 running_loss += loss.item()
                 if audio_cnt % print_frequency == print_frequency-1:
                     print('[%5d] loss: %.4f' % (audio_cnt+1, running_loss/print_frequency))
                     running_loss = 0.0
 
+                speech_prep = outputs.detach().numpy()
+                wav.write(BASE_DATA_PATH+"testdata_recon/speech_a"+str(audio_cnt)+".wav", 8000, speech_prep)
 
-            # vyhodnoceni validace
-            current_validation_result /= valid_audio_cnt # prumer
-            print(current_validation_result, " ", best_validation_result)
-            if current_validation_result >= best_validation_result:
-                opt_lr /= 2
-            else:
-                best_validation_result = current_validation_result
-            print('Finished Validating')
-            print('')
+            print('Finished Testing')
 
+    #TODO ulozeni site a vah, na zacatku moznost nacist naucene vahy
+    print("quit")
 
-        print('Finished Training')
-
-        plt.plot(graph_x, graph_y)
-        plt.show()
-
-
-    elif action in ["test","te"]:
-        global_audio_cnt = 0
-        #running_loss = 0.0
-
-        for audio_cnt, source1 in enumerate(testloader, 0):
-            global_audio_cnt += 1
-            inputs = source1
-            target = inputs.clone()
-
-            optimizer.zero_grad()
-            outputs = autoencoderNN(inputs)
-
-            if target.shape[2] != outputs.shape[2]:
-                target = target.narrow(2, 0, outputs.shape[2])
-                #print("Reshaped:", outputs.shape, target.shape)
-
-            loss = criterion(outputs, target)
-
-            running_loss += loss.item()
-            if audio_cnt % print_frequency == print_frequency-1:
-                print('[%5d] loss: %.4f' % (audio_cnt+1, running_loss/print_frequency))
-                running_loss = 0.0
-
-            speech_prep = outputs.detach().numpy()
-            wav.write(BASE_PATH+"Documents/testdata_recon/speech_a"+str(audio_cnt)+".wav", 8000, speech_prep)
-
-        print('Finished Testing')
-
-
-#TODO ulozeni site a vah, na zacatku moznost nacist naucene vahy
-print("quit")
-
-exit(0)
+    exit(0)
 
