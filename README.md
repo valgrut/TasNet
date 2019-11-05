@@ -42,13 +42,12 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 ### st 23. 10. 2019 - Konzultace
 - skipped
 
-### 28. 10. 2019 - Konzultace
+### ut 28. 10. 2019 - Konzultace
 - rozjel jsem Google colab + Google Drive a GPU notebook
 - Error Index out of bound: nalezena chyba u zpracovani nahravky cca cislo. 2900 neco a souvisejici collate_fn
 - vysledky dosavadniho trenovani: zatim dost nanic
 - loss funkce pro moznost sledovat vizualne progress trenovani
 - zobrazeni rekonstruovanych nahravek v programu Audacity
-
 - Dalsi kroky:
     - extrahovat jednotlive tridy do vlastnich souboru a parametrizovat instanciaci pro snazsi volani site v ruznych konfiguracich
     - **Error:** zpustit sit na vsech nahravkach !bez trenovani!, abych mohl jednoduse opravit tu chybu se zpracovanim nahravek kolem c.2900
