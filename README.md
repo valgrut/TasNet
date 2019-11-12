@@ -75,4 +75,4 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [done] nechat zpracovavat celou validacni mnozinu
     - nechat poradne natrenovat jednu sit s nejakou konfiguraci
     - rozjet si-snr na testovaci mnozine a zprumerovat.
-
+    - make repo public ?
