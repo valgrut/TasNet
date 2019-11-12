@@ -64,4 +64,15 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - zprovoznit inferenci, pripadne moznost siti predat ID nahravky a nechat si vyhodit separovanou smes.
     - zkontrolovat rozmery v prubehu site
 
+### ut 12. 11. 2019 - Konzultace
+- ukazka vykresleni loss funkce
+- ukazka moznosti inference
+- dalsi kroky:
+    - pridat zde do testovani SI_SNR  a pro kazdou nahravku a vysledky zprumerovat a vyhodnotit
+    - Rozdlit do souboru a parametrizovat tridy a presunout je do zvlastnich souboru .py
+    - vykreslit i validacni loss
+    - ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou pres sebe
+    - [done] nechat zpracovavat celou validacni mnozinu
+    - nechat poradne natrenovat jednu sit s nejakou konfiguraci
+    - rozjet si-snr na testovaci mnozine a zprumerovat.
 
