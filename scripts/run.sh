@@ -2,6 +2,10 @@
 
 ## Toto v ruznych podobach bude v tom notebooku - jeden task bude jeden setup
 
+# test network - si-snr
+python3 main.py --test --R 3 --X 7 --basepath="$HOME/Documents/full/min/"
+exit 0
+
 # train network on PC
 python3 main.py --train --epochs 5 --X 7 --R 3 --basepath="$HOME/Documents/full/min/" --dst-dir="$HOME/TEST/"
 
