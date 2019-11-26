@@ -11,6 +11,11 @@ from Dataset import AudioDataset
 from TasNet import Net
 from ResBlock import ResBlock
 from tools import *
+from snr import *
+
+## TODO: Pridat kontrolu vyplnenych argumentu!!!
+## TODO: pro test je potreba X a R
+## TODO: pokud budu fakt pouzivat jen tu jednu fci, tak zase vratit do puvodniho stavu util a snr.py
 
 if __name__== "__main__":
     parser = argparse.ArgumentParser(description='Setup and init neural network')
@@ -383,13 +388,15 @@ if __name__== "__main__":
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
+
     if args.TEST:
         # Load Test dataset
-        test_data_path = BASE_DATA_PATH+"dataset/tt/"
+        test_data_path = BASE_DATA_PATH+"tt/"
         testset        = AudioDataset(test_data_path)
         testloader     = data_utils.DataLoader(testset, batch_size = MINIBATCH_SIZE, shuffle=False)
 
         # Start Testing
+        sdr_sum = 0
         global_audio_cnt = 0
         # pridat zde do testovani SI_SNR  a pro kazdou nahravku a vysledky zprumerovat a vyhodnotit (GIT)
         for audio_cnt, data in enumerate(testloader, 0):
@@ -404,52 +411,41 @@ if __name__== "__main__":
                 target_source1 = target_source1.cuda()
                 target_source2 = target_source2.cuda()
 
-            #optimizer.zero_grad()
+            # separation
             separated_sources = tasnet(input_mixture)
 
+            # unitize length of audio
             smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
             input_mixture = input_mixture.narrow(2, 0, smallest)
             target_source1 = target_source1.narrow(2, 0, smallest)
             target_source2 = target_source2.narrow(2, 0, smallest)
             separated_sources = separated_sources.narrow(2, 0, smallest)
 
-            # spojeni sources do jedne matice
+            # spojeni ref sources do jedne matice
             target_sources = torch.cat((target_source1, target_source2), 1)
 
-            loss = criterion(separated_sources, target_sources)
+            # prepare tensor for SI-SNR
+            estimated_sources_prep = 0
+            ref_sources_prep = 0
 
-            running_loss += loss.item()
-            if audio_cnt % print_loss_frequency == print_loss_frequency-1:
-                print('[%5d] loss: %.4f' % (audio_cnt+1, running_loss/print_loss_frequency))
-                running_loss = 0.0
+            if use_cuda and torch.cuda.is_available():
+                estimated_sources_prep = separated_sources[0].cpu().detach().numpy()
+                ref_sources_prep = target_sources[0].cpu().detach().numpy()
+            else:
+                estimated_sources_prep = separated_sources[0].detach().numpy()
+                ref_sources_prep = target_sources[0].detach().numpy()
 
+            # compute SI-SNR
+            (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources_prep, estimated_sources_prep, compute_permutation=True)
+            print(sdr)
+            # print(sir)
+            # print(sarn)
+            # print(perm)
 
-            # pocitani si-snr
-                #mozna uz tady a je mozne ze ten prevod na mixture prep tu vubec nebude
-            # === Save audio ===
-            if audio_cnt % audio_save_frequency == 0:
-                mixture_prep = 0
-                source1_prep = 0
-                source2_prep = 0
+            sdr_sum += sdr
 
-                if use_cuda and torch.cuda.is_available():
-                    mixture_prep = input_mixture.cpu().detach().numpy()
-                    source1_prep = separated_sources[0][0].cpu().detach().numpy()
-                    source2_prep = separated_sources[0][1].cpu().detach().numpy()
-                else:
-                    mixture_prep = input_mixture.detach().numpy()
-                    source1_prep = separated_sources[0][0].detach().numpy()
-                    source2_prep = separated_sources[0][1].detach().numpy()
-
-            # pocitani si-snr
-                # mozna az zde
-
-                # wav.write(args.dst_dir+"testdata_recon/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s1.wav", 8000, source1_prep)
-                # wav.write(args.dst_dir+"testdata_recon/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s2.wav", 8000, source2_prep)
-                # wav.write(args.dst_dir+"testdata_recon/speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_mix.wav", 8000, mixture_prep)
-
+        print("Final SDR: " + str(sdr_sum/global_audio_cnt))
         print('Finished Testing')
-
 
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################

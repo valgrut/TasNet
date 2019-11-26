@@ -1,6 +1,12 @@
 from scipy.io import wavfile as wav
 import numpy as np
 import torch
+import scipy.fftpack
+from scipy.linalg import toeplitz
+from scipy.signal import fftconvolve
+import collections
+import itertools
+import warnings
 
 def saveAudio():
     print("saveAudio")
