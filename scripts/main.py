@@ -122,7 +122,7 @@ if __name__== "__main__":
     #BASE_DATA_PATH = r"/gdrive/My Drive/FIT/"
     BASE_DATA_PATH = args.BASE_DATA_PATH
 
-    MINIBATCH_SIZE = 1       # TODO Problem s rozmerama pri hodnote > 1
+    MINIBATCH_SIZE = args.minibatch_size       # TODO Problem s rozmerama pri hodnote > 1
     R = args.R #number of repeats of ConvBlocks
     X = args.X #num of ConvBlocks in one repeat
 
