@@ -372,10 +372,10 @@ if __name__== "__main__":
 
                     # spojeni sources do jedne matice
                     target_sources = torch.cat((target_source1, target_source2), 1)
-        
+
                     # v1
                     # loss = criterion(separated_sources, target_sources)
-    
+
                     # v2 - my loss
                     tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
                     sep_sources = torch.squeeze(separated_sources)

@@ -3,6 +3,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 
 ## Resources k praci
 - [TasNet - v1](https://arxiv.org/abs/1809.07454v1) (Puvodni)
+- [TasNet - v2](https://arxiv.org/abs/1809.07454v2)
 - [TasNet - v3](https://arxiv.org/abs/1809.07454) (Nova prace TasNet - 2019 (v3) - zlepseny popis modelu atd.)
 - www.deeplearningbook.org
 - http://www.jzus.zju.edu.cn/oldversion/opentxt.php?doi=10.1631/FITEE.1700814
@@ -18,6 +19,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [NumPy](https://numpy.org/devdocs/user/quickstart.html)
     - [jupyter](https://jupyter.org)
 - [tensor-flow](https://www.tensorflow.org/)
+- [Audacity]()
 
 ## Konzultace
 ### ut 8. 10. 2019 - Konzultace
@@ -87,12 +89,12 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - dalsi kroky:
     - [TODO] Zkusit udelat novy checkpoint s ruznymi X a R a nasledne ho zkusit nahrat.
     - [TODO] kouknout na pytorch errory, co mi to hazi uz nejakou dobu, mela by to byt hovadina jen
-    - [TODO] napsat si svou loss funkci - SI-SNR jako learning objective.
+    - [DONE] napsat si svou loss funkci - SI-SNR jako learning objective.
     - [TODO] mini-batche
-    - [TODO] segmentovat nahravky na 4s - problem: nahravky jsou prumerne 4s dlouhe, takze nevim, jestli to neni zbytecne.
+    - segmentovat nahravky na 4s - problem: nahravky jsou prumerne 4s dlouhe, takze nevim, jestli to neni zbytecne.
 
 ### ut 3. 12. 2019 - Konzultace
 - skipped
 
 ### ut 10. 12. 2019 - Konzultace
-- 
+-
