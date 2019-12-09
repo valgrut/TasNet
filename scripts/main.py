@@ -270,10 +270,20 @@ if __name__== "__main__":
                 target_source2 = target_source2.narrow(2, 0, smallest)
                 separated_sources = separated_sources.narrow(2, 0, smallest)
 
-                # spojeni sources do jedne matice
-                target_sources = torch.cat((target_source1, target_source2), 1)
+                # V1 spojeni sources do jedne matice
+                # target_sources = torch.cat((target_source1, target_source2), 1)
+                # calculate loss
+                # loss = criterion(separated_sources, target_sources)
+                # print("loss", loss)
 
-                loss = criterion(separated_sources, target_sources)
+                # V2 moje loss - TODO jednotlive pro kazdeho \
+                # src nebo tak jak je to ted, ze jsou concatenovani
+                tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
+                sep_sources = torch.squeeze(separated_sources)
+                ests = torch.cat((sep_sources[0], sep_sources[1]), 0)
+                loss = - siSNRloss(ests, tars)
+                # print("loss", loss)
+
                 loss.backward()
                 optimizer.step()
 
@@ -362,8 +372,15 @@ if __name__== "__main__":
 
                     # spojeni sources do jedne matice
                     target_sources = torch.cat((target_source1, target_source2), 1)
-
-                    loss = criterion(separated_sources, target_sources)
+        
+                    # v1
+                    # loss = criterion(separated_sources, target_sources)
+    
+                    # v2 - my loss
+                    tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
+                    sep_sources = torch.squeeze(separated_sources)
+                    ests = torch.cat((sep_sources[0], sep_sources[1]), 0)
+                    loss = - siSNRloss(ests, tars)
 
                     current_validation_result += loss.item()
                     running_loss += loss.item()

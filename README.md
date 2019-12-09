@@ -77,10 +77,10 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [DONE] rozjet si-snr na testovaci mnozine a zprumerovat.
     - make repo public a umoznit tak jednoduse ukladat/loadovat zdrojaky z/na git
 
-### ut 19. 11. 2019
+### ut 19. 11. 2019 - Konzultace
 - skipped
 
-### ut 26. 11. 2019
+### ut 26. 11. 2019 - Konzultace
 - **[INFO] 21. 1. 2020 Obhajoba - 7min, prezentace co delam / udelal/ co funguje, nefunguje...**
 - Nalezen problem s nacitanim checkpointu, ze nesedi jaksi rozmery, i kdyz by sedet mely.
     - je mozne ze to je kvuli nejake zmene v siti a checkpoint tuto zmenu nereflekoval
@@ -91,8 +91,8 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [TODO] mini-batche
     - [TODO] segmentovat nahravky na 4s - problem: nahravky jsou prumerne 4s dlouhe, takze nevim, jestli to neni zbytecne.
 
-### ut 3. 12. 2019
+### ut 3. 12. 2019 - Konzultace
 - skipped
 
-### ut 10. 12. 2019
+### ut 10. 12. 2019 - Konzultace
 - 
