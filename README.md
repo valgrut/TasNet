@@ -49,7 +49,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - loss funkce pro moznost sledovat vizualne progress trenovani
 - zobrazeni rekonstruovanych nahravek v programu Audacity
 - Dalsi kroky:
-    - extrahovat jednotlive tridy do vlastnich souboru a parametrizovat instanciaci pro snazsi volani site v ruznych konfiguracich
+    - [DONE] extrahovat jednotlive tridy do vlastnich souboru a parametrizovat instanciaci pro snazsi volani site v ruznych konfiguracich
     - [done] **Error:** zpustit sit na vsech nahravkach !bez trenovani!, abych mohl jednoduse opravit tu chybu se zpracovanim nahravek kolem c.2900
     - **Batch:** size batch > 1 -definovat collate_fn funkci
     - **zero padding** uplne na zacatku trenovani - jeste pred ResBlocky, protoze pokud budu mit vetsi batche, tak nahravky budou ruzne dlouhe, a to by zpusobovalo problemy s rozmery jako nyni, takze je potrebe je zarovnat na delku nejdelsi nahravky v batchi.
@@ -68,11 +68,31 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - ukazka vykresleni loss funkce
 - ukazka moznosti inference
 - dalsi kroky:
-    - pridat zde do testovani SI_SNR  a pro kazdou nahravku a vysledky zprumerovat a vyhodnotit
-    - Rozdlit do souboru a parametrizovat tridy a presunout je do zvlastnich souboru .py
+    - [DONE] Pridat zde do testovani SI_SNR  a pro kazdou nahravku a vysledky zprumerovat a vyhodnotit
+    - [DONE] Rozdlit do souboru a parametrizovat tridy a presunout je do zvlastnich souboru .py
     - vykreslit i validacni loss
     - ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou pres sebe
     - [done] nechat zpracovavat celou validacni mnozinu
     - nechat poradne natrenovat jednu sit s nejakou konfiguraci
-    - rozjet si-snr na testovaci mnozine a zprumerovat.
-    - make repo public ?
+    - [DONE] rozjet si-snr na testovaci mnozine a zprumerovat.
+    - make repo public a umoznit tak jednoduse ukladat/loadovat zdrojaky z/na git
+
+### ut 19. 11. 2019
+- skipped
+
+### ut 26. 11. 2019
+- **[INFO] 21. 1. 2020 Obhajoba - 7min, prezentace co delam / udelal/ co funguje, nefunguje...**
+- Nalezen problem s nacitanim checkpointu, ze nesedi jaksi rozmery, i kdyz by sedet mely.
+    - je mozne ze to je kvuli nejake zmene v siti a checkpoint tuto zmenu nereflekoval
+- dalsi kroky:
+    - [TODO] Zkusit udelat novy checkpoint s ruznymi X a R a nasledne ho zkusit nahrat.
+    - [TODO] kouknout na pytorch errory, co mi to hazi uz nejakou dobu, mela by to byt hovadina jen
+    - [TODO] napsat si svou loss funkci - SI-SNR jako learning objective.
+    - [TODO] mini-batche
+    - [TODO] segmentovat nahravky na 4s - problem: nahravky jsou prumerne 4s dlouhe, takze nevim, jestli to neni zbytecne.
+
+### ut 3. 12. 2019
+- skipped
+
+### ut 10. 12. 2019
+- 

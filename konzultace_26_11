@@ -1,0 +1,13 @@
+- ! vyzkouset na stare siti nacitani .tar pro ruzna X a R jestli to sedi. pokud ne, opravit a fixnout i ve scriptech
+
+- kouknout na pytorch errory co se mi ukazujou uz nejakou dobu ze je cosi deprecated...
+_____________________________
+
+- napsat si svou loss funkci na SI-SNR a pouzit ji jako minus
+  <> jsou skalarni soucin
+  ||cc||  jsou vynasobit skalarne sam sesebou
+- minibatche
+- trhat kousy na segmenty o 4 sec
+- prezentace co delam, udelal, co funguje nefunguje... 21.1.2020   , 7minut
+
+

@@ -152,7 +152,7 @@ if __name__== "__main__":
     # ..
 
     # create TasNet class
-    tasnet = Net(X, R, nn_stride, padd, DEBUG)
+    tasnet = Net(X=X, R=R, nn_stride=nn_stride, padd=padd, DEBUG=DEBUG)
 
     # Check if cuda is available
     if use_cuda and torch.cuda.is_available():
@@ -163,6 +163,7 @@ if __name__== "__main__":
 
     # loss and Optimizer
     criterion = nn.MSELoss()
+    #-SISNR()
     optimizer = optim.Adam(tasnet.parameters(), lr = learning_rate, weight_decay=opt_decay)
 
 
@@ -171,9 +172,16 @@ if __name__== "__main__":
 ####################################################################################################################################################################################
     # load NN from checkpoint and continue training
     #TODO zde si nacitam ulozenou epochu a los,, takze byc to mohl pri obnoveni trenovani zase nahrat jako pokracovani epochy
+    #TODO fix loading checkpoint
     if args.checkpoint_file:
         # checkpoint = torch.load(BASE_DATA_PATH+'tasnet_model_checkpoint_2019-11-20_07:33_X7_R3_e4_a19999.tar')
-        checkpoint = torch.load(args.checkpoint_file)
+
+        checkpoint = None
+        if use_cuda and torch.cuda.is_available():
+            checkpoint = torch.load(args.checkpoint_file)
+        else:
+            checkpoint = torch.load(args.checkpoint_file, map_location=torch.device('cpu'))
+
         tasnet.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         epoch = checkpoint['epoch']
@@ -383,8 +391,6 @@ if __name__== "__main__":
         plt.show()
 
 
-
-
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
@@ -399,50 +405,51 @@ if __name__== "__main__":
         sdr_sum = 0
         global_audio_cnt = 0
         # pridat zde do testovani SI_SNR  a pro kazdou nahravku a vysledky zprumerovat a vyhodnotit (GIT)
-        for audio_cnt, data in enumerate(testloader, 0):
-            global_audio_cnt += 1
+        with torch.no_grad():
+            for audio_cnt, data in enumerate(testloader, 0):
+                global_audio_cnt += 1
 
-            input_mixture  = data[0]
-            target_source1 = data[1]
-            target_source2 = data[2]
+                input_mixture  = data[0]
+                target_source1 = data[1]
+                target_source2 = data[2]
 
-            if use_cuda and torch.cuda.is_available():
-                input_mixture = input_mixture.cuda()
-                target_source1 = target_source1.cuda()
-                target_source2 = target_source2.cuda()
+                if use_cuda and torch.cuda.is_available():
+                    input_mixture = input_mixture.cuda()
+                    target_source1 = target_source1.cuda()
+                    target_source2 = target_source2.cuda()
 
-            # separation
-            separated_sources = tasnet(input_mixture)
+                # separation
+                separated_sources = tasnet(input_mixture)
 
-            # unitize length of audio
-            smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
-            input_mixture = input_mixture.narrow(2, 0, smallest)
-            target_source1 = target_source1.narrow(2, 0, smallest)
-            target_source2 = target_source2.narrow(2, 0, smallest)
-            separated_sources = separated_sources.narrow(2, 0, smallest)
+                # unitize length of audio
+                smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
+                input_mixture = input_mixture.narrow(2, 0, smallest)
+                target_source1 = target_source1.narrow(2, 0, smallest)
+                target_source2 = target_source2.narrow(2, 0, smallest)
+                separated_sources = separated_sources.narrow(2, 0, smallest)
 
-            # spojeni ref sources do jedne matice
-            target_sources = torch.cat((target_source1, target_source2), 1)
+                # spojeni ref sources do jedne matice
+                target_sources = torch.cat((target_source1, target_source2), 1)
 
-            # prepare tensor for SI-SNR
-            estimated_sources_prep = 0
-            ref_sources_prep = 0
+                # prepare tensor for SI-SNR
+                estimated_sources_prep = 0
+                ref_sources_prep = 0
 
-            if use_cuda and torch.cuda.is_available():
-                estimated_sources_prep = separated_sources[0].cpu().detach().numpy()
-                ref_sources_prep = target_sources[0].cpu().detach().numpy()
-            else:
-                estimated_sources_prep = separated_sources[0].detach().numpy()
-                ref_sources_prep = target_sources[0].detach().numpy()
+                if use_cuda and torch.cuda.is_available():
+                    estimated_sources_prep = separated_sources[0].cpu().detach().numpy()
+                    ref_sources_prep = target_sources[0].cpu().detach().numpy()
+                else:
+                    estimated_sources_prep = separated_sources[0].detach().numpy()
+                    ref_sources_prep = target_sources[0].detach().numpy()
 
-            # compute SI-SNR
-            (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources_prep, estimated_sources_prep, compute_permutation=True)
-            print(sdr)
-            # print(sir)
-            # print(sarn)
-            # print(perm)
+                # compute SI-SNR
+                (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources_prep, estimated_sources_prep, compute_permutation=True)
+                print(sdr)
+                # print(sir)
+                # print(sarn)
+                # print(perm)
 
-            sdr_sum += sdr
+                sdr_sum += sdr
 
         print("Final SDR: " + str(sdr_sum/global_audio_cnt))
         print('Finished Testing')
