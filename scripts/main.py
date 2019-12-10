@@ -15,7 +15,6 @@ from snr import *
 
 ## TODO: Pridat kontrolu vyplnenych argumentu!!!
 ## TODO: pro test je potreba X a R
-## TODO: pokud budu fakt pouzivat jen tu jednu fci, tak zase vratit do puvodniho stavu util a snr.py
 
 if __name__== "__main__":
     parser = argparse.ArgumentParser(description='Setup and init neural network')
@@ -148,8 +147,24 @@ if __name__== "__main__":
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
 
-    # create Dataset class
-    # ..
+    def audio_collate(batch):
+        print("collate")
+        for i in range(0, len(batch)):
+            # print(batch[i][0].shape) #mix
+            # print(batch[i][1].shape) #s1
+            # print(batch[i][2].shape) #s2
+
+            print(len(batch[i][0][0])) #mix
+
+        minibatch_mix = torch.nn.utils.rnn.pad_sequence((batch[0][0][0], batch[1][0][0], batch[2][0][0]), batch_first=True)
+        minibatch_s1 = torch.nn.utils.rnn.pad_sequence((batch[0][1][0], batch[1][1][0], batch[2][1][0]), batch_first=True)
+        minibatch_s2 = torch.nn.utils.rnn.pad_sequence((batch[0][2][0], batch[1][2][0], batch[2][2][0]), batch_first=True)
+        print(minibatch_mix)
+
+        print("konec_collate")
+        return minibatch_mix.unsqueeze(1), minibatch_s1.unsqueeze(1), minibatch_s2.unsqueeze(1)
+
+
 
     # create TasNet class
     tasnet = Net(X=X, R=R, nn_stride=nn_stride, padd=padd, DEBUG=DEBUG)
@@ -218,8 +233,18 @@ if __name__== "__main__":
         # Note: We shuffle the loading process of train_dataset to make the learning process
         # independent of data order, but the order of test_loader
         # remains so as to examine whether we can handle unspecified bias order of inputs.
-        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True)
-        validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False)
+        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True)
+        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
+        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, pin_memory=True, collate_fn = audio_collate)
+        validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
+
+        # test collate_fn:
+        # itr = iter(trainloader)
+        # print("..")
+        # print(itr.next())
+        # print("..")
+        # print(itr.next())
+        # print("konec")
 
         best_validation_result = 42   #initial value
         graph_x = []
