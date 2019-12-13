@@ -1,17 +1,7 @@
-nechat projet vsechny nahravky pro zjisteni index error out of ..
-zakomentovat trenovani
-
-vykreslovat graf do souboru abych se na to mohl pak podivat
-
-zkontrolovat jestli na disku je dataset
-
-zkusit zprovznit batch zpracovani pro vic nez 1
-
 batch je tensor ...
 takze ja musim uplne na zacatku padd by zero. (na konci nebo zacatku)
 pri tvoreni batche ulozit delky promluv abych vedel ktere casti nepocitat v objektivni funkci
 - v kazde nahravkce bude ruzny pocet padd nul podle toho jak je ldouha takze pak ty nuly oddelat.
-
 
 dataloader padding
 - lze predat collate_fn funkci
@@ -21,14 +11,4 @@ rotch.nn.uutils.rnn.pad_sequence ???
 - muj batch z listu promluv udela tensor
 - vracene delky taky museji byt v tensoru
 
-____
-
 padding nulama a batche
-zkusit projet dataset vsechny nahravky pro zjisteni chyby index out of bound
--
-
-todo vypdane tvary
-loss funkce vykreslit
-ukladat si cisla do souboru - ty hodnoty loss ku autio_cnt
-
-

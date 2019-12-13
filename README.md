@@ -96,5 +96,5 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 ### ut 3. 12. 2019 - Konzultace
 - skipped
 
-### ut 10. 12. 2019 - Konzultace
--
+### pa 13. 12. 2019 - Konzultace
+- 

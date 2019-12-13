@@ -147,25 +147,6 @@ if __name__== "__main__":
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
 
-    def audio_collate(batch):
-        print("collate")
-        for i in range(0, len(batch)):
-            # print(batch[i][0].shape) #mix
-            # print(batch[i][1].shape) #s1
-            # print(batch[i][2].shape) #s2
-
-            print(len(batch[i][0][0])) #mix
-
-        minibatch_mix = torch.nn.utils.rnn.pad_sequence((batch[0][0][0], batch[1][0][0], batch[2][0][0]), batch_first=True)
-        minibatch_s1 = torch.nn.utils.rnn.pad_sequence((batch[0][1][0], batch[1][1][0], batch[2][1][0]), batch_first=True)
-        minibatch_s2 = torch.nn.utils.rnn.pad_sequence((batch[0][2][0], batch[1][2][0], batch[2][2][0]), batch_first=True)
-        print(minibatch_mix)
-
-        print("konec_collate")
-        return minibatch_mix.unsqueeze(1), minibatch_s1.unsqueeze(1), minibatch_s2.unsqueeze(1)
-
-
-
     # create TasNet class
     tasnet = Net(X=X, R=R, nn_stride=nn_stride, padd=padd, DEBUG=DEBUG)
 
@@ -186,11 +167,7 @@ if __name__== "__main__":
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
     # load NN from checkpoint and continue training
-    #TODO zde si nacitam ulozenou epochu a los,, takze byc to mohl pri obnoveni trenovani zase nahrat jako pokracovani epochy
-    #TODO fix loading checkpoint
     if args.checkpoint_file:
-        # checkpoint = torch.load(BASE_DATA_PATH+'tasnet_model_checkpoint_2019-11-20_07:33_X7_R3_e4_a19999.tar')
-
         checkpoint = None
         if use_cuda and torch.cuda.is_available():
             checkpoint = torch.load(args.checkpoint_file)
@@ -209,21 +186,12 @@ if __name__== "__main__":
 
         print("Nactena epocha a loss: ", str(epoch), str(loss))
 
-    # if args.INFERENCE:
-        ## if param Load NN for Inference
-        # tasnet.load_state_dict(torch.load(BASE_DATA_PATH+'tasnet_model_inference_X8_R2_e2_ga60000.pkl'))
-        # tasnet.eval()
-
-
-####################################################################################################################################################################################
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
 
     learning_started_date = datetime.now().strftime('%Y-%m-%d %H:%M')
 
     if args.TRAIN:
-        # train_data_path = BASE_DATA_PATH+"dataset/tr/"
-        # valid_data_path = BASE_DATA_PATH+"dataset/cv/"
         train_data_path = BASE_DATA_PATH+"tr/"
         valid_data_path = BASE_DATA_PATH+"cv/"
 
@@ -234,8 +202,8 @@ if __name__== "__main__":
         # independent of data order, but the order of test_loader
         # remains so as to examine whether we can handle unspecified bias order of inputs.
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True)
-        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
-        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, pin_memory=True, collate_fn = audio_collate)
+        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
+        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, pin_memory=True, collate_fn = audio_collate)
         validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
 
         # test collate_fn:
@@ -257,20 +225,13 @@ if __name__== "__main__":
 
             epoch = epoch + cont_epoch
 
-            # tady by data byly dvojice puvodni delky a te nahravky
+            # TODO tady by data byly dvojice puvodni delky a te nahravky
             for audio_cnt, data in enumerate(trainloader, 0):
                 global_audio_cnt += 1
 
-                #if global_audio_cnt > audios_in_epoch:
-                #    print(global_audio_cnt, " ", audios_in_epoch)
-                #    break
-
-                # aby se nesekal prohlizec pri trenovani
                 if audio_cnt % 500 == 0:
-                    print("")
+                    print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
                     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
-                #else: #indikace, ze se neco deje a neseklo se trenovani.
-                #    print(".", end="")
 
                 input_mixture  = data[0]
                 target_source1 = data[1]
@@ -283,10 +244,6 @@ if __name__== "__main__":
 
                 optimizer.zero_grad()
                 separated_sources = tasnet(input_mixture)
-
-                #print(outputs.shape, target.shape)
-                #if target.shape[2] != outputs.shape[2]:
-                #    target = target.narrow(2, 0, outputs.shape[2])
 
                 ## zkraceni nahravek tak, aby vsechny byly stejne dlouho - pocet samplu stejny
                 smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
@@ -302,7 +259,7 @@ if __name__== "__main__":
                 # print("loss", loss)
 
                 # V2 moje loss - TODO jednotlive pro kazdeho \
-                # src nebo tak jak je to ted, ze jsou concatenovani
+                # src nebo tak jak je to ted, ze jsou concatenovani??
                 tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
                 sep_sources = torch.squeeze(separated_sources)
                 ests = torch.cat((sep_sources[0], sep_sources[1]), 0)
@@ -318,8 +275,6 @@ if __name__== "__main__":
                 # === print loss ===
                 if audio_cnt % print_loss_frequency == print_loss_frequency - 1:
                     print('[%d, %5d] loss: %.5f' % (epoch, audio_cnt, running_loss/print_loss_frequency))
-                    #graph_x.append(epoch) #TODO
-                    #graph_x.append(print_loss_frequency)
                     graph_x.append(global_audio_cnt)
                     graph_y.append(running_loss/print_loss_frequency)
 
@@ -340,7 +295,7 @@ if __name__== "__main__":
                       'loss': loss,
                     }, BASE_DATA_PATH+'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d_%H:%M'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(audio_cnt)+'.tar')
 
-                # === Save audio ===
+                # === Save reconstruction ===
                 # ulozeni pouze prvni nahravky pro porovnani epoch
                 #if audio_cnt == 0:
                 # ulozit kazdou Xtou rekonstrukci pro moznost jejiho prehrati a zjisteni, jak to zni.
@@ -372,9 +327,6 @@ if __name__== "__main__":
 
             with torch.no_grad():
                 for audio_cnt, data in enumerate(validloader, 0):
-                    #if valid_audio_cnt >= 2000:
-                    #    print("Zpracovano ", valid_audio_cnt, "validacnich nahravek. Konec validace.")
-                    #    break #TODO pak oddelat
                     valid_audio_cnt += 1
 
                     input_mixture  = data[0]
@@ -386,7 +338,6 @@ if __name__== "__main__":
                         target_source1 = target_source1.cuda()
                         target_source2 = target_source2.cuda()
 
-                    #optimizer.zero_grad()
                     separated_sources = tasnet(input_mixture)
 
                     smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
@@ -433,7 +384,6 @@ if __name__== "__main__":
         plt.show()
 
 
-####################################################################################################################################################################################
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
 
@@ -487,9 +437,6 @@ if __name__== "__main__":
                 # compute SI-SNR
                 (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources_prep, estimated_sources_prep, compute_permutation=True)
                 print(sdr)
-                # print(sir)
-                # print(sarn)
-                # print(perm)
 
                 sdr_sum += sdr
 
@@ -498,11 +445,8 @@ if __name__== "__main__":
 
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
-####################################################################################################################################################################################
     if args.INFERENCE:
         print('Prepared for inference, load your audio.')
-
-        # TODO Rozdlit do souboru a parametrizovat (GIT)
 
         mix_name = "smes2_resampled3.wav"
         mix_name = args.input_mixture

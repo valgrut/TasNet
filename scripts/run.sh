@@ -7,7 +7,7 @@
 # exit 0
 
 # train network on PC
-python3 main.py --train --epochs 5 --X 7 --R 3 --basepath="$HOME/Documents/full/min/" --dst-dir="$HOME/TEST/" --minibatch-size 1
+python3 main.py --train --epochs 5 --X 5 --R 2 --basepath="$HOME/Documents/full/min/" --dst-dir="$HOME/TEST/" --minibatch-size 1
 exit 0
 
 # train network in Colab
