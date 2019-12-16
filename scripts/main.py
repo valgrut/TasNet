@@ -203,13 +203,16 @@ if __name__== "__main__":
         # remains so as to examine whether we can handle unspecified bias order of inputs.
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True)
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
-        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, pin_memory=True, collate_fn = audio_collate)
+        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
         validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
+
+        # from torch.utils.data import *
+        # print(list(BatchSampler(SequentialSampler(trainloader), batch_size=5, drop_last=False)))
 
         # test collate_fn:
         # itr = iter(trainloader)
         # print("..")
-        # print(itr.next())
+        # print("ITER.next: ", itr.next())
         # print("..")
         # print(itr.next())
         # print("konec")

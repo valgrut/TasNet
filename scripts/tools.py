@@ -10,9 +10,9 @@ import warnings
 
 def siSNRloss(output, target):
     # check dimensions of output and target, should be 1xT
-    s_target = (torch.dot(output, target)*target) / ((torch.dot(target, target))**2)
+    s_target = (torch.dot(output, target)*target) / ((torch.dot(target, target)))
     e_noise = output - s_target
-    loss = 10*torch.log10((torch.dot(s_target, s_target)**2)/(torch.dot(e_noise, e_noise)**2))
+    loss = 10*torch.log10((torch.dot(s_target, s_target))/(torch.dot(e_noise, e_noise)))
     return loss
 
 
@@ -27,21 +27,17 @@ def audio_collate(batch):
         print("Audio mix: ", audio[0].shape) #tensor mix
         print("Audio s1 : ", audio[1].shape) #tensor s1
         print("Audio s2 : ", audio[2].shape) #tensor s2
- 
+
         list_mix.append(audio[0][0])
         list_s1.append(audio[1][0])
         list_s2.append(audio[2][0])
 
-    
     minibatch_mix = torch.nn.utils.rnn.pad_sequence(list_mix, batch_first=True)
     minibatch_s1 = torch.nn.utils.rnn.pad_sequence(list_s1, batch_first=True)
     minibatch_s2 = torch.nn.utils.rnn.pad_sequence(list_s2, batch_first=True)
 
-    # minibatch_mix = torch.nn.utils.rnn.pad_sequence((batch[0][0][0], batch[1][0][0], batch[2][0][0]), batch_first=True)
-    # minibatch_s1 = torch.nn.utils.rnn.pad_sequence((batch[0][1][0], batch[1][1][0], batch[2][1][0]), batch_first=True)
-    # minibatch_s2 = torch.nn.utils.rnn.pad_sequence((batch[0][2][0], batch[1][2][0], batch[2][2][0]), batch_first=True)
-
-    print(minibatch_mix)
+    print("minibatch_mix: ", minibatch_mix)
+    print("minibatch_mix unsqueezed: ", minibatch_mix.unsqueeze(1))
 
     print("konec_collate")
     return minibatch_mix.unsqueeze(1), minibatch_s1.unsqueeze(1), minibatch_s2.unsqueeze(1)

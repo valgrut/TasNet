@@ -9,7 +9,6 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.DEBUG=DEBUG
         self.conv1 = nn.Conv1d(1, 256, 20, bias=False, stride=nn_stride, padding=padd)
-        #self.deconv = nn.ConvTranspose1d(256, 2, 20, padding=padd, bias=bias_enabled, stride=20)
         self.deconv = nn.ConvTranspose1d(512, 2, 20, padding=padd, bias=False, stride=nn_stride, groups=2)
 
         self.layer_norm = nn.LayerNorm(256)
@@ -49,14 +48,18 @@ class Net(nn.Module):
         data = self.TCN(data)
 
         data = self.bottleneck2(data)
-        data = torch.reshape(data, (1, 256, 2, -1,))
+        # data = torch.reshape(data, (1, 256, 2, -1,))
+        data = torch.reshape(data, (3, 256, 2, -1,)) #TODO pridat argument BATCH_SIZE menici prvni parametr zde - misto 3 bude batch_size
         masks = self.softmax(data)
         if self.DEBUG:
             print("NN: Masks: ", masks.shape)
 
         # multiply masks and representation
+        print("representation shape: ", representation.shape)
+        print("maskS shape:", masks.shape)
         masked_representation = torch.mul(representation[:,:,None,:], masks)
-        masked_representation = torch.reshape(masked_representation, (1, 512, -1))
+        # masked_representation = torch.reshape(masked_representation, (1, 512, -1)) # TODO zde taky
+        masked_representation = torch.reshape(masked_representation, (3 , 512, -1))
 
         # decoder
         separate_data = self.deconv(masked_representation)
