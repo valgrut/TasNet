@@ -11,7 +11,7 @@ AudioDataset
 """
 class AudioDataset(data_utils.Dataset):
     """
-    Dataset of speech mixtures for speech separation. 
+    Dataset of speech mixtures for speech separation.
     """
     def __init__(self, path):
         super(AudioDataset, self).__init__()
@@ -20,7 +20,8 @@ class AudioDataset(data_utils.Dataset):
         self.source1_path  = self.path + "s1/"
         self.source2_path  = self.path + "s2/"
         self.mixtures = [f for f in listdir(self.mixtures_path) if isfile(join(self.mixtures_path, f))]
-        self.generator = self.generate_segment()
+        self.dataset_len = len(self.mixtures)
+        self.generator = self.segment_generator()
 
         self.current_mixture = ""
         self.audioindex = 0
@@ -43,19 +44,18 @@ class AudioDataset(data_utils.Dataset):
     def loadNextAudio(self):
         #print("f: load_next")
         self.current_mixture = self.getAudioSamples(self.mixtures_path + self.mixtures[self.audioindex])
+        self.current_mixture_len = len(self.current_mixture)
         self.audioindex += 1
-        if self.audioindex > len(self.mixtures):
+        if self.audioindex >= len(self.mixtures):
             return
-        
+
     def getAudioSamples(self, audio_file_path):
         """
         Vrati vzorky zadaneho audio souboru
         """
         rate, samples = wav.read(audio_file_path)
         #print("f: get_audio_samples")
-        #print(samples[0:19])
-        #print(samples[20:39])
-        return samples 
+        return samples
 
     def transform(self, samples):
         # normalisation - zero mean & jednotkova variance (unit variation)
@@ -67,32 +67,37 @@ class AudioDataset(data_utils.Dataset):
         #print("f: get_segment")
         next_segment = next(self.generator)
         return self.transform(next_segment)
-    
-    def generate_segment(self):
-        #print("f: generate_segments")
+
+    def segment_generator(self):
+        #print("f: segment_generators")
         samples = self.current_mixture
         segment = []
-        
-        for i in range(0, len(samples), 20):
-            #print("index i: " + str(i))
-            segment = [samples[i] for i in range(i, i+20)]
-            yield segment
-        
-        self.load_next() # uz neni co nacitat
-        
+        seglen = 32000 #4seconds, 32k samples
+
+        segptr = 0
+        while(segptr < self.current_mixture_len):
+            if(self.current_mixture_len >= seglen):
+                segment = samples[segptr:(segptr+seglen)]
+                print("Delka segmentu: ", len(segment))
+                segptr += 24000 #8000 stride
+                yield segment
+
+        self.loadNextAudio() # uz neni co nacitat
+
 
 
 # --------------- testing of our custom dataloader and dataset ----------------------------
-train_data_path = "/home/valgrut/Documents/full/min/tr/"
+train_data_path = "/root/Documents/full/min/tr/"
 trainset = AudioDataset(train_data_path)
-print(len(trainset)) 
+print(len(trainset))
 
-dataloader = data_utils.DataLoader(trainset, batch_size = 3, shuffle=False)
+dataloader = data_utils.DataLoader(trainset, batch_size = 1, shuffle=False)
 iterator = iter(dataloader)
+
 print("Cyklus:")
-#for i in range (1, 10):
-minibatch = iterator.next()
-print(minibatch)
+for i in range (1, 10):
+    minibatch = iterator.next()
+    print(minibatch)
 
 
 
