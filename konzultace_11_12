@@ -1,0 +1,10 @@
+jen pro trenovani zkusit nahravky rozdelit po  4 sekundach. kratsi dopadovat nulama, delsi rozdelit a treba pro nahravku 1-6 vzit 1-4 a pak 3-6   , proste aby se to prolinalo.
+
+pvni dimenze je obvykle velikost batche / v reshapech atd.
+ta by mela zustat vzdy na prvnim miste
+
+loss funkci bych mel spocitat pro s1 a s2 zvlast 
+viz papir
+
+pred loss pak zase vyhodit to padovani
+

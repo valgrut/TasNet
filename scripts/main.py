@@ -148,7 +148,7 @@ if __name__== "__main__":
 ####################################################################################################################################################################################
 
     # create TasNet class
-    tasnet = Net(X=X, R=R, nn_stride=nn_stride, padd=padd, DEBUG=DEBUG)
+    tasnet = Net(X=X, R=R, nn_stride=nn_stride, padd=padd, batch_size=MINIBATCH_SIZE, DEBUG=DEBUG)
 
     # Check if cuda is available
     if use_cuda and torch.cuda.is_available():
