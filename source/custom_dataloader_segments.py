@@ -13,7 +13,7 @@ AudioDataset
 """
 class AudioDataset(data_utils.Dataset):
     """
-    Dataset of speech mixtures for speech separation. 
+    Dataset of speech mixtures for speech separation.
     """
     def __init__(self, path):
         super(AudioDataset, self).__init__()
@@ -29,7 +29,7 @@ class AudioDataset(data_utils.Dataset):
 
 
     def __getitem__(self, index):
-        #segment = self.getSegment(self.mixtures[index])  
+        #segment = self.getSegment(self.mixtures[index])
         print("__getitem__")
         print(self.mixtures[index])
         samples = self.getAudioSamples(self.mixtures[index])
@@ -43,7 +43,7 @@ class AudioDataset(data_utils.Dataset):
         rate, samples = wav.read(self.mixtures_path + audio_file_path)
         print("get audio samples")
         print(samples[0:7])
-        return samples 
+        return samples
 
     def transform(self, samples):
         # normalisation - zero mean & jednotkova variance (unit variation)
@@ -103,7 +103,7 @@ class BatchSampler(data_utils.Sampler):
 # --------------- testing of our custom dataloader and dataset ----------------------------
 train_data_path = "/home/valgrut/Documents/full/min/tr/"
 trainset = AudioDataset(train_data_path)
-print(len(trainset)) 
+print(len(trainset))
 print(trainset[0])
 print("...")
 
