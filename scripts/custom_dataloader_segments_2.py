@@ -79,7 +79,8 @@ class AudioDataset(data_utils.Dataset):
 
     def segment_generator(self):
         # print("f: segment_generators")
-        samples = self.current_mixture
+        # print("current audio index: ", self.audioindex)
+        print("Beru si dalsi segment")
         segment = []
         seglen = 32000 #4seconds, 32k samples
 
@@ -88,18 +89,20 @@ class AudioDataset(data_utils.Dataset):
             segment = self.current_mixture[segptr:(segptr+seglen)]
             print("Delka segmentu: ", len(segment))
             segptr += 24000 #32000 - 8000 stride
+            print("segment1: ", self.transform(segment[0:2]))
+            if(len(segment) == seglen): #TODO overit
+                print("yield")
+                yield segment
+            else:
+                self.loadNextAudio() # uz neni co nacitat
+                yield segment
 
-            # if(self.current_mixture_len < segptr+seglen): #TODO overit
-            #     print("Je to delsi, takze dalsi nahravka")
-            #     self.loadNextAudio() # uz neni co nacitat
-            
-            yield segment
-        
-        if(self.current_mixture_len < segptr+seglen): #TODO overit
-            print("Je to delsi, takze dalsi nahravka")
-            self.loadNextAudio() # uz neni co nacitat
-        
-        yield segment
+        # if(self.current_mixture_len < segptr+seglen): #TODO overit
+            # print("Je to delsi, takze dalsi nahravka")
+            # self.loadNextAudio() # uz neni co nacitat
+
+        # print("yield-outer")
+        # yield segment
         ### Takhle je to skoro dobre, ale posledni segment se Yielduje dvakrat!!!
 
  # -----------------------------------------------------------------------------------------
@@ -125,17 +128,20 @@ train_data_path = "/root/Documents/full/min/tr/"
 trainset = AudioDataset(train_data_path)
 print(len(trainset))
 
-dataloader = data_utils.DataLoader(trainset, batch_size = 1, shuffle=False, collate_fn=audio_collate)
+dataloader = data_utils.DataLoader(trainset, batch_size = 2, shuffle=False, collate_fn=audio_collate)
 iterator = iter(dataloader)
 
 
-print("Cyklus:")
+# print("Cyklus:")
 for i in range (1, 10):
     minibatch = iterator.next()
     print(minibatch)
 
 # minibatch = iterator.next()
-# print(minibatch)
 # minibatch = iterator.next()
 # print(minibatch)
+print("")
+print("")
 
+# minibatch = iterator.next()
+# print(minibatch)
