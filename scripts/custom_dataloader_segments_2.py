@@ -38,19 +38,21 @@ class AudioDataset(data_utils.Dataset):
         v1: transformovane a nachystane audio v podobe tensoru
         v2: transformovane a nachystane audio, ale pouze jeden segment v podobe tensoru
         """
-        print("f: __getitem__")
+        # print("f: __getitem__")
         segment = self.getSegment() # tato bude, misto return, mit yield
         return segment
 
     def loadNextAudio(self):
-        print("f: loadNextAudio")
+        print("")
+        # print("f: loadNextAudio")
         self.current_mixture = self.getAudioSamples(self.mixtures_path + self.mixtures[self.audioindex])
         self.current_mixture_len = len(self.current_mixture)
+        print("New audio len: ", self.current_mixture_len)
         self.audioindex += 1
         self.generator = self.segment_generator()
         if self.audioindex >= len(self.mixtures):
             return
-        print("f: konec loadNextAudio")
+        # print("f: konec loadNextAudio")
 
 
     def getAudioSamples(self, audio_file_path):
@@ -58,7 +60,7 @@ class AudioDataset(data_utils.Dataset):
         Vrati vzorky zadaneho audio souboru
         """
         rate, samples = wav.read(audio_file_path)
-        print("f: get_audio_samples")
+        # print("f: get_audio_samples")
         return samples
 
     def transform(self, samples):
@@ -71,12 +73,12 @@ class AudioDataset(data_utils.Dataset):
         return tensor_float32
 
     def getSegment(self):
-        print("f: get_segment")
+        # print("f: get_segment")
         next_segment = next(self.generator)
         return self.transform(next_segment)
 
     def segment_generator(self):
-        print("f: segment_generators")
+        # print("f: segment_generators")
         samples = self.current_mixture
         segment = []
         seglen = 32000 #4seconds, 32k samples
@@ -85,14 +87,20 @@ class AudioDataset(data_utils.Dataset):
         while(segptr < self.current_mixture_len):
             segment = self.current_mixture[segptr:(segptr+seglen)]
             print("Delka segmentu: ", len(segment))
-            segptr += 24000 #8000 stride
+            segptr += 24000 #32000 - 8000 stride
 
-            # if(self.current_mixture_len >= seglen):
-            if(self.current_mixture_len < seglen+segptr): #TODO overit
-                # print("Je to delsi, takze dalsi nahravka")
-                self.loadNextAudio() # uz neni co nacitat
-
+            # if(self.current_mixture_len < segptr+seglen): #TODO overit
+            #     print("Je to delsi, takze dalsi nahravka")
+            #     self.loadNextAudio() # uz neni co nacitat
+            
             yield segment
+        
+        if(self.current_mixture_len < segptr+seglen): #TODO overit
+            print("Je to delsi, takze dalsi nahravka")
+            self.loadNextAudio() # uz neni co nacitat
+        
+        yield segment
+        ### Takhle je to skoro dobre, ale posledni segment se Yielduje dvakrat!!!
 
  # -----------------------------------------------------------------------------------------
 
@@ -117,8 +125,7 @@ train_data_path = "/root/Documents/full/min/tr/"
 trainset = AudioDataset(train_data_path)
 print(len(trainset))
 
-# dataloader = data_utils.DataLoader(trainset, batch_size = 1, shuffle=False)
-dataloader = data_utils.DataLoader(trainset, batch_size = 4, shuffle=False, collate_fn=audio_collate)
+dataloader = data_utils.DataLoader(trainset, batch_size = 1, shuffle=False, collate_fn=audio_collate)
 iterator = iter(dataloader)
 
 
