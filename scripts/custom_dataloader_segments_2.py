@@ -1,6 +1,7 @@
 from scipy.io import wavfile as wav
 import numpy as np
 import torch
+import torch.nn.functional as F
 import torch.utils.data as data_utils
 from torch._six import int_classes as _int_classes
 from os import listdir
@@ -37,53 +38,78 @@ class AudioDataset(data_utils.Dataset):
         v1: transformovane a nachystane audio v podobe tensoru
         v2: transformovane a nachystane audio, ale pouze jeden segment v podobe tensoru
         """
-        #print("f: __getitem__")
-        segment = self.getSegment(self.current_mixture) # tato bude, misto return, mit yield
+        print("f: __getitem__")
+        segment = self.getSegment() # tato bude, misto return, mit yield
         return segment
 
     def loadNextAudio(self):
-        #print("f: load_next")
+        print("f: loadNextAudio")
         self.current_mixture = self.getAudioSamples(self.mixtures_path + self.mixtures[self.audioindex])
         self.current_mixture_len = len(self.current_mixture)
         self.audioindex += 1
+        self.generator = self.segment_generator()
         if self.audioindex >= len(self.mixtures):
             return
+        print("f: konec loadNextAudio")
+
 
     def getAudioSamples(self, audio_file_path):
         """
         Vrati vzorky zadaneho audio souboru
         """
         rate, samples = wav.read(audio_file_path)
-        #print("f: get_audio_samples")
+        print("f: get_audio_samples")
         return samples
 
     def transform(self, samples):
         # normalisation - zero mean & jednotkova variance (unit variation)
         numpy = np.array(samples)
-        tensor = torch.from_numpy(numpy)
-        return tensor
+        numpy = numpy / 2**15
+        tensor = torch.as_tensor(numpy)
+        tensor_float32 = torch.tensor(tensor, dtype=torch.float32)
+        # tensor = torch.from_numpy(numpy)
+        return tensor_float32
 
-    def getSegment(self, path):
-        #print("f: get_segment")
+    def getSegment(self):
+        print("f: get_segment")
         next_segment = next(self.generator)
         return self.transform(next_segment)
 
     def segment_generator(self):
-        #print("f: segment_generators")
+        print("f: segment_generators")
         samples = self.current_mixture
         segment = []
         seglen = 32000 #4seconds, 32k samples
 
         segptr = 0
         while(segptr < self.current_mixture_len):
-            if(self.current_mixture_len >= seglen):
-                segment = samples[segptr:(segptr+seglen)]
-                print("Delka segmentu: ", len(segment))
-                segptr += 24000 #8000 stride
-                yield segment
+            segment = self.current_mixture[segptr:(segptr+seglen)]
+            print("Delka segmentu: ", len(segment))
+            segptr += 24000 #8000 stride
 
-        self.loadNextAudio() # uz neni co nacitat
+            # if(self.current_mixture_len >= seglen):
+            if(self.current_mixture_len < seglen+segptr): #TODO overit
+                # print("Je to delsi, takze dalsi nahravka")
+                self.loadNextAudio() # uz neni co nacitat
 
+            yield segment
+
+ # -----------------------------------------------------------------------------------------
+
+# Budu muset predelat pro 3 nahravky - mix, s1, s2
+def audio_collate(batch):
+    if(len(batch) > 1):
+        list_mix = []
+        for audio in batch:
+            list_mix.append(audio)
+
+        minibatch_mix = torch.nn.utils.rnn.pad_sequence(list_mix, batch_first=True)
+    else:
+        print("Doplneno nul: ", 32000 - len(batch[0]))
+        zero = torch.zeros(32000 - len(batch[0]))
+        minibatch_mix = torch.cat((batch[0], zero), 0)
+
+    return minibatch_mix
 
 
 # --------------- testing of our custom dataloader and dataset ----------------------------
@@ -91,13 +117,18 @@ train_data_path = "/root/Documents/full/min/tr/"
 trainset = AudioDataset(train_data_path)
 print(len(trainset))
 
-dataloader = data_utils.DataLoader(trainset, batch_size = 1, shuffle=False)
+# dataloader = data_utils.DataLoader(trainset, batch_size = 1, shuffle=False)
+dataloader = data_utils.DataLoader(trainset, batch_size = 4, shuffle=False, collate_fn=audio_collate)
 iterator = iter(dataloader)
+
 
 print("Cyklus:")
 for i in range (1, 10):
     minibatch = iterator.next()
     print(minibatch)
 
-
+# minibatch = iterator.next()
+# print(minibatch)
+# minibatch = iterator.next()
+# print(minibatch)
 
