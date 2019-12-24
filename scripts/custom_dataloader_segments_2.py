@@ -50,6 +50,7 @@ class AudioDataset(data_utils.Dataset):
         print("New audio len: ", self.current_mixture_len)
         self.audioindex += 1
         self.generator = self.segment_generator()
+        # print("1: ", self.transform(self.current_mixture[0]), ", 32k:", self.transform(self.current_mixture[31999]), ", 24k: ", self.transform(self.current_mixture[24000]))
         if self.audioindex >= len(self.mixtures):
             return
         # print("f: konec loadNextAudio")
@@ -128,14 +129,21 @@ train_data_path = "/root/Documents/full/min/tr/"
 trainset = AudioDataset(train_data_path)
 print(len(trainset))
 
-dataloader = data_utils.DataLoader(trainset, batch_size = 2, shuffle=False, collate_fn=audio_collate)
+dataloader = data_utils.DataLoader(trainset, batch_size = 3, shuffle=False, collate_fn=audio_collate)
 iterator = iter(dataloader)
 
 
 # print("Cyklus:")
-for i in range (1, 10):
-    minibatch = iterator.next()
-    print(minibatch)
+# for i in range (1, 10):
+    # minibatch = iterator.next()
+    # print(minibatch)
+
+maxx = 10
+for cnt, data in enumerate(dataloader, 0):
+    if(cnt < maxx):
+        print(data)
+    else:
+        break
 
 # minibatch = iterator.next()
 # minibatch = iterator.next()
