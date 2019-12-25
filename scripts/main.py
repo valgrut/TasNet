@@ -8,6 +8,7 @@ from datetime import datetime
 import argparse
 
 from Dataset import AudioDataset
+from TrainDataset import TrainDataset
 from TasNet import Net
 from ResBlock import ResBlock
 from tools import *
@@ -195,7 +196,8 @@ if __name__== "__main__":
         train_data_path = BASE_DATA_PATH+"tr/"
         valid_data_path = BASE_DATA_PATH+"cv/"
 
-        trainset = AudioDataset(train_data_path)
+        # trainset = AudioDataset(train_data_path)
+        trainset = TrainDataset(train_data_path)
         validset = AudioDataset(valid_data_path)
 
         # Note: We shuffle the loading process of train_dataset to make the learning process
@@ -203,7 +205,8 @@ if __name__== "__main__":
         # remains so as to examine whether we can handle unspecified bias order of inputs.
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True)
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
-        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
+        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
+        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate)
         validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
 
         # from torch.utils.data import *
