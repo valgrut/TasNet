@@ -62,8 +62,8 @@ def train_collate(batch):
         zero = torch.zeros(32000 - len(batch[0]))
         minibatch_mix = torch.cat((batch[0], zero), 0)
 
-    return padded_mix, padded_s1, padded_s2
-    # return padded_mix.unsqueeze_(0), padded_s1.unsqueeze_(0), padded_s2.unsqueeze_(0)
+    # return padded_mix, padded_s1, padded_s2
+    return padded_mix.unsqueeze_(1), padded_s1.unsqueeze_(1), padded_s2.unsqueeze_(1)
 
 
 def saveAudio():
