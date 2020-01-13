@@ -1,10 +1,12 @@
 # TasNet
 Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 
-## Resources k praci
+## Studie
 - [TasNet - v1](https://arxiv.org/abs/1809.07454v1) (Puvodni)
 - [TasNet - v2](https://arxiv.org/abs/1809.07454v2)
 - [TasNet - v3](https://arxiv.org/abs/1809.07454) (Nova prace TasNet - 2019 (v3) - zlepseny popis modelu atd.)
+
+## Ruzne kurzy o NN, SI-SNR, examples
 - [SI-SNR source code repo](https://github.com/craffel/mir_eval/blob/master/mir_eval/separation.py)
 - www.deeplearningbook.org
 - http://www.jzus.zju.edu.cn/oldversion/opentxt.php?doi=10.1631/FITEE.1700814
@@ -92,10 +94,26 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [TODO] kouknout na pytorch errory, co mi to hazi uz nejakou dobu, mela by to byt hovadina jen
     - [DONE] napsat si svou loss funkci - SI-SNR jako learning objective.
     - [TODO] mini-batche
-    - segmentovat nahravky na 4s - problem: nahravky jsou prumerne 4s dlouhe, takze nevim, jestli to neni zbytecne.
+    - [DONE] segmentovat nahravky na 4s
 
 ### ut 3. 12. 2019 - Konzultace
 - skipped
 
 ### pa 13. 12. 2019 - Konzultace
-- 
+- pro trenovani zkusit nahravky rozdelit po  4 sekundach. kratsi dopaddovat nulama, delsi rozdelit a treba pro nahravku 1-6 vzit 1-4 a pak 3-6, aby se prolinaly konce/zacatky.
+- pozn.: pvni dimenze je obvykle velikost batche / v reshapech atd. ta by mela zustat vzdy na prvnim miste
+- pozn.: loss funkci bych mel spocitat pro s1 a s2 zvlast **VIZ. PAPIR**
+    - +pred loss pak zase vyhodit to padovani ??
+- dalsi kroky:
+    - je nutne udelat Cross-validaci viz papir a ruzne poscitat vysledky loss funkce a vybrat nejlepsi a tu pouzit pro backprop.
+    - segmentace a padding a minibatche
+
+### ut 14. 1. 2020 - Konzultace
+- **Prezentace**
+    - Obsah:
+    - Do kdy odevzdat zdrojaky:
+    - Co vse odevzdat: 
+- upgrade RAMky
+- xxx
+- dalsi kroky:
+    - xxx
