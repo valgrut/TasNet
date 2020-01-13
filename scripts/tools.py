@@ -10,6 +10,8 @@ import warnings
 
 def siSNRloss(output, target):
     # check dimensions of output and target, should be 1xT
+    print(output.shape)
+    print(target.shape)
     s_target = (torch.dot(output, target)*target) / ((torch.dot(target, target)))
     e_noise = output - s_target
     loss = 10*torch.log10((torch.dot(s_target, s_target))/(torch.dot(e_noise, e_noise)))
