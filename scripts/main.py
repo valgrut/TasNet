@@ -255,6 +255,7 @@ if __name__== "__main__":
                 # target_source2 = target_source2.narrow(2, 0, smallest)
                 # separated_sources = separated_sources.narrow(2, 0, smallest)
 
+
                 # V1 spojeni sources do jedne matice
                 # target_sources = torch.cat((target_source1, target_source2), 1)
                 # calculate loss
@@ -278,13 +279,22 @@ if __name__== "__main__":
 
                 # V4 loss: si-snr, cross validace,  - pro kazdou dvojici src a target zvlast
                 separated_sources = separated_sources.transpose(1,0)
+                # print("separated sources shape: ", separated_sources.shape)
+                # print("target_source1 shape: ", target_source1.shape)
+                # print("target_source2 shape: ", target_source2.shape)
+
                 s1 = separated_sources[0].unsqueeze(1)
                 s2 = separated_sources[1].unsqueeze(1)
-                # print("separated source shape: ", separated_sources.shape)
-                # print("target_source1 shape: ", target_source1.shape)
 
-                # print(siSNRloss(s1, target_source1))
-                # print(siSNRloss(s2, target_source2))
+                # print("s1 shape: ", s1.shape)
+                # print("s2 shape: ", s2.shape)
+
+                if(s1.shape[2] != target_source1.shape[2]):
+                    smallest = min(s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
+                    s1 = s1.narrow(2, 0, smallest)
+                    s2 = s2.narrow(2, 0, smallest)
+                    target_source1 = target_source1.narrow(2, 0, smallest)
+                    target_source2 = target_source2.narrow(2, 0, smallest)
 
                 batch_loss1 = np.add(siSNRloss(s1, target_source1), siSNRloss(s2, target_source2))
                 batch_loss2 = np.add(siSNRloss(s1, target_source2), siSNRloss(s2, target_source1))

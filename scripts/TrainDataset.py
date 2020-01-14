@@ -77,13 +77,13 @@ class TrainDataset(data_utils.Dataset):
 
 
     def loadNextAudio(self):
-        print("")
+        # print("")
         # print("f: loadNextAudio")
         self.current_mixture = self.transform(self.getAudioSamples(self.mixtures_path + self.mixtures[self.audioindex]))
         self.current_source1 = self.transform(self.getAudioSamples(self.sources1_path + self.sources1[self.audioindex]))
         self.current_source2 = self.transform(self.getAudioSamples(self.sources2_path + self.sources2[self.audioindex]))
         self.current_mixture_len = len(self.current_mixture)
-        print("New audio len: ", self.current_mixture_len)
+        # print("New audio len: ", self.current_mixture_len)
         self.audioindex += 1
         self.generator = self.segment_generator()
         if self.audioindex >= len(self.mixtures):

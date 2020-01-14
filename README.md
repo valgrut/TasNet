@@ -115,5 +115,8 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - Co vse odevzdat:
 - upgrade RAMky
 - segmentace nahravek - v main.py ukazat!
+- zprovoznena segmentace a cross validace mezi loss hodnotami
+- DOTAZ: jak je to se segmentaci u Validace a Test? 
 - dalsi kroky:
-    - Loss funkce a cross validace viz papir
+    - Mozna jeste odstranovat u poslednich segmentu pred danim do loss ty nuly.
+    - 

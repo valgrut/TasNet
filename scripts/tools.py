@@ -15,15 +15,16 @@ def siSNRloss(output, target):
     minibatche
     """
     # check dimensions of output and target, should be 1xT
-    # print("siSNR output shape:", output.shape)
-    # print("siSNR target shape:", target.shape)
+    if(output.shape != target.shape):
+        print("siSNR output shape:", output.shape)
+        print("siSNR target shape:", target.shape)
     #for each pair of target and estimate source calculate loss
     batch_loss = []
     batch_size = len(target)
     for pair in range(batch_size):
         output1d = output[pair].squeeze(0)
         target1d = target[pair].squeeze(0)
-        s_target = (torch.dot(output1d, target1d)*target1d) / ((torch.dot(target1d, target1d)))
+        s_target = (torch.dot(output1d, target1d)*target1d) / (torch.dot(target1d, target1d))
         e_noise = output1d - s_target
         sub_loss = 10*torch.log10((torch.dot(s_target, s_target))/(torch.dot(e_noise, e_noise)))
         batch_loss.append(sub_loss)
