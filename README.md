@@ -116,7 +116,10 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - upgrade RAMky
 - segmentace nahravek - v main.py ukazat!
 - zprovoznena segmentace a cross validace mezi loss hodnotami
-- DOTAZ: jak je to se segmentaci u Validace a Test? 
+- DOTAZ: jak je to se segmentaci u Validace a Test?
+- DOTAZ: ma byt nekde minus u siSNR obj funkce?
+- DOTAZ: delka segmentu a delka prekryti
+- Error - index out of range - v main v cyklu segmentovat cely dataset a najit chybu.
 - dalsi kroky:
     - Mozna jeste odstranovat u poslednich segmentu pred danim do loss ty nuly.
-    - 
+    -
