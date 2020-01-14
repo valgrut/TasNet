@@ -300,6 +300,7 @@ if __name__== "__main__":
                 batch_loss2 = np.add(siSNRloss(s1, target_source2), siSNRloss(s2, target_source1))
 
                 # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
+                loss = 0
                 for batch_id in range(MINIBATCH_SIZE):
                     # TODO nema zde byt minus o toho MIN???
                     loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
@@ -308,7 +309,7 @@ if __name__== "__main__":
                 optimizer.step()
 
                 # calculate average loss
-                # running_loss += loss.item()
+                running_loss += loss.item()
 
                 # === print loss ===
                 if audio_cnt % print_loss_frequency == print_loss_frequency - 1:
