@@ -55,12 +55,13 @@ class Net(nn.Module):
             print("NN: Masks: ", masks.shape)
 
         # multiply masks and representation
-        print("representation shape: ", representation.shape)
-        print("maskS shape:", masks.shape)
+        print("TasNet: representation shape: ", representation.shape)
+        print("TasNet: masks shape:", masks.shape)
         masked_representation = torch.mul(representation[:,:,None,:], masks)
         masked_representation = torch.reshape(masked_representation, (self.batch_size, 512, -1))
 
         # decoder
         separate_data = self.deconv(masked_representation)
+        print("TasNet: separated data OUTPUT shape", separate_data.shape)
         return separate_data
 

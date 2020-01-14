@@ -6,6 +6,7 @@ from torch.autograd import Variable
 import torchvision.transforms as transforms
 from datetime import datetime
 import argparse
+import numpy as np
 
 from Dataset import AudioDataset
 from TrainDataset import TrainDataset
@@ -14,13 +15,8 @@ from ResBlock import ResBlock
 from tools import *
 from snr import *
 
-## TODO: Pridat kontrolu vyplnenych argumentu!!!
-## TODO: pro test je potreba X a R
-
 if __name__== "__main__":
     parser = argparse.ArgumentParser(description='Setup and init neural network')
-    # parser.add_argument('integers', metavar='N', type=int, nargs='+', help='an integer for the accumulator')
-    # parser.add_argument('--sum', dest='accumulate', action='store_const', const=sum, default=max, help='sum the integers (default: find the max)')
 
     parser.add_argument('--train',
             dest='TRAIN',
@@ -122,7 +118,7 @@ if __name__== "__main__":
     #BASE_DATA_PATH = r"/gdrive/My Drive/FIT/"
     BASE_DATA_PATH = args.BASE_DATA_PATH
 
-    MINIBATCH_SIZE = args.minibatch_size       # TODO Problem s rozmerama pri hodnote > 1
+    MINIBATCH_SIZE = args.minibatch_size
     R = args.R #number of repeats of ConvBlocks
     X = args.X #num of ConvBlocks in one repeat
 
@@ -162,7 +158,6 @@ if __name__== "__main__":
     criterion = nn.MSELoss()
     #-SISNR()
     optimizer = optim.Adam(tasnet.parameters(), lr = learning_rate, weight_decay=opt_decay)
-
 
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
@@ -235,6 +230,8 @@ if __name__== "__main__":
             for audio_cnt, data in enumerate(trainloader, 0):
                 global_audio_cnt += 1
 
+                torch.autograd.set_detect_anomaly(True)
+
                 if audio_cnt % 500 == 0:
                     print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
                     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
@@ -251,12 +248,12 @@ if __name__== "__main__":
                 optimizer.zero_grad()
                 separated_sources = tasnet(input_mixture)
 
-                ## zkraceni nahravek tak, aby vsechny byly stejne dlouho - pocet samplu stejny
-                smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
-                input_mixture = input_mixture.narrow(2, 0, smallest)
-                target_source1 = target_source1.narrow(2, 0, smallest)
-                target_source2 = target_source2.narrow(2, 0, smallest)
-                separated_sources = separated_sources.narrow(2, 0, smallest)
+                ## zkraceni nahravek tak, aby vsechny byly stejne dlouhe - pocet samplu stejny
+                # smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
+                # input_mixture = input_mixture.narrow(2, 0, smallest)
+                # target_source1 = target_source1.narrow(2, 0, smallest)
+                # target_source2 = target_source2.narrow(2, 0, smallest)
+                # separated_sources = separated_sources.narrow(2, 0, smallest)
 
                 # V1 spojeni sources do jedne matice
                 # target_sources = torch.cat((target_source1, target_source2), 1)
@@ -264,19 +261,44 @@ if __name__== "__main__":
                 # loss = criterion(separated_sources, target_sources)
                 # print("loss", loss)
 
-                # V2 moje loss - TODO jednotlive pro kazdeho \
-                # src nebo tak jak je to ted, ze jsou concatenovani??
-                tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
-                sep_sources = torch.squeeze(separated_sources)
-                ests = torch.cat((sep_sources[0], sep_sources[1]), 0)
-                loss = - siSNRloss(ests, tars)
+                # V2 moje loss
+                # tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
+                # sep_sources = torch.squeeze(separated_sources)
+                # ests = torch.cat((sep_sources[0], sep_sources[1]), 0)
+                # loss = -siSNRloss(ests, tars)
                 # print("loss", loss)
 
-                loss.backward()
+                # V3 loss: si-snr, cross validace,  - pro kazdou dvojici src a target zvlast
+                # print("separated source shape: ", separated_sources.shape)
+                # print("target_source1 shape: ", target_source1.shape)
+                # loss1 = siSNRloss(separated_sources[0], target_source1) + siSNRloss(separated_sources[1], target_source2)
+                # loss2 = siSNRloss(separated_sources[0], target_source2) + siSNRloss(separated_sources[1], target_source1)
+                # loss = min(loss1, loss2) #TODO minus?? -min(.. ,..)
+                # print(loss)
+
+                # V4 loss: si-snr, cross validace,  - pro kazdou dvojici src a target zvlast
+                separated_sources = separated_sources.transpose(1,0)
+                s1 = separated_sources[0].unsqueeze(1)
+                s2 = separated_sources[1].unsqueeze(1)
+                # print("separated source shape: ", separated_sources.shape)
+                # print("target_source1 shape: ", target_source1.shape)
+
+                # print(siSNRloss(s1, target_source1))
+                # print(siSNRloss(s2, target_source2))
+
+                batch_loss1 = np.add(siSNRloss(s1, target_source1), siSNRloss(s2, target_source2))
+                batch_loss2 = np.add(siSNRloss(s1, target_source2), siSNRloss(s2, target_source1))
+
+                # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
+                for batch_id in range(MINIBATCH_SIZE):
+                    # TODO nema zde byt minus o toho MIN???
+                    loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
+                    loss.backward(retain_graph=True)
+
                 optimizer.step()
 
                 # calculate average loss
-                running_loss += loss.item()
+                # running_loss += loss.item()
 
                 # === print loss ===
                 if audio_cnt % print_loss_frequency == print_loss_frequency - 1:

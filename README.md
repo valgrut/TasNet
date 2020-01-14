@@ -102,7 +102,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 ### pa 13. 12. 2019 - Konzultace
 - pro trenovani zkusit nahravky rozdelit po  4 sekundach. kratsi dopaddovat nulama, delsi rozdelit a treba pro nahravku 1-6 vzit 1-4 a pak 3-6, aby se prolinaly konce/zacatky.
 - pozn.: pvni dimenze je obvykle velikost batche / v reshapech atd. ta by mela zustat vzdy na prvnim miste
-- pozn.: loss funkci bych mel spocitat pro s1 a s2 zvlast **VIZ. PAPIR**
+- pozn.: loss funkci bych mel spocitat pro s1 a s2 zvlast
     - +pred loss pak zase vyhodit to padovani ??
 - dalsi kroky:
     - je nutne udelat Cross-validaci viz papir a ruzne poscitat vysledky loss funkce a vybrat nejlepsi a tu pouzit pro backprop.
@@ -112,8 +112,8 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - **Prezentace**
     - Obsah:
     - Do kdy odevzdat zdrojaky:
-    - Co vse odevzdat: 
+    - Co vse odevzdat:
 - upgrade RAMky
-- xxx
+- segmentace nahravek - v main.py ukazat!
 - dalsi kroky:
-    - xxx
+    - Loss funkce a cross validace viz papir
