@@ -110,16 +110,25 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 
 ### ut 14. 1. 2020 - Konzultace
 - **Prezentace**
-    - Obsah:
-    - Do kdy odevzdat zdrojaky:
-    - Co vse odevzdat:
+    - Obsah: https://wis.fit.vutbr.cz/FIT/st/bci-com-l.php.cs?id=9
+    - Do kdy odevzdat zdrojaky:  neni nutne
+    - Co vse odevzdat: neni nutne
 - upgrade RAMky
 - segmentace nahravek - v main.py ukazat!
 - zprovoznena segmentace a cross validace mezi loss hodnotami
 - DOTAZ: jak je to se segmentaci u Validace a Test?
-- DOTAZ: ma byt nekde minus u siSNR obj funkce?
-- DOTAZ: delka segmentu a delka prekryti
+    - u Validacni jo
+    - u Testovaci ne (cele nahravky - pripadne batch o velikosti 1)
+- DOTAZ: ma byt nekde minus u siSNR obj funkce? -sisnr() - sisnr() a nechat min.
+- DOTAZ: delka segmentu a delka prekryti: segmenty nechat a prekryti oddelat.
 - Error - index out of range - v main v cyklu segmentovat cely dataset a najit chybu.
 - dalsi kroky:
-    - Mozna jeste odstranovat u poslednich segmentu pred danim do loss ty nuly.
-    -
+    - oddelat prekryti
+    - batch size tak velkou co to jde ... az dokud to nespadne pametove
+    - mozna neni nutne paddovani nulama, ale u posledniho nekompletniho segmentu
+    vzit ty 4 sekundy od konce
+    - cca do ctvrtka nastin prezentace
+    - U testovaci sady zadne batche, ale cele nahravky (prip. batch o velikosti 1)
+
+### pa 17. 1. 2020 - Konzultace
+- konzultace k prezentaci

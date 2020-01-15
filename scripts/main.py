@@ -248,7 +248,6 @@ if __name__== "__main__":
                 optimizer.zero_grad()
                 separated_sources = tasnet(input_mixture)
 
-
                 separated_sources = separated_sources.transpose(1,0)
                 # print("separated sources shape: ", separated_sources.shape)
 
@@ -267,14 +266,12 @@ if __name__== "__main__":
                     target_source1 = target_source1.narrow(2, 0, smallest)
                     target_source2 = target_source2.narrow(2, 0, smallest)
 
-                batch_loss1 = np.add(siSNRloss(s1, target_source1), siSNRloss(s2, target_source2))
-                batch_loss2 = np.add(siSNRloss(s1, target_source2), siSNRloss(s2, target_source1))
+                batch_loss1 = np.add(-siSNRloss(s1, target_source1), -siSNRloss(s2, target_source2))
+                batch_loss2 = np.add(-siSNRloss(s1, target_source2), -siSNRloss(s2, target_source1))
 
                 # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
                 loss = 0
                 for batch_id in range(MINIBATCH_SIZE):
-                    # TODO nema zde byt minus o toho MIN??? nebo u batch_lossX  ??
-                    # loss = -min(,,.)
                     loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
                     loss.backward(retain_graph=True)
 
