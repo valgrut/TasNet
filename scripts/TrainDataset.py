@@ -52,9 +52,9 @@ class TrainDataset(data_utils.Dataset):
         self.sources2.sort()
 
         self.dataset_len = len(self.mixtures)
-        print("mixtures dataset len: ", self.dataset_len)
-        print("sources1 dataset len: ", len(self.sources1))
-        print("sources2 dataset len: ", len(self.sources1))
+        # print("mixtures dataset len: ", self.dataset_len)
+        # print("sources1 dataset len: ", len(self.sources1))
+        # print("sources2 dataset len: ", len(self.sources1))
 
         # instantiate generator of segments
         self.generator = self.segment_generator()
@@ -65,10 +65,10 @@ class TrainDataset(data_utils.Dataset):
 
     def __len__(self):
         if(self.audioindex < self.dataset_len):
-            print("__len__:", self.audioindex, "<", self.dataset_len)
+            # print("__len__:", self.audioindex, "<", self.dataset_len)
             return len(self.current_mixture)
         else:
-            print("__len__:", self.audioindex, ">=", self.dataset_len)
+            # print("__len__:", self.audioindex, ">=", self.dataset_len)
             return self.dataset_len
 
 
@@ -88,8 +88,8 @@ class TrainDataset(data_utils.Dataset):
     def loadNextAudio(self):
         # print("")
         # print("f: loadNextAudio")
-        print("LoadNextAudio: self.audioindex = ", self.audioindex)
-        print("LoadNextAudio: self.mixtures len = ", len(self.mixtures))
+        # print("LoadNextAudio: self.audioindex = ", self.audioindex)
+        # print("LoadNextAudio: self.mixtures len = ", len(self.mixtures))
         self.current_mixture = self.transform(self.getAudioSamples(self.mixtures_path + self.mixtures[self.audioindex]))
         self.current_source1 = self.transform(self.getAudioSamples(self.sources1_path + self.sources1[self.audioindex]))
         self.current_source2 = self.transform(self.getAudioSamples(self.sources2_path + self.sources2[self.audioindex]))
@@ -97,11 +97,10 @@ class TrainDataset(data_utils.Dataset):
         # print("New audio len: ", self.current_mixture_len)
         self.audioindex += 1
         if self.audioindex >= len(self.mixtures):
-            print("POZOR: audioindex >= len(self.mixtures), iterace by mela skoncit")
+            # print("POZOR: audioindex >= len(self.mixtures), iterace by mela skoncit")
             return None #raises StopIteration exception
-            # ono to tady neskonci, po vypsani pozor to pak znova
-            # zavola loadNextAudio, a to je uz prusvih protoze je to out.
-        self.generator = self.segment_generator()
+        else: #jeste je co prochazet
+            self.generator = self.segment_generator()
 
 
     def getAudioSamples(self, audio_file_path):
@@ -132,7 +131,6 @@ class TrainDataset(data_utils.Dataset):
             mix_seg, s1_seg, s2_seg = next(self.generator)
             return mix_seg, s1_seg, s2_seg
         except StopIteration:
-            print("getSegment: Stop iteration vyjimka zachycena")
             raise StopIteration
 
 

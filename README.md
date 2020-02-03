@@ -55,10 +55,10 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - zobrazeni rekonstruovanych nahravek v programu Audacity
 - Dalsi kroky:
     - [DONE] extrahovat jednotlive tridy do vlastnich souboru a parametrizovat instanciaci pro snazsi volani site v ruznych konfiguracich
-    - [done] **Error:** zpustit sit na vsech nahravkach !bez trenovani!, abych mohl jednoduse opravit tu chybu se zpracovanim nahravek kolem c.2900
-    - **Batch:** size batch > 1 -definovat collate_fn funkci
+    - [DONE] **Error:** zpustit sit na vsech nahravkach !bez trenovani!, abych mohl jednoduse opravit tu chybu se zpracovanim nahravek kolem c.2900
+    - [DONE] **Batch:** size batch > 1 -definovat collate_fn funkci
     - **zero padding** uplne na zacatku trenovani - jeste pred ResBlocky, protoze pokud budu mit vetsi batche, tak nahravky budou ruzne dlouhe, a to by zpusobovalo problemy s rozmery jako nyni, takze je potrebe je zarovnat na delku nejdelsi nahravky v batchi.
-    - [done] **loss funkce:** ukladat si hodnoty loss nekam do souboru s moznosti to kdykoli vykreslit a pro perzistentnost techto dat. Ulozit tam i aktualni konfiguraci site (mozna do nazvu).
+    - [DONE] **loss funkce:** ukladat si hodnoty loss nekam do souboru s moznosti to kdykoli vykreslit a pro perzistentnost techto dat. Ulozit tam i aktualni konfiguraci site (mozna do nazvu).
     - vypsat vsechny rozmery tensoru skrze sit v prubehu zpracovani a trenovani nahravek a zjistit, jestli tvary odpovidaji tem ve studii a jestli se vsude deje to, co se dit ma.
     - viz. ../konzultace_poznamky.txt
 
@@ -75,12 +75,12 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - dalsi kroky:
     - [DONE] Pridat zde do testovani SI_SNR  a pro kazdou nahravku a vysledky zprumerovat a vyhodnotit
     - [DONE] Rozdlit do souboru a parametrizovat tridy a presunout je do zvlastnich souboru .py
-    - vykreslit i validacni loss
-    - ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou pres sebe
-    - [done] nechat zpracovavat celou validacni mnozinu
+    - [TODO] vykreslit i validacni loss
+    - [TODO] ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou pres sebe
+    - [DONE] nechat zpracovavat celou validacni mnozinu
     - nechat poradne natrenovat jednu sit s nejakou konfiguraci
     - [DONE] rozjet si-snr na testovaci mnozine a zprumerovat.
-    - make repo public a umoznit tak jednoduse ukladat/loadovat zdrojaky z/na git
+    - [TODO] make repo public a umoznit tak jednoduse ukladat/loadovat zdrojaky z/na git
 
 ### ut 19. 11. 2019 - Konzultace
 - skipped
@@ -93,7 +93,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [TODO] Zkusit udelat novy checkpoint s ruznymi X a R a nasledne ho zkusit nahrat.
     - [TODO] kouknout na pytorch errory, co mi to hazi uz nejakou dobu, mela by to byt hovadina jen
     - [DONE] napsat si svou loss funkci - SI-SNR jako learning objective.
-    - [TODO] mini-batche
+    - [DONE] mini-batche
     - [DONE] segmentovat nahravky na 4s
 
 ### ut 3. 12. 2019 - Konzultace
@@ -105,8 +105,8 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - pozn.: loss funkci bych mel spocitat pro s1 a s2 zvlast
     - +pred loss pak zase vyhodit to padovani ??
 - dalsi kroky:
-    - je nutne udelat Cross-validaci viz papir a ruzne poscitat vysledky loss funkce a vybrat nejlepsi a tu pouzit pro backprop.
-    - segmentace a padding a minibatche
+    - [DONE] je nutne udelat Cross-validaci viz papir a ruzne poscitat vysledky loss funkce a vybrat nejlepsi a tu pouzit pro backprop.
+    - [DONE] segmentace a padding a minibatche
 
 ### ut 14. 1. 2020 - Konzultace
 - **Prezentace**
@@ -114,7 +114,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - Do kdy odevzdat zdrojaky:  neni nutne
     - Co vse odevzdat: neni nutne
 - upgrade RAMky
-- segmentace nahravek - v main.py ukazat!
+- segmentace nahravek - v main.py ukazat
 - zprovoznena segmentace a cross validace mezi loss hodnotami
 - DOTAZ: jak je to se segmentaci u Validace a Test?
     - u Validacni jo
@@ -132,3 +132,8 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 
 ### pa 17. 1. 2020 - Konzultace
 - konzultace k prezentaci
+
+### ? ?.1.2020 - Obhajoba
+- Feedback viz dokument
+
+### 

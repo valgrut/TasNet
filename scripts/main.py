@@ -202,22 +202,21 @@ if __name__== "__main__":
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
         trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate, drop_last = True)
-        # validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
+        validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
 
         # from torch.utils.data import *
         # print(list(BatchSampler(SequentialSampler(trainloader), batch_size=5, drop_last=False)))
 
         # TESTING of Dataloading
         # itr = iter(trainloader)
-        for audio_cnt, data in enumerate(trainloader, 0):
-        # test collate_fn:
-            print("cnt: ", audio_cnt)
+        # for audio_cnt, data in enumerate(trainloader, 0):
+            # test collate_fn:
+            # print("cnt: ", audio_cnt)
             # print("ITER.next: ", itr.next())
-        # print("..")
-        # print(itr.next())
-        print("konec")
+            # print(itr.next())
+        # print("konec")
 
-        exit(1)
+        # exit(1)
 
         best_validation_result = 42   #initial value
         graph_x = []
@@ -269,8 +268,10 @@ if __name__== "__main__":
                     target_source1 = target_source1.narrow(2, 0, smallest)
                     target_source2 = target_source2.narrow(2, 0, smallest)
 
-                batch_loss1 = np.add(-siSNRloss(s1, target_source1), -siSNRloss(s2, target_source2))
-                batch_loss2 = np.add(-siSNRloss(s1, target_source2), -siSNRloss(s2, target_source1))
+
+                print(np.negative(siSNRloss(s1, target_source1)))
+                batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
+                batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
 
                 # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
                 loss = 0
@@ -290,7 +291,7 @@ if __name__== "__main__":
                     graph_y.append(running_loss/print_loss_frequency)
 
                     # Write loss to file
-                    with open(BASE_DATA_PATH + "loss_"+ learning_started_date + "_X"+str(X) + "_R" + str(R) + ".log", "a") as logloss:
+                    with open(args.dst_dir + "loss_"+ learning_started_date + "_X"+str(X) + "_R" + str(R) + ".log", "a") as logloss:
                         logloss.write(str(global_audio_cnt)+","+str(running_loss/print_loss_frequency)+"\n")
 
                     running_loss = 0.0
@@ -304,7 +305,7 @@ if __name__== "__main__":
                       'model_state_dict': tasnet.state_dict(),
                       'optimizer_state_dict': optimizer.state_dict(),
                       'loss': loss,
-                    }, BASE_DATA_PATH+'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d_%H:%M'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(audio_cnt)+'.tar')
+                    }, args.dst_dir+'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d_%H:%M'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(audio_cnt)+'.tar')
 
                 # === Save reconstruction ===
                 # ulozeni pouze prvni nahravky pro porovnani epoch
@@ -329,7 +330,7 @@ if __name__== "__main__":
                     wav.write(args.dst_dir+"speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_mix.wav", 8000, mixture_prep)
             # ==== End Of Epoch of training ====
 
-            # === validation na konci epochy ===
+            # === VALIDACE na konci epochy ===
             print("")
             print("Validace")
             valid_audio_cnt = 0
@@ -388,7 +389,7 @@ if __name__== "__main__":
 
 
         # Save Network For Inference in the end of training
-        torch.save(tasnet.state_dict(), BASE_DATA_PATH+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_ga'+str(global_audio_cnt)+'.pkl')
+        torch.save(tasnet.state_dict(), args.dst_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_ga'+str(global_audio_cnt)+'.pkl')
         print('Finished Training')
 
         plt.plot(graph_x, graph_y)
@@ -492,6 +493,6 @@ if __name__== "__main__":
         wav.write(args.dst_dir + "s1-" + mix_name, 8000, source1_prep)
         wav.write(args.dst_dir + "s2-" + mix_name, 8000, source2_prep)
 
-        print("Inference done, separated speakers saved into " + BASE_DATA_PATH + "inferenced/")
+        print("Inference done, separated speakers saved into " + args.dst_dir + "inferenced/")
 
 

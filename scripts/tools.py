@@ -32,16 +32,16 @@ def siSNRloss(output, target):
 
 
 def audio_collate(batch):
-    print("collate")
-    print(batch) #list listuu s tenzory mix,s1,s2
-    print("")
+    # print("collate")
+    # print(batch) #list listuu s tenzory mix,s1,s2
+    # print("")
     list_mix = []
     list_s1 = []
     list_s2 = []
     for audio in batch:
-        print("Audio mix: ", audio[0].shape) #tensor mix
-        print("Audio s1 : ", audio[1].shape) #tensor s1
-        print("Audio s2 : ", audio[2].shape) #tensor s2
+        # print("Audio mix: ", audio[0].shape) #tensor mix
+        # print("Audio s1 : ", audio[1].shape) #tensor s1
+        # print("Audio s2 : ", audio[2].shape) #tensor s2
 
         list_mix.append(audio[0][0])
         list_s1.append(audio[1][0])
@@ -51,10 +51,10 @@ def audio_collate(batch):
     minibatch_s1 = torch.nn.utils.rnn.pad_sequence(list_s1, batch_first=True)
     minibatch_s2 = torch.nn.utils.rnn.pad_sequence(list_s2, batch_first=True)
 
-    print("minibatch_mix: ", minibatch_mix)
-    print("minibatch_mix unsqueezed: ", minibatch_mix.unsqueeze(1))
+    # print("minibatch_mix: ", minibatch_mix)
+    # print("minibatch_mix unsqueezed: ", minibatch_mix.unsqueeze(1))
 
-    print("konec_collate")
+    # print("konec_collate")
     return minibatch_mix.unsqueeze(1), minibatch_s1.unsqueeze(1), minibatch_s2.unsqueeze(1)
 
 
