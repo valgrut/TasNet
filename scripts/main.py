@@ -200,20 +200,24 @@ if __name__== "__main__":
         # remains so as to examine whether we can handle unspecified bias order of inputs.
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True)
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
-        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
-        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate)
-        validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
+        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
+        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate, drop_last = True)
+        # validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
 
         # from torch.utils.data import *
         # print(list(BatchSampler(SequentialSampler(trainloader), batch_size=5, drop_last=False)))
 
-        # test collate_fn:
+        # TESTING of Dataloading
         # itr = iter(trainloader)
-        # print("..")
-        # print("ITER.next: ", itr.next())
+        for audio_cnt, data in enumerate(trainloader, 0):
+        # test collate_fn:
+            print("cnt: ", audio_cnt)
+            # print("ITER.next: ", itr.next())
         # print("..")
         # print(itr.next())
-        # print("konec")
+        print("konec")
+
+        exit(1)
 
         best_validation_result = 42   #initial value
         graph_x = []
@@ -226,7 +230,6 @@ if __name__== "__main__":
 
             epoch = epoch + cont_epoch
 
-            # TODO tady by data byly dvojice puvodni delky a te nahravky
             for audio_cnt, data in enumerate(trainloader, 0):
                 global_audio_cnt += 1
 
