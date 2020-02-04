@@ -269,7 +269,6 @@ if __name__== "__main__":
                     target_source2 = target_source2.narrow(2, 0, smallest)
 
 
-                print(np.negative(siSNRloss(s1, target_source1)))
                 batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
                 batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
 
@@ -341,6 +340,12 @@ if __name__== "__main__":
                 for audio_cnt, data in enumerate(validloader, 0):
                     valid_audio_cnt += 1
 
+                    torch.autograd.set_detect_anomaly(True)
+
+                    if audio_cnt % 500 == 0:
+                        print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
+                        print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
+
                     input_mixture  = data[0]
                     target_source1 = data[1]
                     target_source2 = data[2]
@@ -352,31 +357,82 @@ if __name__== "__main__":
 
                     separated_sources = tasnet(input_mixture)
 
-                    smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
-                    input_mixture = input_mixture.narrow(2, 0, smallest)
-                    target_source1 = target_source1.narrow(2, 0, smallest)
-                    target_source2 = target_source2.narrow(2, 0, smallest)
-                    separated_sources = separated_sources.narrow(2, 0, smallest)
+                    separated_sources = separated_sources.transpose(1,0)
 
-                    # spojeni sources do jedne matice
-                    target_sources = torch.cat((target_source1, target_source2), 1)
+                    s1 = separated_sources[0].unsqueeze(1)
+                    s2 = separated_sources[1].unsqueeze(1)
 
-                    # v1
-                    # loss = criterion(separated_sources, target_sources)
+                    if(s1.shape[2] != target_source1.shape[2]):
+                        smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
+                        s1 = s1.narrow(2, 0, smallest)
+                        s2 = s2.narrow(2, 0, smallest)
+                        target_source1 = target_source1.narrow(2, 0, smallest)
+                        target_source2 = target_source2.narrow(2, 0, smallest)
 
-                    # v2 - my loss
-                    tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
-                    sep_sources = torch.squeeze(separated_sources)
-                    ests = torch.cat((sep_sources[0], sep_sources[1]), 0)
-                    loss = - siSNRloss(ests, tars)
+                    batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
+                    batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
 
-                    current_validation_result += loss.item()
+                    # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
+                    loss = 0
+                    for batch_id in range(MINIBATCH_SIZE):
+                        loss = loss + min(batch_loss1[batch_id], batch_loss2[batch_id])
+
+                    # calculate average loss
                     running_loss += loss.item()
-                    if audio_cnt % print_valid_loss_frequency == print_valid_loss_frequency-1:
-                        print('[%5d] loss: %.4f' % (audio_cnt + 1, running_loss/print_valid_loss_frequency))
+                    current_validation_result += loss.item()
+
+                    # === print loss ===
+                    if audio_cnt % print_valid_loss_frequency == print_valid_loss_frequency - 1:
+                        print('[%d, %5d] loss: %.5f' % (epoch, audio_cnt, running_loss/print_valid_loss_frequency))
+                        graph_x.append(valid_audio_cnt)
+                        graph_y.append(running_loss/print_valid_loss_frequency)
+
+                        # Write loss to file
+                        with open(args.dst_dir + "validloss_"+ learning_started_date + "_X"+str(X) + "_R" + str(R) + ".log", "a") as logloss:
+                            logloss.write(str(valid_audio_cnt)+","+str(running_loss/print_valid_loss_frequency)+"\n")
+
                         running_loss = 0.0
 
-                # vyhodnoceni validace
+                # for audio_cnt, data in enumerate(validloader, 0):
+                #     valid_audio_cnt += 1
+
+                #     input_mixture  = data[0]
+                #     target_source1 = data[1]
+                #     target_source2 = data[2]
+
+                #     if use_cuda and torch.cuda.is_available():
+                #         input_mixture = input_mixture.cuda()
+                #         target_source1 = target_source1.cuda()
+                #         target_source2 = target_source2.cuda()
+
+                #     separated_sources = tasnet(input_mixture)
+
+                #     smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
+                #     input_mixture = input_mixture.narrow(2, 0, smallest)
+                #     target_source1 = target_source1.narrow(2, 0, smallest)
+                #     target_source2 = target_source2.narrow(2, 0, smallest)
+                #     separated_sources = separated_sources.narrow(2, 0, smallest)
+
+                #     # spojeni sources do jedne matice
+                #     target_sources = torch.cat((target_source1, target_source2), 1)
+
+                #     # v1
+                #     # loss = criterion(separated_sources, target_sources)
+
+                #     # v2 - my loss
+                #     tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
+                #     sep_sources = torch.squeeze(separated_sources)
+                #     ests = torch.cat((sep_sources[0], sep_sources[1]), 0)
+                #     loss = - siSNRloss(ests, tars)
+
+                #     current_validation_result += loss.item()
+                #     running_loss += loss.item()
+                #     if audio_cnt % print_valid_loss_frequency == print_valid_loss_frequency-1:
+                #         print('[%5d] loss: %.4f' % (audio_cnt + 1, running_loss/print_valid_loss_frequency))
+                #         running_loss = 0.0
+
+
+                # == Validacni dataset je zpracovan, Vyhodnoceni validace ==
                 # TODO vykreslit i tuto loss, ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou rpes sebe. (GIT)
                 current_validation_result /= valid_audio_cnt # prumer
                 print(current_validation_result, " ", best_validation_result)
