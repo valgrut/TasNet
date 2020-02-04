@@ -132,11 +132,11 @@ if __name__== "__main__":
 
     use_cuda        = True
     epochs          = args.epochs
-    audios_in_epoch = 20000 # kolik zpracovat nahravek v jedne epose
+    # audios_in_epoch = 20000 # kolik zpracovat nahravek v jedne epose
 
-    audio_save_frequency = 10000
-    print_loss_frequency = 5000 # za kolik segmentu (minibatchu) vypisovat loss
-    print_valid_loss_frequency = 5000
+    audio_save_frequency = 15000
+    print_loss_frequency = 7000 # za kolik segmentu (minibatchu) vypisovat loss
+    print_valid_loss_frequency = 6000
     #log_loss_frequency = 5000
     create_checkpoint_frequency = 10000
 
@@ -154,9 +154,7 @@ if __name__== "__main__":
     else:
         print("Cuda is NOT available")
 
-    # loss and Optimizer
-    criterion = nn.MSELoss()
-    #-SISNR()
+    # Optimizer
     optimizer = optim.Adam(tasnet.parameters(), lr = learning_rate, weight_decay=opt_decay)
 
 ####################################################################################################################################################################################
@@ -200,8 +198,8 @@ if __name__== "__main__":
         # remains so as to examine whether we can handle unspecified bias order of inputs.
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True)
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
-        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
-        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate, drop_last = True)
+        # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
+        trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate, drop_last = True)
         validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
 
         # from torch.utils.data import *
@@ -222,21 +220,24 @@ if __name__== "__main__":
         graph_x = []
         graph_y = []
 
-        global_audio_cnt = 0
+        ### Uz to neni audio_cnt ale spis segment_cnt
+        global_segment_cnt = 0
         cont_epoch = 0
         for (epoch) in range(epochs):
             running_loss = 0.0
+            segment_cnt = 0
 
             epoch = epoch + cont_epoch
 
             for audio_cnt, data in enumerate(trainloader, 0):
-                global_audio_cnt += 1
+                global_segment_cnt += MINIBATCH_SIZE
+                segment_cnt += MINIBATCH_SIZE
 
                 torch.autograd.set_detect_anomaly(True)
 
-                if audio_cnt % 500 == 0:
+                if segment_cnt % (MINIBATCH_SIZE*100) == 0:
                     print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
-                    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
+                    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, segment_cnt)
 
                 input_mixture  = data[0]
                 target_source1 = data[1]
@@ -268,7 +269,6 @@ if __name__== "__main__":
                     target_source1 = target_source1.narrow(2, 0, smallest)
                     target_source2 = target_source2.narrow(2, 0, smallest)
 
-
                 batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
                 batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
 
@@ -284,33 +284,30 @@ if __name__== "__main__":
                 running_loss += loss.item()
 
                 # === print loss ===
-                if audio_cnt % print_loss_frequency == print_loss_frequency - 1:
-                    print('[%d, %5d] loss: %.5f' % (epoch, audio_cnt, running_loss/print_loss_frequency))
-                    graph_x.append(global_audio_cnt)
+                if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == print_loss_frequency - 1: 
+                    print('[%d, %5d] loss: %.5f' % (epoch, segment_cnt, running_loss/print_loss_frequency))
+                    graph_x.append(global_segment_cnt)
                     graph_y.append(running_loss/print_loss_frequency)
 
                     # Write loss to file
                     with open(args.dst_dir + "loss_"+ learning_started_date + "_X"+str(X) + "_R" + str(R) + ".log", "a") as logloss:
-                        logloss.write(str(global_audio_cnt)+","+str(running_loss/print_loss_frequency)+"\n")
+                        logloss.write(str(global_segment_cnt)+","+str(running_loss/print_loss_frequency)+"\n")
 
                     running_loss = 0.0
 
                 # === Create checkpoint ===
-                if audio_cnt % create_checkpoint_frequency == create_checkpoint_frequency - 1:
+                if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == create_checkpoint_frequency - 1:
                     # Create snapshot - checkpoint
                     torch.save({
                       'epoch': epoch,
-                      'audio_cnt': audio_cnt,
+                      'audio_cnt': segment_cnt,
                       'model_state_dict': tasnet.state_dict(),
                       'optimizer_state_dict': optimizer.state_dict(),
                       'loss': loss,
-                    }, args.dst_dir+'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d_%H:%M'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(audio_cnt)+'.tar')
+                    }, args.dst_dir+'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d_%H:%M'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
 
                 # === Save reconstruction ===
-                # ulozeni pouze prvni nahravky pro porovnani epoch
-                #if audio_cnt == 0:
-                # ulozit kazdou Xtou rekonstrukci pro moznost jejiho prehrati a zjisteni, jak to zni.
-                if audio_cnt % audio_save_frequency == 0:
+                if (segment_cnt/MINIBATCH_SIZE) % (audio_save_frequency) == 0:
                     mixture_prep = 0
                     source1_prep = 0
                     source2_prep = 0
@@ -324,9 +321,9 @@ if __name__== "__main__":
                         source1_prep = separated_sources[0][0].detach().numpy()
                         source2_prep = separated_sources[0][1].detach().numpy()
 
-                    wav.write(args.dst_dir+"speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s1.wav", 8000, source1_prep)
-                    wav.write(args.dst_dir+"speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_s2.wav", 8000, source2_prep)
-                    wav.write(args.dst_dir+"speech_e"+str(epoch)+"_a"+str(audio_cnt)+"_mix.wav", 8000, mixture_prep)
+                    wav.write(args.dst_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s1.wav", 8000, source1_prep)
+                    wav.write(args.dst_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s2.wav", 8000, source2_prep)
+                    wav.write(args.dst_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_mix.wav", 8000, mixture_prep)
             # ==== End Of Epoch of training ====
 
             # === VALIDACE na konci epochy ===
@@ -393,45 +390,6 @@ if __name__== "__main__":
 
                         running_loss = 0.0
 
-                # for audio_cnt, data in enumerate(validloader, 0):
-                #     valid_audio_cnt += 1
-
-                #     input_mixture  = data[0]
-                #     target_source1 = data[1]
-                #     target_source2 = data[2]
-
-                #     if use_cuda and torch.cuda.is_available():
-                #         input_mixture = input_mixture.cuda()
-                #         target_source1 = target_source1.cuda()
-                #         target_source2 = target_source2.cuda()
-
-                #     separated_sources = tasnet(input_mixture)
-
-                #     smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
-                #     input_mixture = input_mixture.narrow(2, 0, smallest)
-                #     target_source1 = target_source1.narrow(2, 0, smallest)
-                #     target_source2 = target_source2.narrow(2, 0, smallest)
-                #     separated_sources = separated_sources.narrow(2, 0, smallest)
-
-                #     # spojeni sources do jedne matice
-                #     target_sources = torch.cat((target_source1, target_source2), 1)
-
-                #     # v1
-                #     # loss = criterion(separated_sources, target_sources)
-
-                #     # v2 - my loss
-                #     tars = torch.cat((torch.squeeze(target_source1), torch.squeeze(target_source2)))
-                #     sep_sources = torch.squeeze(separated_sources)
-                #     ests = torch.cat((sep_sources[0], sep_sources[1]), 0)
-                #     loss = - siSNRloss(ests, tars)
-
-                #     current_validation_result += loss.item()
-                #     running_loss += loss.item()
-                #     if audio_cnt % print_valid_loss_frequency == print_valid_loss_frequency-1:
-                #         print('[%5d] loss: %.4f' % (audio_cnt + 1, running_loss/print_valid_loss_frequency))
-                #         running_loss = 0.0
-
-
                 # == Validacni dataset je zpracovan, Vyhodnoceni validace ==
                 # TODO vykreslit i tuto loss, ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou rpes sebe. (GIT)
                 current_validation_result /= valid_audio_cnt # prumer
@@ -445,7 +403,7 @@ if __name__== "__main__":
 
 
         # Save Network For Inference in the end of training
-        torch.save(tasnet.state_dict(), args.dst_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_ga'+str(global_audio_cnt)+'.pkl')
+        torch.save(tasnet.state_dict(), args.dst_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_ga'+str(global_segment_cnt)+'.pkl')
         print('Finished Training')
 
         plt.plot(graph_x, graph_y)
@@ -463,11 +421,11 @@ if __name__== "__main__":
 
         # Start Testing
         sdr_sum = 0
-        global_audio_cnt = 0
+        global_segment_cnt = 0
         # pridat zde do testovani SI_SNR  a pro kazdou nahravku a vysledky zprumerovat a vyhodnotit (GIT)
         with torch.no_grad():
             for audio_cnt, data in enumerate(testloader, 0):
-                global_audio_cnt += 1
+                global_segment_cnt += 1
 
                 input_mixture  = data[0]
                 target_source1 = data[1]
@@ -508,7 +466,7 @@ if __name__== "__main__":
 
                 sdr_sum += sdr
 
-        print("Final SDR: " + str(sdr_sum/global_audio_cnt))
+        print("Final SDR: " + str(sdr_sum/global_segment_cnt))
         print('Finished Testing')
 
 ####################################################################################################################################################################################

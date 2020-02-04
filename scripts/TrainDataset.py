@@ -144,7 +144,8 @@ class TrainDataset(data_utils.Dataset):
             mix_segment = self.current_mixture[segptr:(segptr+self.segment_len)]
             s1_segment = self.current_source1[segptr:(segptr+self.segment_len)]
             s2_segment = self.current_source2[segptr:(segptr+self.segment_len)]
-            segptr += 24000 #32000 - 8000 stride
+            # segptr += 24000 #32000 - 8000 stride
+            segptr += 32000 #bez prekryti
             if(len(mix_segment) == self.segment_len):
                 yield mix_segment, s1_segment, s2_segment
             else:
