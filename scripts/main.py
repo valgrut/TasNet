@@ -294,7 +294,7 @@ if __name__== "__main__":
                         logloss.write(str(global_segment_cnt)+","+str(running_loss/print_loss_frequency)+"\n")
 
                     running_loss = 0.0
-
+                    
                 # === Create checkpoint ===
                 if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == create_checkpoint_frequency - 1:
                     # Create snapshot - checkpoint
