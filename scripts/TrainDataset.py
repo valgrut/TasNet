@@ -88,14 +88,14 @@ class TrainDataset(data_utils.Dataset):
     def loadNextAudio(self):
         # print("")
         # print("f: loadNextAudio")
-        print("LoadNextAudio: self.audioindex = ", self.audioindex)
-        print("LoadNextAudio: self.mixtures len = ", len(self.mixtures))
+        # print("LoadNextAudio: self.audioindex = ", self.audioindex)
+        # print("LoadNextAudio: self.mixtures len = ", len(self.mixtures))
 
-        if self.audioindex >= len(self.mixtures):
-            print("CHECK: audioindex >= len(self.mixtures), iterace by mela skoncit")
-            return None #raises StopIteration exception
-        else: #jeste je co prochazet
-            self.generator = self.segment_generator()
+        # if self.audioindex >= len(self.mixtures):
+        #     print("CHECK: audioindex >= len(self.mixtures), iterace by mela skoncit")
+        #     return None #raises StopIteration exception
+        # else: #jeste je co prochazet
+        #     self.generator = self.segment_generator()
 
         self.current_mixture = self.transform(self.getAudioSamples(self.mixtures_path + self.mixtures[self.audioindex]))
         self.current_source1 = self.transform(self.getAudioSamples(self.sources1_path + self.sources1[self.audioindex]))
@@ -104,7 +104,7 @@ class TrainDataset(data_utils.Dataset):
         # print("New audio len: ", self.current_mixture_len)
         self.audioindex += 1
         if self.audioindex >= len(self.mixtures):
-            print("POZOR: audioindex >= len(self.mixtures), iterace by mela skoncit")
+            # print("POZOR: audioindex >= len(self.mixtures), iterace by mela skoncit")
             return None #raises StopIteration exception
         else: #jeste je co prochazet
             self.generator = self.segment_generator()

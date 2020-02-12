@@ -276,7 +276,7 @@ if __name__== "__main__":
                 for batch_id in range(MINIBATCH_SIZE):
                     loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
                     loss.backward(retain_graph=True)
-#TODO
+
                 optimizer.step()
 
                 # calculate average loss

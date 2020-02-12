@@ -125,7 +125,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - dalsi kroky:
     - [DONE] oddelat prekryti
     - [TODO] batch size tak velkou co to jde ... az dokud to nespadne pametove
-    - [**TODO**]mozna neni nutne paddovani nulama, ale u posledniho nekompletniho segmentu
+    - [DONE]mozna neni nutne paddovani nulama, ale u posledniho nekompletniho segmentu
     vzit ty 4 sekundy od konce
     - [DONE] cca do ctvrtka nastin prezentace
     - [TODO] U testovaci sady zadne batche, ale cele nahravky (prip. batch o velikosti 1)
@@ -136,7 +136,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 ### ut 21.1.2020 - Obhajoba
 - **Feedback** viz dokument
 
-### 
-
+###
+    [DONE] Zmenena segmentace tak, aby vzala pro posledni segment posledni 4 sekundy, misto paddovani nulama. Nulama se paduje uz jen u nahravek, ktere jsou kratsi nez 4 sekundy.
 
 
