@@ -191,7 +191,7 @@ if __name__== "__main__":
 
         # trainset = AudioDataset(train_data_path)
         trainset = TrainDataset(train_data_path)
-        validset = AudioDataset(valid_data_path)
+        validset = TrainDataset(valid_data_path)
 
         # Note: We shuffle the loading process of train_dataset to make the learning process
         # independent of data order, but the order of test_loader
@@ -200,7 +200,7 @@ if __name__== "__main__":
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False)
         # trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = audio_collate)
         trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate, drop_last = True)
-        validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate)
+        validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = audio_collate, drop_last = True)
 
         # from torch.utils.data import *
         # print(list(BatchSampler(SequentialSampler(trainloader), batch_size=5, drop_last=False)))
@@ -276,7 +276,7 @@ if __name__== "__main__":
                 for batch_id in range(MINIBATCH_SIZE):
                     loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
                     loss.backward(retain_graph=True)
-
+#TODO
                 optimizer.step()
 
                 # calculate average loss
