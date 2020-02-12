@@ -208,12 +208,11 @@ if __name__== "__main__":
         # TESTING of Dataloading
         # itr = iter(trainloader)
         # for audio_cnt, data in enumerate(trainloader, 0):
-            # test collate_fn:
-            # print("cnt: ", audio_cnt)
-            # print("ITER.next: ", itr.next())
-            # print(itr.next())
+        #     # test collate_fn:
+        #     print("cnt: ", audio_cnt)
+        #     print("ITER.next: ", itr.next())
+        #     print(itr.next())
         # print("konec")
-
         # exit(1)
 
         best_validation_result = 42   #initial value
@@ -284,7 +283,7 @@ if __name__== "__main__":
                 running_loss += loss.item()
 
                 # === print loss ===
-                # if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == print_loss_frequency - 1: 
+                # if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == print_loss_frequency - 1:
                 if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == 0:
                     print('[%d, %5d] loss: %.5f' % (epoch, segment_cnt, running_loss/print_loss_frequency))
                     graph_x.append(global_segment_cnt)
