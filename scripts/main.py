@@ -134,11 +134,11 @@ if __name__== "__main__":
     epochs          = args.epochs
     # audios_in_epoch = 20000 # kolik zpracovat nahravek v jedne epose
 
-    audio_save_frequency = 15000
-    print_loss_frequency = 7000 # za kolik segmentu (minibatchu) vypisovat loss
+    audio_save_frequency = 5000
+    print_loss_frequency = 5000 # za kolik segmentu (minibatchu) vypisovat loss
     print_valid_loss_frequency = 6000
     #log_loss_frequency = 5000
-    create_checkpoint_frequency = 10000
+    create_checkpoint_frequency = 6000
 
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
@@ -284,7 +284,8 @@ if __name__== "__main__":
                 running_loss += loss.item()
 
                 # === print loss ===
-                if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == print_loss_frequency - 1: 
+                # if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == print_loss_frequency - 1: 
+                if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == 0:
                     print('[%d, %5d] loss: %.5f' % (epoch, segment_cnt, running_loss/print_loss_frequency))
                     graph_x.append(global_segment_cnt)
                     graph_y.append(running_loss/print_loss_frequency)

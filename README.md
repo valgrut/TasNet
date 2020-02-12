@@ -123,17 +123,20 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - DOTAZ: delka segmentu a delka prekryti: segmenty nechat a prekryti oddelat.
 - Error - index out of range - v main v cyklu segmentovat cely dataset a najit chybu.
 - dalsi kroky:
-    - oddelat prekryti
-    - batch size tak velkou co to jde ... az dokud to nespadne pametove
-    - mozna neni nutne paddovani nulama, ale u posledniho nekompletniho segmentu
+    - [DONE] oddelat prekryti
+    - [TODO] batch size tak velkou co to jde ... az dokud to nespadne pametove
+    - [**TODO**]mozna neni nutne paddovani nulama, ale u posledniho nekompletniho segmentu
     vzit ty 4 sekundy od konce
-    - cca do ctvrtka nastin prezentace
-    - U testovaci sady zadne batche, ale cele nahravky (prip. batch o velikosti 1)
+    - [DONE] cca do ctvrtka nastin prezentace
+    - [TODO] U testovaci sady zadne batche, ale cele nahravky (prip. batch o velikosti 1)
 
 ### pa 17. 1. 2020 - Konzultace
 - konzultace k prezentaci
 
-### ? ?.1.2020 - Obhajoba
-- Feedback viz dokument
+### ut 21.1.2020 - Obhajoba
+- **Feedback** viz dokument
 
 ### 
+
+
+

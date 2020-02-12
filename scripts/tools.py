@@ -99,3 +99,4 @@ def normalizeAudio(samples):
 def getAudioSamples(audio_file_path):
     rate, samples = wav.read(audio_file_path)
     return normalizeAudio(samples)
+
