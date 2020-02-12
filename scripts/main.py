@@ -294,7 +294,7 @@ if __name__== "__main__":
                         logloss.write(str(global_segment_cnt)+","+str(running_loss/print_loss_frequency)+"\n")
 
                     running_loss = 0.0
-                    
+
                 # === Create checkpoint ===
                 if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == create_checkpoint_frequency - 1:
                     # Create snapshot - checkpoint
@@ -474,10 +474,10 @@ if __name__== "__main__":
     if args.INFERENCE:
         print('Prepared for inference, load your audio.')
 
-        mix_name = "smes2_resampled3.wav"
+        # mix_name = "smes2_resampled3.wav"
         mix_name = args.input_mixture
+        data_path = args.BASE_DATA_PATH + "/" + args.input_mixture
 
-        data_path = args.input_mixture
         mixture = getAudioSamples(data_path)
         mixture.unsqueeze_(0)
         mixture.unsqueeze_(0)
@@ -507,6 +507,6 @@ if __name__== "__main__":
         wav.write(args.dst_dir + "s1-" + mix_name, 8000, source1_prep)
         wav.write(args.dst_dir + "s2-" + mix_name, 8000, source2_prep)
 
-        print("Inference done, separated speakers saved into " + args.dst_dir + "inferenced/")
+        print("Inference done, separated speakers saved into " + args.dst_dir)
 
 

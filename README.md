@@ -139,4 +139,4 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 ###
     [DONE] Zmenena segmentace tak, aby vzala pro posledni segment posledni 4 sekundy, misto paddovani nulama. Nulama se paduje uz jen u nahravek, ktere jsou kratsi nez 4 sekundy.
 
-
+    [todo] zkontrolovat pri inferenci pocet kanalu a vzorkovani.
