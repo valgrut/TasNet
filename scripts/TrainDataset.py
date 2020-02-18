@@ -138,6 +138,9 @@ class TrainDataset(data_utils.Dataset):
             mix_seg, s1_seg, s2_seg = next(self.generator)
             return mix_seg, s1_seg, s2_seg
         except StopIteration:
+            #init for next epoch
+            self.audioindex = 0
+            self.generator = self.segment_generator()
             raise StopIteration
 
 
