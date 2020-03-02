@@ -18,7 +18,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 06")
+    print("Version 07")
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
     parser.add_argument('--train',
@@ -139,12 +139,12 @@ if __name__== "__main__":
 
     # hodnota je rovna poctu zpracovanych batchu
     # (pocet_segmentu = pocet_batchu * velikost_batche)
-    print_controll_check = 500
-    audio_save_frequency = 2000
-    print_loss_frequency = 500 # za kolik segmentu (minibatchu) vypisovat loss
-    print_valid_loss_frequency = 2000
+    print_controll_check = 1000
+    audio_save_frequency = 1000
+    print_loss_frequency = 300 # za kolik segmentu (minibatchu) vypisovat loss
+    print_valid_loss_frequency = 500
     #log_loss_frequency = 5000
-    create_checkpoint_frequency = 2000
+    create_checkpoint_frequency = 1500
 
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
@@ -235,15 +235,20 @@ if __name__== "__main__":
         global_segment_cnt = 0
         cont_epoch = 0
         for (epoch) in range(epochs):
-            print("epoch ", epoch)
+            print("Epoch ", epoch, " started")
+
+            epoch_start = datetime.now()
 
             running_loss = 0.0
             segment_cnt = 0
             valid_segment_cnt = 0
 
             ## TODO 1. nacist checkpoint a zkusit inferenci nejake nahravky !!! (dodelat inferenci celych nahravek)
+
+            ## rozdelit main na casti
             ## TODO proc kazda druha epocha vypise pouze jeden vypis?
-            ## TODO zkontrolovat, ze se opravdu porovnavaji ty nahravky, co se maji porovnavat.
+            ## TODO zkontrolovat, ze se opravdu porovnavaji ty nahravky, co se maji porovnavat
+            ## a zkontrolovat rozmery v trenovani, jakoze shapes. protoze se to netrenuje... :(
             ## TODO Proc loss klesa do minusu
 
             epoch = epoch + cont_epoch
@@ -282,12 +287,12 @@ if __name__== "__main__":
                 # print("target_source2 shape: ", target_source2.shape)
 
                 # TODO pozn neni potreba, protoze segmenty jsou upravovany v collate_fn a dale.
-                # if(s1.shape[2] != target_source1.shape[2]):
-                #     smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
-                #     s1 = s1.narrow(2, 0, smallest)
-                #     s2 = s2.narrow(2, 0, smallest)
-                #     target_source1 = target_source1.narrow(2, 0, smallest)
-                #     target_source2 = target_source2.narrow(2, 0, smallest)
+                if(s1.shape[2] != target_source1.shape[2]):
+                    smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
+                    s1 = s1.narrow(2, 0, smallest)
+                    s2 = s2.narrow(2, 0, smallest)
+                    target_source1 = target_source1.narrow(2, 0, smallest)
+                    target_source2 = target_source2.narrow(2, 0, smallest)
 
                 batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
                 batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
@@ -309,7 +314,7 @@ if __name__== "__main__":
                 # === print loss ===
                 # print("segment cnt: ", segment_cnt, " ", (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency))
                 if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == 0.0:
-                    print('[%d, %5d] loss: %.5f' % (epoch, segment_cnt, running_loss/print_loss_frequency))
+                    # print('[%d, %5d] loss: %.5f' % (epoch, segment_cnt, running_loss/print_loss_frequency))
                     graph_x.append(global_segment_cnt)
                     graph_y.append(running_loss/print_loss_frequency)
 
@@ -351,17 +356,22 @@ if __name__== "__main__":
                     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s1.wav", 8000, source1_prep)
                     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s2.wav", 8000, source2_prep)
                     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_mix.wav", 8000, mixture_prep)
-            print("finished training")
+
+            epoch_end = datetime.now()
+            print("Epoch ", epoch, " finished - processed in ", (epoch_end - epoch_start))
             # ==== End Of Epoch of training ====
 
 
             # === VALIDACE na konci epochy ===
             print("")
             print("Validace")
+
+
+            validation_start = datetime.now()
+
             valid_segment_cnt = 1
             running_loss = 0.0
             current_validation_result = 0
-
             with torch.no_grad():
                 for audio_cnt, data in enumerate(validloader, 0):
                     valid_segment_cnt += MINIBATCH_SIZE
@@ -390,12 +400,12 @@ if __name__== "__main__":
                     s1 = separated_sources[0].unsqueeze(1)
                     s2 = separated_sources[1].unsqueeze(1)
 
-                    # if(s1.shape[2] != target_source1.shape[2]):
-                    #     smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
-                    #     s1 = s1.narrow(2, 0, smallest)
-                    #     s2 = s2.narrow(2, 0, smallest)
-                    #     target_source1 = target_source1.narrow(2, 0, smallest)
-                    #     target_source2 = target_source2.narrow(2, 0, smallest)
+                    if(s1.shape[2] != target_source1.shape[2]):
+                        smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
+                        s1 = s1.narrow(2, 0, smallest)
+                        s2 = s2.narrow(2, 0, smallest)
+                        target_source1 = target_source1.narrow(2, 0, smallest)
+                        target_source2 = target_source2.narrow(2, 0, smallest)
 
                     batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
                     batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
@@ -429,7 +439,10 @@ if __name__== "__main__":
                     learning_rate /= 2 #TODO zjistit kdy se to ma delit
                 else:
                     best_validation_result = current_validation_result
-                print('Finished Validating')
+
+
+                validation_end = datetime.now()
+                print('Finished Validating in ', (validation_end - validation_start))
                 print('')
 
 
