@@ -10,8 +10,8 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Dataset import AudioDataset
-from TrainDataset import TrainDataset
+from AudioDataset import AudioDataset
+from SegmentDataset import SegmentDataset
 from TasNet import Net
 from ResBlock import ResBlock
 from tools import *
@@ -142,7 +142,8 @@ if __name__== "__main__":
         epoch = checkpoint['epoch']
         loss = checkpoint['loss']
 
-        tasnet.train() # For inference
+        # tasnet.train() # For inference
+        tasnet.eval() # For inference
 
         print("Nactena epocha a loss: ", str(epoch), str(loss))
 
