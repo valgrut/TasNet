@@ -97,6 +97,8 @@ class AudioDataset(data_utils.Dataset):
         #normalizace
         numpy = numpy / 2**15
         tensor = torch.as_tensor(numpy)
-        tensor_float32 = torch.tensor(tensor, dtype=torch.float32)
+        # tensor_float32 = torch.tensor(tensor, dtype=torch.float32)
+        tensor_float32 = tensor.clone().detach().requires_grad_(True)
+        tensor_float32 = tensor_float32.type(torch.float32)
         return tensor_float32
 

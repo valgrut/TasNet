@@ -8,14 +8,14 @@ from os import listdir
 from os.path import isfile, join
 
 """
-TrainDataset
+SegmentDataset
 """
-class TrainDataset(data_utils.Dataset):
+class SegmentDataset(data_utils.Dataset):
     """
     Dataset of speech mixtures for speech separation.
     """
     def __init__(self, path):
-        super(TrainDataset, self).__init__()
+        super(SegmentDataset, self).__init__()
         self.segment_len = 32000 #4seconds, 32k samples
 
         self.path = path
@@ -126,7 +126,9 @@ class TrainDataset(data_utils.Dataset):
         numpy = np.array(samples)
         numpy = numpy / 2**15
         tensor = torch.as_tensor(numpy)
-        tensor_float32 = torch.tensor(tensor, dtype=torch.float32)
+        # tensor_float32 = torch.tensor(tensor, dtype=torch.float32)
+        tensor_float32 = tensor.clone().detach().requires_grad_(True)
+        tensor_float32 = tensor_float32.type(torch.float32)
         return tensor_float32
 
 
