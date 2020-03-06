@@ -31,6 +31,29 @@ def siSNRloss(output, target):
     return batch_loss
 
 
+def train_collate(batch):
+    list_mix = []
+    list_s1 = []
+    list_s2 = []
+
+    if(len(batch) > 1): # TODO mozna >=
+        for audio in batch:
+            list_mix.append(audio[0][0])  # pripadne bez te posledni [0], pokud bych oddelal squ      eeze v __get_item__()
+            list_s1.append(audio[1][0])
+            list_s2.append(audio[2][0])
+
+        padded_mix = torch.nn.utils.rnn.pad_sequence(list_mix, batch_first=True)
+        padded_s1 = torch.nn.utils.rnn.pad_sequence(list_s1, batch_first=True)
+        padded_s2 = torch.nn.utils.rnn.pad_sequence(list_s2, batch_first=True)
+    else:
+        print("Doplneno nul: ", 32000 - len(batch[0]))
+        zero = torch.zeros(32000 - len(batch[0]))
+        minibatch_mix = torch.cat((batch[0], zero), 0)
+
+    # return padded_mix, padded_s1, padded_s2
+    return padded_mix.unsqueeze(1), padded_s1.unsqueeze(1), padded_s2.unsqueeze(1)
+
+
 def audio_collate(batch):
     # print("collate")
     # print(batch) #list listuu s tenzory mix,s1,s2
@@ -57,28 +80,6 @@ def audio_collate(batch):
     # print("konec_collate")
     return minibatch_mix.unsqueeze(1), minibatch_s1.unsqueeze(1), minibatch_s2.unsqueeze(1)
 
-
-def train_collate(batch):
-    list_mix = []
-    list_s1 = []
-    list_s2 = []
-
-    if(len(batch) > 1):
-        for audio in batch:
-            list_mix.append(audio[0][0])  # pripadne bez te posledni [0], pokud bych oddelal squ      eeze v __get_item__()
-            list_s1.append(audio[1][0])
-            list_s2.append(audio[2][0])
-
-        padded_mix = torch.nn.utils.rnn.pad_sequence(list_mix, batch_first=True)
-        padded_s1 = torch.nn.utils.rnn.pad_sequence(list_s1, batch_first=True)
-        padded_s2 = torch.nn.utils.rnn.pad_sequence(list_s2, batch_first=True)
-    else:
-        print("Doplneno nul: ", 32000 - len(batch[0]))
-        zero = torch.zeros(32000 - len(batch[0]))
-        minibatch_mix = torch.cat((batch[0], zero), 0)
-
-    # return padded_mix, padded_s1, padded_s2
-    return padded_mix.unsqueeze_(1), padded_s1.unsqueeze_(1), padded_s2.unsqueeze_(1)
 
 
 def saveAudio():

@@ -16,7 +16,7 @@ class SegmentDataset(data_utils.Dataset):
     """
     def __init__(self, path):
         super(SegmentDataset, self).__init__()
-        self.segment_len = 32000 #4seconds, 32k samples
+        self.SEGMENT_LEN = 32000 #4seconds, 32k samples
 
         self.path = path
 
@@ -33,10 +33,19 @@ class SegmentDataset(data_utils.Dataset):
         self.sources2 = [f for f in listdir(self.sources2_path) if isfile(join(self.sources2_path, f))]
 
         # REMOVE DUPLICATES
+        self.dataset_len = len(self.mixtures)
+        # print("mixtures dataset len: ", self.dataset_len)
+        # print("sources1 dataset len: ", len(self.sources1))
+        # print("sources2 dataset len: ", len(self.sources2))
+
         # make list unique
         smixtures = set(self.mixtures)
         ssources1 = set(self.sources1)
         ssources2 = set(self.sources2)
+
+        # print("mixtures dataset len: ", len(smixtures))
+        # print("sources1 dataset len: ", len(ssources1))
+        # print("sources2 dataset len: ", len(ssources2))
 
         ms1_duplicates = smixtures - ssources1
         ms2_duplicates = smixtures - ssources2
@@ -54,7 +63,7 @@ class SegmentDataset(data_utils.Dataset):
         self.dataset_len = len(self.mixtures)
         # print("mixtures dataset len: ", self.dataset_len)
         # print("sources1 dataset len: ", len(self.sources1))
-        # print("sources2 dataset len: ", len(self.sources1))
+        # print("sources2 dataset len: ", len(self.sources2))
 
         # instantiate generator of segments
         self.generator = self.segment_generator()
@@ -102,6 +111,10 @@ class SegmentDataset(data_utils.Dataset):
         self.current_source2 = self.transform(self.getAudioSamples(self.sources2_path + self.sources2[self.audioindex]))
         self.current_mixture_len = len(self.current_mixture)
         # print("New audio len: ", self.current_mixture_len)
+        
+        # print("new mixture: ", self.mixtures_path + self.mixtures[self.audioindex])
+        # print("new source1: ", self.sources1_path + self.sources1[self.audioindex])
+        # print("new source2: ", self.sources2_path + self.sources2[self.audioindex])
         self.audioindex += 1
         if self.audioindex >= len(self.mixtures):
             # print("POZOR: audioindex >= len(self.mixtures), iterace by mela skoncit")
@@ -141,6 +154,7 @@ class SegmentDataset(data_utils.Dataset):
             return mix_seg, s1_seg, s2_seg
         except StopIteration:
             #init for next epoch
+            print("segmentDataset - segmentGenerator Prepare Next Epoch!")
             self.audioindex = 0
             self.generator = self.segment_generator()
             raise StopIteration
@@ -160,11 +174,11 @@ class SegmentDataset(data_utils.Dataset):
             # print("seg_gen: segptr: ", segptr)
 
             # nahravka je kratsi nez 4 sekundy (<32k) - nelze vzit 4s od konce.
-            if(self.current_mixture_len < self.segment_len):
+            if(self.current_mixture_len < self.SEGMENT_LEN):
                 # print("else presahli bychom konec, takze vezmeme 4s od konce.")
-                mix_segment = self.current_mixture[(self.current_mixture_len - self.segment_len):self.current_mixture_len]
-                s1_segment = self.current_source1[(self.current_mixture_len - self.segment_len):self.current_mixture_len]
-                s2_segment = self.current_source2[(self.current_mixture_len - self.segment_len):self.current_mixture_len]
+                mix_segment = self.current_mixture[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]
+                s1_segment = self.current_source1[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]
+                s2_segment = self.current_source2[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]
                 self.loadNextAudio() # uz neni co nacitat
                 new_required = True
                 yield mix_segment, s1_segment, s2_segment
@@ -172,20 +186,20 @@ class SegmentDataset(data_utils.Dataset):
             # jsou li dalsi 4 sekundy k dispozici, nebo je potreba je vzit od konce.
             else:
                 # bereme dalsi 4 sekundy
-                if(segptr + self.segment_len < self.current_mixture_len):
-                    # print("if Dalsi 4s k dispozici: ", (segptr+self.segment_len), "<", self.current_mixture_len)
-                    mix_segment = self.current_mixture[segptr:(segptr+self.segment_len)]
-                    s1_segment = self.current_source1[segptr:(segptr+self.segment_len)]
-                    s2_segment = self.current_source2[segptr:(segptr+self.segment_len)]
-                    segptr += self.segment_len
+                if(segptr + self.SEGMENT_LEN < self.current_mixture_len):
+                    # print("if Dalsi 4s k dispozici: ", (segptr+self.SEGMENT_LEN), "<", self.current_mixture_len)
+                    mix_segment = self.current_mixture[segptr:(segptr+self.SEGMENT_LEN)]
+                    s1_segment = self.current_source1[segptr:(segptr+self.SEGMENT_LEN)]
+                    s2_segment = self.current_source2[segptr:(segptr+self.SEGMENT_LEN)]
+                    segptr += self.SEGMENT_LEN
                     yield mix_segment, s1_segment, s2_segment
 
-                # segptr + self.segment_len >= self.current_mixture_len
+                # segptr + self.SEGMENT_LEN >= self.current_mixture_len
                 else:
                     # print("else presahli bychom konec, takze vezmeme 4s od konce.")
-                    mix_segment = self.current_mixture[(self.current_mixture_len - self.segment_len):self.current_mixture_len]
-                    s1_segment = self.current_source1[(self.current_mixture_len - self.segment_len):self.current_mixture_len]
-                    s2_segment = self.current_source2[(self.current_mixture_len - self.segment_len):self.current_mixture_len]
+                    mix_segment = self.current_mixture[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]
+                    s1_segment = self.current_source1[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]
+                    s2_segment = self.current_source2[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]
                     self.loadNextAudio() # uz neni co nacitat
                     new_required = True
                     yield mix_segment, s1_segment, s2_segment

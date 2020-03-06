@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 07")
+    print("Version 13")
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
     parser.add_argument('--epochs',
@@ -116,7 +116,7 @@ if __name__== "__main__":
     # (pocet_segmentu = pocet_batchu * velikost_batche)
     print_controll_check = 1000
     audio_save_frequency = 1000
-    print_loss_frequency = 600 # za kolik segmentu (minibatchu) vypisovat loss
+    print_loss_frequency = 250 # za kolik segmentu (minibatchu) vypisovat loss
     print_valid_loss_frequency = 500
     #log_loss_frequency = 5000
     create_checkpoint_frequency = 1500
@@ -162,14 +162,13 @@ if __name__== "__main__":
     train_data_path = BASE_DATA_PATH+"tr/"
     valid_data_path = BASE_DATA_PATH+"cv/"
 
-    # trainset = AudioDataset(train_data_path)
     trainset = SegmentDataset(train_data_path)
     validset = SegmentDataset(valid_data_path)
 
     # Note: We shuffle the loading process of train_dataset to make the learning process
     # independent of data order, but the order of test_loader
     # remains so as to examine whether we can handle unspecified bias order of inputs.
-    trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate, drop_last = True)
+    trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = True)
     validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = True)
 
     # from torch.utils.data import *
@@ -217,7 +216,9 @@ if __name__== "__main__":
             global_segment_cnt += MINIBATCH_SIZE
             segment_cnt += MINIBATCH_SIZE
 
-            print("batch_cnt: ", batch_cnt, " global_segment_cnt: ", global_segment_cnt, " segment_cnt", segment_cnt)
+            # print("batch_cnt: ", batch_cnt, " global_segment_cnt: ", global_segment_cnt, " segment_cnt", segment_cnt)
+            # print("data len: ", len(data), " = Mix, ref s1, ref s2")
+            # print("data[0] len: ", len(data[0]), " = MINIBATCH_SIZE of mix segments")
 
             torch.autograd.set_detect_anomaly(True)
 
@@ -226,9 +227,17 @@ if __name__== "__main__":
                 # print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
                 print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, segment_cnt)
 
-            input_mixture  = data[0]
-            target_source1 = data[1]
-            target_source2 = data[2]
+            input_mixture  = data[0] # tensor(N, 1, 32000) # N of mix segments
+            target_source1 = data[1] # tensor(N, 1, 32000) # N of s1 segments
+            target_source2 = data[2] # tensor(N, 1, 32000) # N of s2 segments
+
+            # print("input_mixture shape ", input_mixture.shape)
+            # print("KONTROLA SPRAVNYCH SEGMENTU SPOLU")
+            # print(input_mixture)
+            # print(input_mixture[0])
+            # print(input_mixture[0][0])
+            # print(input_mixture[0][0][0])
+            # print("#################", input_mixture[0][0][0] - (target_source1[0][0][0] + target_source2[0][0][0]))
 
             if use_cuda and torch.cuda.is_available():
                 input_mixture = input_mixture.cuda()
@@ -236,27 +245,54 @@ if __name__== "__main__":
                 target_source2 = target_source2.cuda()
 
             separated_sources = tasnet(input_mixture)
+            # Outputs: (N, 2, 32000)
+            # print("output separated sources shape: ", separated_sources.shape)
+
             separated_sources = separated_sources.transpose(1,0)
+            # Outputs: (2, N, 32000)
             # print("separated sources shape: ", separated_sources.shape)
 
+            # print("separated s1 shape: ", separated_sources[0].shape)
+            # print("separated s2 shape: ", separated_sources[1].shape)
             s1 = separated_sources[0].unsqueeze(1)
             s2 = separated_sources[1].unsqueeze(1)
-
-            # print("sepsrc1 shape: ", s1.shape)
-            # print("sepsrc2 shape: ", s2.shape)
+            # Output: eval. s1, s2 = torch.size([N, 1, 32000])
+            #         ref. s1, s2 = torch.size([N, 1, 32000])
+            # print("separated s1 unsqueezed shape: ", s1.shape)
+            # print("separated s2 unsqueezed shape: ", s2.shape)
             # print("target_source1 shape: ", target_source1.shape)
             # print("target_source2 shape: ", target_source2.shape)
 
             # TODO pozn neni potreba, protoze segmenty jsou upravovany v collate_fn a dale.
-            if(s1.shape[2] != target_source1.shape[2]):
+            if(s1.shape[2] != target_source1.shape[2] != s2.shape[2] != target_source2.shape[2]):
                 smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
                 s1 = s1.narrow(2, 0, smallest)
                 s2 = s2.narrow(2, 0, smallest)
                 target_source1 = target_source1.narrow(2, 0, smallest)
                 target_source2 = target_source2.narrow(2, 0, smallest)
 
+            # print("Test loss sisnr results:")
+            # print(siSNRloss(s1, target_source1))
+            # print(np.negative(siSNRloss(s1, target_source1)))
+            # print(np.negative(siSNRloss(s2, target_source2)))
+            # print(np.negative(siSNRloss(s1, target_source2)))
+            # print(np.negative(siSNRloss(s2, target_source1)))
+            # print("Soucet: ", np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2))))
             batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
             batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
+            # print("batch loss1: \n", batch_loss1)
+            # print("batch loss2: \n", batch_loss2)
+
+            # tbatch_loss1 = np.add(np.negative(siSNRloss(target_source1, target_source1)), np.negative(siSNRloss(target_source2, target_source2)))
+            # tbatch_loss2 = np.add(np.negative(siSNRloss(target_source1, target_source2)), np.negative(siSNRloss(target_source2, target_source1)))
+            # print("target batch loss1: \n", tbatch_loss1)
+            # print("target batch loss2: \n", tbatch_loss2)
+            # print("sisnr: \n", (siSNRloss(s1, target_source1)))
+            # print("sisnr neg: \n", np.negative(siSNRloss(s1, target_source1)))
+            # print("sisnr identita: \n", (siSNRloss(target_source1, target_source1)))
+            # print("sisnr neg identita: \n", np.negative(siSNRloss(target_source1, target_source1)))
+            # print("sisnr neg identita: \n", np.negative(siSNRloss(target_source2, target_source1)))
+            # print("\n\n")
 
             # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
             optimizer.zero_grad()
@@ -265,6 +301,12 @@ if __name__== "__main__":
                 loss += min(batch_loss1[batch_id], batch_loss2[batch_id])
                 # loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
                 # loss.backward(retain_graph=True)
+
+            # TODO 1. loss by mozna mela byt Average over the batch
+            # loss = loss / MINIBATCH_SIZE
+            # print(loss)
+            # TODO 2. mozna by zaporne hodnoty (identita) mely byt hozeny jako 0.00001
+
 
             loss.backward()
             optimizer.step()
