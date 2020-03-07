@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 15")
+    print("Version 16")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -114,11 +114,11 @@ if __name__== "__main__":
 
     # hodnota je rovna poctu zpracovanych batchu
     # (pocet_segmentu = pocet_batchu * velikost_batche)
-    print_controll_check = 500
-    print_loss_frequency = 250 # za kolik segmentu (minibatchu) vypisovat loss
+    print_controll_check = 500 / MINIBATCH_SIZE
+    print_loss_frequency = 250 / MINIBATCH_SIZE # za kolik segmentu (minibatchu) vypisovat loss
     print_valid_loss_frequency = 250
     #log_loss_frequency = 5000
-    create_checkpoint_frequency = 1500
+    create_checkpoint_frequency = 1500 / MINIBATCH_SIZE
 
 ####################################################################################################################################################################################
 
@@ -328,12 +328,24 @@ if __name__== "__main__":
             #     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_mix.wav", 8000, mixture_prep)
 
         epoch_end = datetime.now()
+
+        # Create checkpoint at the end of epoch
+        torch.save({
+          'epoch': epoch,
+          'audio_cnt': segment_cnt,
+          'model_state_dict': tasnet.state_dict(),
+          'optimizer_state_dict': optimizer.state_dict(),
+          'loss': loss,
+        }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
+        print("Checkpoint has been created.")
+        log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
+
         print("Epoch ", epoch, " finished - processed in ", (epoch_end - epoch_start))
         log("## Epoch " + str(epoch) + " finished - processed in " + str((epoch_end - epoch_start)))
-        # ==== End Of Epoch of training ====
+        # ====== End Of Epoch ======
 
 
-        # === VALIDACE na konci epochy ===
+        # ====== VALIDACE na konci epochy ======
         print("")
         print("Validace")
         log("## Validation started")
