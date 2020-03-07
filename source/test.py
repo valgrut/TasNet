@@ -161,6 +161,8 @@ if __name__== "__main__":
             if (global_audio_cnt) % 1000 == 0.0:
                 print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
                 print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
+                with open(training_dir + "testing.log", "a") as testlog:
+                    testlog.write("Audio_cnt: " + audio_cnt + " SDR: " + str(sdr_sum/global_audio_cnt) + "\n")
 
             input_mixture  = data[0]
             target_source1 = data[1]
