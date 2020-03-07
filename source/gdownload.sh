@@ -10,13 +10,13 @@ if [ "$#" -eq 1 ]; then
 
     # Zkopiruje obsah adresare na local
     mkdir $HOME/TEST/$training_dir/
-    rclone copy --progress --no-traverse gdrive:FIT/reconstruction/$training_dir/ $HOME/TEST/$training_dir/
+    rclone copy --progress --no-traverse gdrive:FIT/training_results/$training_dir/ $HOME/TEST/$training_dir/
 else
     # Najde nejnoveji vytvoreny adresar
-    recent_training_dir="$(rclone lsd gdrive:FIT/reconstruction/ | awk '{print $5}' | sort -r | head -1)"
+    recent_training_dir="$(rclone lsd gdrive:FIT/training_results/ | awk '{print $5}' | sort -r | head -1)"
     echo Stahuje se $recent_training_dir
 
     # Zkopiruje obsah adresare na local
     mkdir $HOME/TEST/$recent_training_dir/
-    rclone copy --progress --no-traverse gdrive:FIT/reconstruction/$recent_training_dir/ $HOME/TEST/$recent_training_dir/
+    rclone copy --progress --no-traverse gdrive:FIT/training_results/$recent_training_dir/ $HOME/TEST/$recent_training_dir/
 fi
