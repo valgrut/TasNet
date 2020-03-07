@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 07")
+    print("Version 08")
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
     parser.add_argument('--padding',
@@ -133,22 +133,24 @@ if __name__== "__main__":
 
         tasnet.eval() # For inference and testing
 
-
     learning_started_date = datetime.now().strftime('%Y-%m-%d_%H:%M')
 
     # Load Test dataset
     test_data_path = BASE_DATA_PATH+"tt/"
     testset        = AudioDataset(test_data_path)
-    testloader     = data_utils.DataLoader(testset, batch_size = MINIBATCH_SIZE, shuffle=False)
+    testloader     = data_utils.DataLoader(testset, batch_size=1, shuffle=False)
 
     # Start Testing
     sdr_sum = 0
+    sir_sum = 0
+    sarn_sum = 0
+    perm_sum = 0
+
     global_segment_cnt = 0
     running_loss = 0.0
     test_segment_cnt = 0
     current_testing_result = 0
 
-    # kopie  z validace - UPRAVIT!!!
     with torch.no_grad():
         for audio_cnt, data in enumerate(testloader, 0):
             global_segment_cnt += 1
@@ -168,6 +170,7 @@ if __name__== "__main__":
                 target_source1 = target_source1.cuda()
                 target_source2 = target_source2.cuda()
 
+            # separation
             separated_sources = tasnet(input_mixture)
 
             separated_sources = separated_sources.transpose(1,0)
@@ -183,76 +186,44 @@ if __name__== "__main__":
                 target_source2 = target_source2.narrow(2, 0, smallest)
                 input_mixture = input_mixture.narrow(2, 0, smallest)
 
-
             # Vypocet metrik
-            # compute SI-SNR / TODO zde asi taky bude potreba udelat to samo jako pro pocitani loss
+
+            s1.squeeze_(0)
+            s2.squeeze_(0)
+            target_source1.squeeze_(0)
+            target_source2.squeeze_(0)
+
+            # prepare tensor for SI-SNR
+            estimated_sources_prep = 0
+            ref_sources_prep = 0
+
+            # Create numpy array from tensors
+            if use_cuda and torch.cuda.is_available():
+                estimated_source1_prep = s1.cpu().detach().numpy()
+                estimated_source2_prep = s2.cpu().detach().numpy()
+                ref_source1_prep = target_source1.cpu().detach().numpy()
+                ref_source2_prep = target_source2.cpu().detach().numpy()
+            else:
+                estimated_source1_prep = s1.detach().numpy()
+                estimated_source2_prep = s2.detach().numpy()
+                ref_source1_prep = target_source1.detach().numpy()
+                ref_source2_prep = target_source2.detach().numpy()
+
+            # Create np array of shape (NumOfSpeakers, NumOfSamples)
+            estimated_sources = np.concatenate((estimated_source1_prep, estimated_source2_prep))
+            ref_sources = np.concatenate((ref_source1_prep, ref_source2_prep))
+            
+            # calculation of metrics
+            (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources, estimated_sources, compute_permutation=True)
+            print(sdr, sir, sarn, perm)
+
+            # TODO MOZNA zde asi taky bude potreba udelat to samo jako pro pocitani loss
             # protoze taky nemuzu vedet, ze mix[0] odpovida s1, nebo jestli odpovida s2
-
-            print(target_source1.shape, target_source2.shape)
-            print(s1.shape, s2.shape)
-
-            batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
-            batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
-
-            # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
-            loss = 0
-            for batch_id in range(MINIBATCH_SIZE):
-                loss = loss + min(batch_loss1[batch_id], batch_loss2[batch_id])
-
-            # calculate average loss
-            running_loss += loss.item()
-            current_testing_result += loss.item()
-
-            (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources_prep, estimated_sources ,compute_permutation=True)
-            # (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources_prep, estimated_sources_prep, compute_permutation=True)
-            print(sdr)
-
-            sdr_sum += sdr
-
-
-    # pridat zde do testovani SI_SNR  a pro kazdou nahravku a vysledky zprumerovat a vyhodnotit (GIT)
-    # with torch.no_grad():
-    #     for audio_cnt, data in enumerate(testloader, 0):
-    #         global_segment_cnt += 1
-
-    #         input_mixture  = data[0]
-    #         target_source1 = data[1]
-    #         target_source2 = data[2]
-
-    #         if use_cuda and torch.cuda.is_available():
-    #             input_mixture = input_mixture.cuda()
-    #             target_source1 = target_source1.cuda()
-    #             target_source2 = target_source2.cuda()
-
-    #         # separation
-    #         separated_sources = tasnet(input_mixture)
-
-    #         # unitize length of audio
-    #         smallest = min(input_mixture.shape[2], target_source1.shape[2], target_source2.shape[2], separated_sources.shape[2])
-    #         input_mixture = input_mixture.narrow(2, 0, smallest)
-    #         target_source1 = target_source1.narrow(2, 0, smallest)
-    #         target_source2 = target_source2.narrow(2, 0, smallest)
-    #         separated_sources = separated_sources.narrow(2, 0, smallest)
-
-    #         # spojeni ref sources do jedne matice
-    #         target_sources = torch.cat((target_source1, target_source2), 1)
-
-    #         # prepare tensor for SI-SNR
-    #         estimated_sources_prep = 0
-    #         ref_sources_prep = 0
-
-    #         if use_cuda and torch.cuda.is_available():
-    #             estimated_sources_prep = separated_sources[0].cpu().detach().numpy()
-    #             ref_sources_prep = target_sources[0].cpu().detach().numpy()
-    #         else:
-    #             estimated_sources_prep = separated_sources[0].detach().numpy()
-    #             ref_sources_prep = target_sources[0].detach().numpy()
-
-    #         # compute SI-SNR
-    #         (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources_prep, estimated_sources_prep, compute_permutation=True)
-    #         print(sdr)
-
-    #         sdr_sum += sdr
+            
+            sdr_sum += max(sdr) # pricitam to vetsi z dvojice vysledku
+            sir_sum += sir
+            sarn_sum += sarn
+            perm_sum += perm
 
     print("Final SDR: " + str(sdr_sum/global_segment_cnt))
     print('Finished Testing')

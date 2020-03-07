@@ -197,6 +197,8 @@ if __name__== "__main__":
 
     log(str(datetime.now()))
     log(args)
+    log("numpy version: " + np.__version__)
+    log("pytorch version: " + torch.__version__)
     log("Creating Trainign directory: " + training_dir)
 
     best_validation_result = 42   #initial value
