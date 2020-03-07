@@ -17,7 +17,8 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 13")
+    print("Version 15")
+
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
     parser.add_argument('--epochs',
@@ -110,14 +111,12 @@ if __name__== "__main__":
 
     use_cuda        = True
     epochs          = args.epochs
-    # audios_in_epoch = 20000 # kolik zpracovat nahravek v jedne epose
 
     # hodnota je rovna poctu zpracovanych batchu
     # (pocet_segmentu = pocet_batchu * velikost_batche)
-    print_controll_check = 1000
-    audio_save_frequency = 1000
+    print_controll_check = 500
     print_loss_frequency = 250 # za kolik segmentu (minibatchu) vypisovat loss
-    print_valid_loss_frequency = 500
+    print_valid_loss_frequency = 250
     #log_loss_frequency = 5000
     create_checkpoint_frequency = 1500
 
@@ -189,6 +188,16 @@ if __name__== "__main__":
     print("Trainign directory: ", training_dir)
     if not os.path.exists(training_dir):
         os.makedirs(training_dir)
+        os.makedirs(training_dir+"reconstruction")
+        os.makedirs(training_dir+"inference")
+
+    def log(info):
+        with open(training_dir + "training.log", "a") as trainlog:
+            trainlog.write(str(info) + "\n")
+
+    log(str(datetime.now()))
+    log(args)
+    log("Creating Trainign directory: " + training_dir)
 
     best_validation_result = 42   #initial value
     graph_x = []
@@ -197,10 +206,11 @@ if __name__== "__main__":
     global_segment_cnt = 0
     cont_epoch = 0
 
+    log("##### Training started #####")
     for (epoch) in range(epochs):
-        print("Epoch ", epoch, " started")
-
         epoch_start = datetime.now()
+        print("Epoch ", epoch, " started at ", epoch_start)
+        log("## Epoch " + str(epoch) + " started at " + str(epoch_start))
 
         running_loss = 0.0
         segment_cnt = 0
@@ -208,7 +218,7 @@ if __name__== "__main__":
 
         ## TODO proc kazda druha epocha vypise pouze jeden vypis?
         ## TODO zkontrolovat, ze se opravdu porovnavaji ty nahravky, co se maji porovnavat
-        ## a zkontrolovat rozmery v trenovani, jakoze shapes. protoze se to netrenuje... :(
+        ## a zkontrolovat rozmery v trenovani, jakoze shapes.
         ## TODO Proc loss klesa do minusu
 
         epoch = epoch + cont_epoch
@@ -216,28 +226,17 @@ if __name__== "__main__":
             global_segment_cnt += MINIBATCH_SIZE
             segment_cnt += MINIBATCH_SIZE
 
-            # print("batch_cnt: ", batch_cnt, " global_segment_cnt: ", global_segment_cnt, " segment_cnt", segment_cnt)
-            # print("data len: ", len(data), " = Mix, ref s1, ref s2")
-            # print("data[0] len: ", len(data[0]), " = MINIBATCH_SIZE of mix segments")
-
             torch.autograd.set_detect_anomaly(True)
 
             if (segment_cnt/MINIBATCH_SIZE) % (print_controll_check) == 0.0:
-            # if segment_cnt % (MINIBATCH_SIZE*100) == 0:
                 # print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
-                print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, segment_cnt)
+                # print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, segment_cnt)
+                with open(training_dir + "controll_check.log", "a") as logloss:
+                    logloss.write(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, segment_cnt+"\n")
 
             input_mixture  = data[0] # tensor(N, 1, 32000) # N of mix segments
             target_source1 = data[1] # tensor(N, 1, 32000) # N of s1 segments
             target_source2 = data[2] # tensor(N, 1, 32000) # N of s2 segments
-
-            # print("input_mixture shape ", input_mixture.shape)
-            # print("KONTROLA SPRAVNYCH SEGMENTU SPOLU")
-            # print(input_mixture)
-            # print(input_mixture[0])
-            # print(input_mixture[0][0])
-            # print(input_mixture[0][0][0])
-            # print("#################", input_mixture[0][0][0] - (target_source1[0][0][0] + target_source2[0][0][0]))
 
             if use_cuda and torch.cuda.is_available():
                 input_mixture = input_mixture.cuda()
@@ -246,24 +245,17 @@ if __name__== "__main__":
 
             separated_sources = tasnet(input_mixture)
             # Outputs: (N, 2, 32000)
-            # print("output separated sources shape: ", separated_sources.shape)
 
             separated_sources = separated_sources.transpose(1,0)
             # Outputs: (2, N, 32000)
-            # print("separated sources shape: ", separated_sources.shape)
 
-            # print("separated s1 shape: ", separated_sources[0].shape)
-            # print("separated s2 shape: ", separated_sources[1].shape)
             s1 = separated_sources[0].unsqueeze(1)
             s2 = separated_sources[1].unsqueeze(1)
-            # Output: eval. s1, s2 = torch.size([N, 1, 32000])
-            #         ref. s1, s2 = torch.size([N, 1, 32000])
-            # print("separated s1 unsqueezed shape: ", s1.shape)
-            # print("separated s2 unsqueezed shape: ", s2.shape)
-            # print("target_source1 shape: ", target_source1.shape)
-            # print("target_source2 shape: ", target_source2.shape)
+            # Outputs: eval. s1, s2 = torch.size([N, 1, 32000])
+            #          ref.  s1, s2 = torch.size([N, 1, 32000])
 
             # TODO pozn neni potreba, protoze segmenty jsou upravovany v collate_fn a dale.
+            # A proc to furt potreba je... nekde se to z nejakyho duvodu nici
             if(s1.shape[2] != target_source1.shape[2] != s2.shape[2] != target_source2.shape[2]):
                 smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
                 s1 = s1.narrow(2, 0, smallest)
@@ -271,28 +263,9 @@ if __name__== "__main__":
                 target_source1 = target_source1.narrow(2, 0, smallest)
                 target_source2 = target_source2.narrow(2, 0, smallest)
 
-            # print("Test loss sisnr results:")
-            # print(siSNRloss(s1, target_source1))
-            # print(np.negative(siSNRloss(s1, target_source1)))
-            # print(np.negative(siSNRloss(s2, target_source2)))
-            # print(np.negative(siSNRloss(s1, target_source2)))
-            # print(np.negative(siSNRloss(s2, target_source1)))
-            # print("Soucet: ", np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2))))
+            # Loss calculation
             batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
             batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
-            # print("batch loss1: \n", batch_loss1)
-            # print("batch loss2: \n", batch_loss2)
-
-            # tbatch_loss1 = np.add(np.negative(siSNRloss(target_source1, target_source1)), np.negative(siSNRloss(target_source2, target_source2)))
-            # tbatch_loss2 = np.add(np.negative(siSNRloss(target_source1, target_source2)), np.negative(siSNRloss(target_source2, target_source1)))
-            # print("target batch loss1: \n", tbatch_loss1)
-            # print("target batch loss2: \n", tbatch_loss2)
-            # print("sisnr: \n", (siSNRloss(s1, target_source1)))
-            # print("sisnr neg: \n", np.negative(siSNRloss(s1, target_source1)))
-            # print("sisnr identita: \n", (siSNRloss(target_source1, target_source1)))
-            # print("sisnr neg identita: \n", np.negative(siSNRloss(target_source1, target_source1)))
-            # print("sisnr neg identita: \n", np.negative(siSNRloss(target_source2, target_source1)))
-            # print("\n\n")
 
             # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
             optimizer.zero_grad()
@@ -304,9 +277,6 @@ if __name__== "__main__":
 
             # TODO 1. loss by mozna mela byt Average over the batch
             # loss = loss / MINIBATCH_SIZE
-            # print(loss)
-            # TODO 2. mozna by zaporne hodnoty (identita) mely byt hozeny jako 0.00001
-
 
             loss.backward()
             optimizer.step()
@@ -315,7 +285,6 @@ if __name__== "__main__":
             running_loss += loss.item()
 
             # === print loss ===
-            # print("segment cnt: ", segment_cnt, " ", (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency))
             if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == 0.0:
                 # print('[%d, %5d] loss: %.5f' % (epoch, segment_cnt, running_loss/print_loss_frequency))
                 graph_x.append(global_segment_cnt)
@@ -328,7 +297,6 @@ if __name__== "__main__":
                 running_loss = 0.0
 
             # === Create checkpoint ===
-            # if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == create_checkpoint_frequency - 1:
             if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == 0.0:
                 # Create snapshot - checkpoint
                 torch.save({
@@ -337,37 +305,39 @@ if __name__== "__main__":
                   'model_state_dict': tasnet.state_dict(),
                   'optimizer_state_dict': optimizer.state_dict(),
                   'loss': loss,
-                }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d_%H:%M'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
+                }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
                 print("Checkpoint has been created.")
+                log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
 
+            # # === Save reconstruction ===
+            # if (segment_cnt/MINIBATCH_SIZE) % (audio_save_frequency) == 0:
+            #     mixture_prep = 0
+            #     source1_prep = 0
+            #     source2_prep = 0
 
-            # === Save reconstruction ===
-            if (segment_cnt/MINIBATCH_SIZE) % (audio_save_frequency) == 0:
-                mixture_prep = 0
-                source1_prep = 0
-                source2_prep = 0
+            #     if use_cuda and torch.cuda.is_available():
+            #         mixture_prep = input_mixture.cpu().detach().numpy()
+            #         source1_prep = separated_sources[0][0].cpu().detach().numpy()
+            #         source2_prep = separated_sources[0][1].cpu().detach().numpy()
+            #     else:
+            #         mixture_prep = input_mixture.detach().numpy()
+            #         source1_prep = separated_sources[0][0].detach().numpy()
+            #         source2_prep = separated_sources[0][1].detach().numpy()
 
-                if use_cuda and torch.cuda.is_available():
-                    mixture_prep = input_mixture.cpu().detach().numpy()
-                    source1_prep = separated_sources[0][0].cpu().detach().numpy()
-                    source2_prep = separated_sources[0][1].cpu().detach().numpy()
-                else:
-                    mixture_prep = input_mixture.detach().numpy()
-                    source1_prep = separated_sources[0][0].detach().numpy()
-                    source2_prep = separated_sources[0][1].detach().numpy()
-
-                wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s1.wav", 8000, source1_prep)
-                wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s2.wav", 8000, source2_prep)
-                wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_mix.wav", 8000, mixture_prep)
+            #     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s1.wav", 8000, source1_prep)
+            #     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s2.wav", 8000, source2_prep)
+            #     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_mix.wav", 8000, mixture_prep)
 
         epoch_end = datetime.now()
         print("Epoch ", epoch, " finished - processed in ", (epoch_end - epoch_start))
+        log("## Epoch " + str(epoch) + " finished - processed in " + str((epoch_end - epoch_start)))
         # ==== End Of Epoch of training ====
 
 
         # === VALIDACE na konci epochy ===
         print("")
         print("Validace")
+        log("## Validation started")
         validation_start = datetime.now()
 
         valid_segment_cnt = 1
@@ -376,8 +346,6 @@ if __name__== "__main__":
         with torch.no_grad():
             for batch_cnt, data in enumerate(validloader, 0):
                 valid_segment_cnt += MINIBATCH_SIZE
-
-                # print("batch_cnt", batch_cnt, " valid_segment_cnt ", valid_segment_cnt)
 
                 # torch.autograd.set_detect_anomaly(True)
 
@@ -408,6 +376,7 @@ if __name__== "__main__":
                     target_source1 = target_source1.narrow(2, 0, smallest)
                     target_source2 = target_source2.narrow(2, 0, smallest)
 
+                # loss calculation
                 batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
                 batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
 
@@ -435,6 +404,7 @@ if __name__== "__main__":
             # == Validacni dataset je zpracovan, Vyhodnoceni validace ==
             validation_end = datetime.now()
             print('Validation Finished in ', (validation_end - validation_start))
+            log('## Validation Finished in ' + str((validation_end - validation_start)))
             print('')
 
             # TODO vykreslit i tuto loss, ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou rpes sebe. (GIT)
@@ -448,7 +418,10 @@ if __name__== "__main__":
 
     # Save Network For Inference in the end of training
     torch.save(tasnet.state_dict(), training_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(global_segment_cnt)+'.pkl')
+    log("Created Inference checkpoint: " + training_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(global_segment_cnt)+'.pkl')
     print('Finished Training')
+    log("##### Training Finished #####")
 
     plt.plot(graph_x, graph_y)
     plt.show()
+

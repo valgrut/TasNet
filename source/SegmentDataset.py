@@ -154,7 +154,7 @@ class SegmentDataset(data_utils.Dataset):
             return mix_seg, s1_seg, s2_seg
         except StopIteration:
             #init for next epoch
-            print("segmentDataset - segmentGenerator Prepare Next Epoch!")
+            # print("segmentDataset - segmentGenerator Prepare Next Epoch!")
             self.audioindex = 0
             self.generator = self.segment_generator()
             raise StopIteration
