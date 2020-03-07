@@ -133,12 +133,16 @@ if __name__== "__main__":
 
         tasnet.eval() # For inference and testing
 
+    training_dir = args.dst_dir
+    with open(training_dir + "testing.log", "a") as testlog:
+        testlog.write("Loaded Checkpoint: " + args.checkpoint_file + "\n")
+
     learning_started_date = datetime.now().strftime('%Y-%m-%d_%H:%M')
 
     # Load Test dataset
     test_data_path = BASE_DATA_PATH+"tt/"
     testset        = AudioDataset(test_data_path)
-    testloader     = data_utils.DataLoader(testset, batch_size=1, shuffle=False)
+    testloader     = data_utils.DataLoader(testset, batch_size=MINIBATCH_SIZE, shuffle=False)
 
     # Start Testing
     sdr_sum = 0
@@ -146,18 +150,15 @@ if __name__== "__main__":
     sarn_sum = 0
     perm_sum = 0
 
-    global_segment_cnt = 0
+    global_audio_cnt = 0
     running_loss = 0.0
-    test_segment_cnt = 0
     current_testing_result = 0
 
     with torch.no_grad():
         for audio_cnt, data in enumerate(testloader, 0):
-            global_segment_cnt += 1
-            # test_audio_cnt += 1
-            # torch.autograd.set_detect_anomaly(True)
+            global_audio_cnt += 1
 
-            if audio_cnt % 500 == 0:
+            if (global_audio_cnt) % 1000 == 0.0:
                 print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
                 print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
 
@@ -212,18 +213,35 @@ if __name__== "__main__":
             # Create np array of shape (NumOfSpeakers, NumOfSamples)
             estimated_sources = np.concatenate((estimated_source1_prep, estimated_source2_prep))
             ref_sources = np.concatenate((ref_source1_prep, ref_source2_prep))
-            
+
             # calculation of metrics
             (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources, estimated_sources, compute_permutation=True)
-            print(sdr, sir, sarn, perm)
+            # print(sdr, sir, sarn, perm)
 
             # TODO MOZNA zde asi taky bude potreba udelat to samo jako pro pocitani loss
             # protoze taky nemuzu vedet, ze mix[0] odpovida s1, nebo jestli odpovida s2
-            
-            sdr_sum += max(sdr) # pricitam to vetsi z dvojice vysledku
-            sir_sum += sir
-            sarn_sum += sarn
-            perm_sum += perm
 
-    print("Final SDR: " + str(sdr_sum/global_segment_cnt))
+            # Signal to Distortion Ratios (SDR)
+            sdr_sum += max(sdr) # pricitam to vetsi z dvojice vysledku
+
+            # Source to Interference Ratios (SIR)
+            sir_sum += max(sir)
+
+            # Sources to Artifacts Ratios (SAR)
+            sarn_sum += max(sarn)
+
+            # vector containing the best ordering of estimated sources in the mean SIR sense
+            # Just permutation - tells position of the best value when comparing cross sources. (s1-t1, s1-t2, s2-t1, s2-t2)
+            # perm_sum += perm
+
+    print("Final SDR: " + str(sdr_sum/global_audio_cnt))
+    print("Final SIR: " + str(sir_sum/global_audio_cnt))
+    print("Final SAR: " + str(sarn_sum/global_audio_cnt))
+
+    # Save results into the
+    with open(training_dir + "testing.log", "a") as testlog:
+        testlog.write("Final SDR: " + str(sdr_sum/global_audio_cnt) + "\n")
+        testlog.write("Final SIR: " + str(sir_sum/global_audio_cnt) + "\n")
+        testlog.write("Final SAR: " + str(sarn_sum/global_audio_cnt) + "\n")
+
     print('Finished Testing')
