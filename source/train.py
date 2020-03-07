@@ -170,9 +170,6 @@ if __name__== "__main__":
     trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = True)
     validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = True)
 
-    # from torch.utils.data import *
-    # print(list(BatchSampler(SequentialSampler(trainloader), batch_size=5, drop_last=False)))
-
     # TESTING of Dataloading
     # itr = iter(trainloader)
     # for audio_cnt, data in enumerate(trainloader, 0):
@@ -234,7 +231,7 @@ if __name__== "__main__":
                 # print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
                 # print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, segment_cnt)
                 with open(training_dir + "controll_check.log", "a") as logloss:
-                    logloss.write(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, segment_cnt+"\n")
+                    logloss.write(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " epoch: " + str(epoch) + " segment_cnt: " + str(segment_cnt) + "\n")
 
             input_mixture  = data[0] # tensor(N, 1, 32000) # N of mix segments
             target_source1 = data[1] # tensor(N, 1, 32000) # N of s1 segments
