@@ -124,11 +124,11 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - Error - index out of range - v main v cyklu segmentovat cely dataset a najit chybu.
 - dalsi kroky:
     - [DONE] oddelat prekryti
-    - [TODO] batch size tak velkou co to jde ... az dokud to nespadne pametove
+    - [DONE] batch size tak velkou co to jde ... az dokud to nespadne pametove
     - [DONE]mozna neni nutne paddovani nulama, ale u posledniho nekompletniho segmentu
     vzit ty 4 sekundy od konce
     - [DONE] cca do ctvrtka nastin prezentace
-    - [TODO] U testovaci sady zadne batche, ale cele nahravky (prip. batch o velikosti 1)
+    - [DONE] U testovaci sady zadne batche, ale cele nahravky (prip. batch o velikosti 1)
 
 ### pa 17. 1. 2020 - Konzultace
 - konzultace k prezentaci
@@ -136,7 +136,9 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 ### ut 21.1.2020 - Obhajoba
 - **Feedback** viz dokument
 
-###
+### po 9.3.2020
     [DONE] Zmenena segmentace tak, aby vzala pro posledni segment posledni 4 sekundy, misto paddovani nulama. Nulama se paduje uz jen u nahravek, ktere jsou kratsi nez 4 sekundy.
-
-    [todo] zkontrolovat pri inferenci pocet kanalu a vzorkovani.
+    [DONE] zkontrolovat pri inferenci pocet kanalu a vzorkovani.
+    [DONE] Zprovozneno Testovani
+    [DONE] Zprovoznena inference
+    [DONE] Trenovani funguje (Asi spravne)

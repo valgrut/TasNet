@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 08")
+    print("Version 09")
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
     parser.add_argument('--padding',
@@ -158,7 +158,7 @@ if __name__== "__main__":
         for audio_cnt, data in enumerate(testloader, 0):
             global_audio_cnt += 1
 
-            if (global_audio_cnt) % 1000 == 0.0:
+            if (global_audio_cnt) % 500 == 0.0:
                 print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
                 print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
                 with open(training_dir + "testing.log", "a") as testlog:

@@ -145,7 +145,7 @@ if __name__== "__main__":
         # tasnet.train() # For inference
         tasnet.eval() # For inference
 
-        print("Nactena epocha a loss: ", str(epoch), str(loss))
+        print("Nactena epocha: ", str(epoch), " a loss: ", str(loss))
 
 ####################################################################################################################################################################################
 ####################################################################################################################################################################################
@@ -160,7 +160,6 @@ if __name__== "__main__":
     mixture.unsqueeze_(0)
 
     input_mixture = mixture
-    print(input_mixture.size())
 
     if use_cuda and torch.cuda.is_available():
         input_mixture = input_mixture.cuda()
