@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 16")
+    print("Version 18")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -114,11 +114,11 @@ if __name__== "__main__":
 
     # hodnota je rovna poctu zpracovanych batchu
     # (pocet_segmentu = pocet_batchu * velikost_batche)
-    print_controll_check = 500 / MINIBATCH_SIZE
-    print_loss_frequency = 250 / MINIBATCH_SIZE # za kolik segmentu (minibatchu) vypisovat loss
-    print_valid_loss_frequency = 250
+    print_controll_check = 100
+    print_loss_frequency = 100 # za kolik segmentu (minibatchu) vypisovat loss
+    print_valid_loss_frequency = 100
     #log_loss_frequency = 5000
-    create_checkpoint_frequency = 1500 / MINIBATCH_SIZE
+    create_checkpoint_frequency = 500
 
 ####################################################################################################################################################################################
 

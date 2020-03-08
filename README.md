@@ -141,4 +141,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     [DONE] zkontrolovat pri inferenci pocet kanalu a vzorkovani.
     [DONE] Zprovozneno Testovani
     [DONE] Zprovoznena inference
-    [DONE] Trenovani funguje (Asi spravne)
+    [DONE] Sit se trenuje
+    TODO je potreba spravit trenovani. Spravne se projede jen prvni epocha, a z nejakeho duvodu se to dal pose**
+        pri debugu udelat dbg vypis a vypnout trenovani.
+    Pametova narocnost pri inferenci nahravky dlouhe 7minut (350MB) 
