@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 18")
+    print("Version 02")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -59,6 +59,18 @@ if __name__== "__main__":
             dest='checkpoint_file',
             type=str,
             help='path to checkpoint file with .tar extension')
+
+    parser.add_argument('--disable-validation',
+            dest='disable_validation',
+            default=False,
+            action='store_true',
+            help='disables validation after epoch')
+
+    parser.add_argument('--disable-backprop',
+            dest='disable_backprop',
+            default=False,
+            action='store_true',
+            help='disables backpropagation operation in training')
 
     parser.add_argument('--debug',
             dest='DEBUG',
@@ -199,8 +211,8 @@ if __name__== "__main__":
     log("Creating Trainign directory: " + training_dir)
 
     best_validation_result = 42   #initial value
-    graph_x = []
-    graph_y = []
+    # graph_x = []
+    # graph_y = []
 
     global_segment_cnt = 0
     cont_epoch = 0
@@ -277,8 +289,9 @@ if __name__== "__main__":
             # TODO 1. loss by mozna mela byt Average over the batch
             # loss = loss / MINIBATCH_SIZE
 
-            loss.backward()
-            optimizer.step()
+            if not args.disable_backprop:
+                loss.backward()
+                optimizer.step()
 
             # calculate average loss
             running_loss += loss.item()
@@ -286,9 +299,6 @@ if __name__== "__main__":
             # === print loss ===
             if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == 0.0:
                 # print('[%d, %5d] loss: %.5f' % (epoch, segment_cnt, running_loss/print_loss_frequency))
-                graph_x.append(global_segment_cnt)
-                graph_y.append(running_loss/print_loss_frequency)
-
                 # Write loss to file
                 with open(training_dir + "training_loss.log", "a") as logloss:
                     logloss.write(str(global_segment_cnt)+","+str(running_loss/print_loss_frequency)+"\n")
@@ -307,25 +317,6 @@ if __name__== "__main__":
                 }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
                 print("Checkpoint has been created.")
                 log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
-
-            # # === Save reconstruction ===
-            # if (segment_cnt/MINIBATCH_SIZE) % (audio_save_frequency) == 0:
-            #     mixture_prep = 0
-            #     source1_prep = 0
-            #     source2_prep = 0
-
-            #     if use_cuda and torch.cuda.is_available():
-            #         mixture_prep = input_mixture.cpu().detach().numpy()
-            #         source1_prep = separated_sources[0][0].cpu().detach().numpy()
-            #         source2_prep = separated_sources[0][1].cpu().detach().numpy()
-            #     else:
-            #         mixture_prep = input_mixture.detach().numpy()
-            #         source1_prep = separated_sources[0][0].detach().numpy()
-            #         source2_prep = separated_sources[0][1].detach().numpy()
-
-            #     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s1.wav", 8000, source1_prep)
-            #     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_s2.wav", 8000, source2_prep)
-            #     wav.write(training_dir+"speech_e"+str(epoch)+"_a"+str(segment_cnt)+"_mix.wav", 8000, mixture_prep)
 
         epoch_end = datetime.now()
 
@@ -346,86 +337,91 @@ if __name__== "__main__":
 
 
         # ====== VALIDACE na konci epochy ======
-        print("")
-        print("Validace")
-        log("## Validation started")
-        validation_start = datetime.now()
+        if not args.disable_validation:
+            print("")
+            print("Validace")
+            log("## Validation started")
+            validation_start = datetime.now()
 
-        valid_segment_cnt = 1
-        running_loss = 0.0
-        current_validation_result = 0
-        with torch.no_grad():
-            for batch_cnt, data in enumerate(validloader, 0):
-                valid_segment_cnt += MINIBATCH_SIZE
+            valid_segment_cnt = 1
+            running_loss = 0.0
+            current_validation_result = 0
+            with torch.no_grad():
+                for batch_cnt, data in enumerate(validloader, 0):
+                    valid_segment_cnt += MINIBATCH_SIZE
 
-                # torch.autograd.set_detect_anomaly(True)
+                    # torch.autograd.set_detect_anomaly(True)
 
-                if valid_segment_cnt % 500 == 0:
-                    print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
-                    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, valid_segment_cnt)
+                    if valid_segment_cnt % 500 == 0:
+                        print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
+                        print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, valid_segment_cnt)
 
-                input_mixture  = data[0]
-                target_source1 = data[1]
-                target_source2 = data[2]
+                    input_mixture  = data[0]
+                    target_source1 = data[1]
+                    target_source2 = data[2]
 
-                if use_cuda and torch.cuda.is_available():
-                    input_mixture = input_mixture.cuda()
-                    target_source1 = target_source1.cuda()
-                    target_source2 = target_source2.cuda()
+                    if use_cuda and torch.cuda.is_available():
+                        input_mixture = input_mixture.cuda()
+                        target_source1 = target_source1.cuda()
+                        target_source2 = target_source2.cuda()
 
-                separated_sources = tasnet(input_mixture)
+                    separated_sources = tasnet(input_mixture)
 
-                separated_sources = separated_sources.transpose(1,0)
+                    separated_sources = separated_sources.transpose(1,0)
 
-                s1 = separated_sources[0].unsqueeze(1)
-                s2 = separated_sources[1].unsqueeze(1)
+                    s1 = separated_sources[0].unsqueeze(1)
+                    s2 = separated_sources[1].unsqueeze(1)
 
-                if(s1.shape[2] != target_source1.shape[2]):
-                    smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
-                    s1 = s1.narrow(2, 0, smallest)
-                    s2 = s2.narrow(2, 0, smallest)
-                    target_source1 = target_source1.narrow(2, 0, smallest)
-                    target_source2 = target_source2.narrow(2, 0, smallest)
+                    if(s1.shape[2] != target_source1.shape[2]):
+                        smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
+                        s1 = s1.narrow(2, 0, smallest)
+                        s2 = s2.narrow(2, 0, smallest)
+                        target_source1 = target_source1.narrow(2, 0, smallest)
+                        target_source2 = target_source2.narrow(2, 0, smallest)
 
-                # loss calculation
-                batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
-                batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
+                    # loss calculation
+                    batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
+                    batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
 
-                # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
-                loss = 0
-                for batch_id in range(MINIBATCH_SIZE):
-                    loss += min(batch_loss1[batch_id], batch_loss2[batch_id])
+                    # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
+                    loss = 0
+                    for batch_id in range(MINIBATCH_SIZE):
+                        loss += min(batch_loss1[batch_id], batch_loss2[batch_id])
 
-                # calculate average loss
-                running_loss += loss.item()
-                current_validation_result += loss.item()
+                    # calculate average loss
+                    running_loss += loss.item()
+                    current_validation_result += loss.item()
 
-                # === print loss ===
-                if valid_segment_cnt % print_valid_loss_frequency == print_valid_loss_frequency - 1:
-                    print('[%d, %5d] loss: %.5f' % (epoch, valid_segment_cnt, running_loss/print_valid_loss_frequency))
-                    graph_x.append(valid_segment_cnt)
-                    graph_y.append(running_loss/print_valid_loss_frequency)
+                    # === print loss ===
+                    if valid_segment_cnt % print_valid_loss_frequency == print_valid_loss_frequency - 1:
+                        print('[%d, %5d] loss: %.5f' % (epoch, valid_segment_cnt, running_loss/print_valid_loss_frequency))
+                        # graph_x.append(valid_segment_cnt)
+                        # graph_y.append(running_loss/print_valid_loss_frequency)
 
-                    # Write loss to file
-                    with open(training_dir + "validation_loss.log", "a") as logloss:
-                        logloss.write(str(valid_segment_cnt)+","+str(running_loss/print_valid_loss_frequency)+"\n")
+                        # Write loss to file
+                        with open(training_dir + "validation_loss.log", "a") as logloss:
+                            logloss.write(str(valid_segment_cnt)+","+str(running_loss/print_valid_loss_frequency)+"\n")
 
-                    running_loss = 0.0
+                        running_loss = 0.0
 
-            # == Validacni dataset je zpracovan, Vyhodnoceni validace ==
-            validation_end = datetime.now()
-            print('Validation Finished in ', (validation_end - validation_start))
-            log('## Validation Finished in ' + str((validation_end - validation_start)))
-            print('')
+                # == Validacni dataset je zpracovan, Vyhodnoceni validace ==
+                validation_end = datetime.now()
+                print('Validation Finished in ', (validation_end - validation_start))
+                log('## Validation Finished in ' + str((validation_end - validation_start)))
+                print('')
 
-            # TODO vykreslit i tuto loss, ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou rpes sebe. (GIT)
-            current_validation_result /= valid_segment_cnt # prumer
-            print(current_validation_result, " ", best_validation_result)
-            if current_validation_result >= best_validation_result:
-                learning_rate /= 2 #TODO zjistit kdy se to ma delit
-            else:
-                best_validation_result = current_validation_result
+                # TODO vykreslit i tuto loss, ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou rpes sebe. (GIT)
+                current_validation_result /= valid_segment_cnt # prumer
+                print(current_validation_result, " ", best_validation_result)
+                if current_validation_result >= best_validation_result:
+                    learning_rate /= 2 #TODO zjistit kdy se to ma delit
+                else:
+                    best_validation_result = current_validation_result
 
+        # ===== Validation skipped
+        else:
+            print('Warning: Validation skipped')
+            log('Warning: Validation skipped')
 
     # Save Network For Inference in the end of training
     torch.save(tasnet.state_dict(), training_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(global_segment_cnt)+'.pkl')
@@ -433,6 +429,6 @@ if __name__== "__main__":
     print('Finished Training')
     log("##### Training Finished #####")
 
-    plt.plot(graph_x, graph_y)
-    plt.show()
+    # plt.plot(graph_x, graph_y)
+    # plt.show()
 
