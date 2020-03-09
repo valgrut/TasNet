@@ -66,8 +66,8 @@ if __name__== "__main__":
             action='store_true',
             help='disables validation after epoch')
 
-    parser.add_argument('--disable-backprop',
-            dest='disable_backprop',
+    parser.add_argument('--disable-training',
+            dest='disable_training',
             default=False,
             action='store_true',
             help='disables backpropagation operation in training')
@@ -289,7 +289,7 @@ if __name__== "__main__":
             # TODO 1. loss by mozna mela byt Average over the batch
             # loss = loss / MINIBATCH_SIZE
 
-            if not args.disable_backprop:
+            if not args.disable_training:
                 loss.backward()
                 optimizer.step()
 

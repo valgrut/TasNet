@@ -4,8 +4,9 @@ python3 train.py \
     --basepath="$HOME/Documents/full/min/" \
     --dst-dir="$HOME/TEST/" \
     --disable-validation \
-    --debug \
+    --disable-training \
     --minibatch-size 4 
+    # --debug
 
 exit 0
 
