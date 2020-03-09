@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 02")
+    print("Version 03")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
