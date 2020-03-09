@@ -179,7 +179,7 @@ if __name__== "__main__":
     # Note: We shuffle the loading process of train_dataset to make the learning process
     # independent of data order, but the order of test_loader
     # remains so as to examine whether we can handle unspecified bias order of inputs.
-    trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = True)
+    trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate, drop_last = True)
     validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = True)
 
     # TESTING of Dataloading
@@ -226,11 +226,6 @@ if __name__== "__main__":
         running_loss = 0.0
         segment_cnt = 0
         valid_segment_cnt = 0
-
-        ## TODO proc kazda druha epocha vypise pouze jeden vypis?
-        ## TODO zkontrolovat, ze se opravdu porovnavaji ty nahravky, co se maji porovnavat
-        ## a zkontrolovat rozmery v trenovani, jakoze shapes.
-        ## TODO Proc loss klesa do minusu
 
         epoch = epoch + cont_epoch
         for batch_cnt, data in enumerate(trainloader, 0):

@@ -142,8 +142,9 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     [DONE] Zprovozneno Testovani
     [DONE] Zprovoznena inference
     [DONE] Sit se trenuje
-    TODO je potreba spravit trenovani. Spravne se projede jen prvni epocha, a z nejakeho duvodu se to dal pose**
-        pri debugu udelat dbg vypis a vypnout trenovani.
-    poznamka: Pametova narocnost pri inferenci nahravky dlouhe 7minut (350MB)
-    dotaz: nemela by se loss pocitat jako average?
-    poznamka: scripty pro gdrive
+    !!!! je potreba spravit trenovani. Spravne se projede jen prvni epocha, a z nejakeho duvodu se to dal .. - kazda druha epocha se neprovede, ostatni jsou moc rychle.
+    - Pametova narocnost pri inferenci nahravky dlouhe 7minut (350MB)
+    - nemela by se loss pocitat jako average?
+    - scripty pro gdrive
+    - proc loss klesa do minusu
+    -
