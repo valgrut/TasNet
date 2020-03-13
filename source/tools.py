@@ -36,7 +36,7 @@ def train_collate(batch):
     list_s1 = []
     list_s2 = []
 
-    if(len(batch) > 1): # TODO mozna >=
+    if(len(batch) > 1):
         for audio in batch:
             list_mix.append(audio[0][0])  # pripadne bez te posledni [0], pokud bych oddelal squ      eeze v __get_item__()
             list_s1.append(audio[1][0])
@@ -55,6 +55,9 @@ def train_collate(batch):
 
 
 def audio_collate(batch):
+    """
+    Pro mini-batch size = 1
+    """
     # print("collate")
     # print(batch) #list listuu s tenzory mix,s1,s2
     # print("")

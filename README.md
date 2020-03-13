@@ -148,3 +148,6 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - scripty pro gdrive
     - proc loss klesa do minusu
     -
+
+### pa 3.2020
+

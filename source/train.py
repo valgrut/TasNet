@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 03")
+    print("Version 08")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -179,8 +179,8 @@ if __name__== "__main__":
     # Note: We shuffle the loading process of train_dataset to make the learning process
     # independent of data order, but the order of test_loader
     # remains so as to examine whether we can handle unspecified bias order of inputs.
-    trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=True, collate_fn = train_collate, drop_last = True)
-    validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = True)
+    trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = False)
+    validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = False)
 
     # TESTING of Dataloading
     # itr = iter(trainloader)
@@ -269,6 +269,7 @@ if __name__== "__main__":
                 target_source1 = target_source1.narrow(2, 0, smallest)
                 target_source2 = target_source2.narrow(2, 0, smallest)
 
+
             # Loss calculation
             batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
             batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
@@ -280,9 +281,6 @@ if __name__== "__main__":
                 loss += min(batch_loss1[batch_id], batch_loss2[batch_id])
                 # loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
                 # loss.backward(retain_graph=True)
-
-            # TODO 1. loss by mozna mela byt Average over the batch
-            # loss = loss / MINIBATCH_SIZE
 
             if not args.disable_training:
                 loss.backward()
@@ -313,6 +311,7 @@ if __name__== "__main__":
                 print("Checkpoint has been created.")
                 log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
 
+        # ### End of epoch ###
         epoch_end = datetime.now()
 
         # Create checkpoint at the end of epoch
@@ -323,11 +322,14 @@ if __name__== "__main__":
           'optimizer_state_dict': optimizer.state_dict(),
           'loss': loss,
         }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
-        print("Checkpoint has been created.")
-        log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
 
-        print("Epoch ", epoch, " finished - processed in ", (epoch_end - epoch_start))
-        log("## Epoch " + str(epoch) + " finished - processed in " + str((epoch_end - epoch_start)))
+        print("Checkpoint has been created after epoch.")
+        log("Checkpoint created after epoch: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
+
+        print("batch_cnt: ", batch_cnt, " segment-cnt: ", segment_cnt)
+
+        print("Epoch ", epoch, " finished - processed in ", (epoch_end - epoch_start), "\n")
+        log("## Epoch " + str(epoch) + " finished - processed in " + str((epoch_end - epoch_start))+ "\n")
         # ====== End Of Epoch ======
 
 
@@ -415,8 +417,8 @@ if __name__== "__main__":
 
         # ===== Validation skipped
         else:
-            print('Warning: Validation skipped')
-            log('Warning: Validation skipped')
+            print('Warning: Validation skipped\n')
+            log('Warning: Validation skipped\n')
 
     # Save Network For Inference in the end of training
     torch.save(tasnet.state_dict(), training_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(global_segment_cnt)+'.pkl')

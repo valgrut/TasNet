@@ -49,7 +49,9 @@ class Net(nn.Module):
         data = self.TCN(data)
 
         data = self.bottleneck2(data)
-        data = torch.reshape(data, (self.batch_size, 256, 2, -1,))
+        current_batch_size = data.shape[0] # for case if batch is not complete
+        data = torch.reshape(data, (current_batch_size, 256, 2, -1,))
+        # data = torch.reshape(data, (self.batch_size, 256, 2, -1,))
         masks = self.softmax(data)
         if self.DEBUG:
             print("NN: Masks: ", masks.shape)
@@ -58,7 +60,8 @@ class Net(nn.Module):
         # print("TasNet: representation shape: ", representation.shape)
         # print("TasNet: masks shape:", masks.shape)
         masked_representation = torch.mul(representation[:,:,None,:], masks)
-        masked_representation = torch.reshape(masked_representation, (self.batch_size, 512, -1))
+        masked_representation = torch.reshape(masked_representation, (current_batch_size, 512, -1))
+        # masked_representation = torch.reshape(masked_representation, (self.batch_size, 512, -1))
 
         # decoder
         separate_data = self.deconv(masked_representation)

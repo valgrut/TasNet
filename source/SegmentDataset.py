@@ -90,7 +90,7 @@ class SegmentDataset(data_utils.Dataset):
         v1: transformovane a nachystane audio v podobe tensoru
         """
         #print(">> __getitem__")
-        mix_seg, s1_seg, s2_seg = self.getSegment() # tato bude, misto return, mit yield
+        mix_seg, s1_seg, s2_seg = self.getSegment()
         mix_seg.unsqueeze_(0)
         s1_seg.unsqueeze_(0)
         s2_seg.unsqueeze_(0)
@@ -103,7 +103,7 @@ class SegmentDataset(data_utils.Dataset):
         # print("LoadNextAudio: audioindex of current mixture: ", self.audioindex, "/", len(self.mixtures))
 
         if self.audioindex >= len(self.mixtures):
-            #print("POZOR: audioindex >= len(self.mixtures), iterace by mela skoncit")
+            print("loadNextAudio: POZOR: audioindex >= len(self.mixtures) ", self.audioindex, "/", len(self.mixtures) ,", iterace by mela skoncit a nachystat se nove epocha.")
             return None #raises StopIteration exception
         else: #jeste je co prochazet
             self.generator = self.segment_generator()
@@ -165,16 +165,19 @@ class SegmentDataset(data_utils.Dataset):
             return mix_seg, s1_seg, s2_seg
         except StopIteration:
             #init for next epoch
-            #print("segmentDataset - segmentGenerator Prepare Next Epoch!")
+            print("getSegmen: segmentDataset - segmentGenerator Prepare Next Epoch!")
 
             #print("Shiffle of mix, s1, s2 array")
             random.shuffle(self.mixtures)
             self.sources1 = self.mixtures
             self.sources2 = self.mixtures
 
+            print("getSegment: audioindex = ",self.audioindex, " and len(self.mixtures) = ", len(self.mixtures))
+
             self.audioindex = 0
             self.loadNextAudio()
             # self.generator = self.segment_generator() #TODO mozna zde neni potreba????
+            print("getSegment: audioindex = ",self.audioindex, " and len(self.mixtures) = ", len(self.mixtures))
             raise StopIteration
 
 
