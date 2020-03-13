@@ -1,0 +1,579 @@
+Version 08
+Namespace(BASE_DATA_PATH='/root/Documents/full/min/', DEBUG=False, R=1, X=1, checkpoint_file=None, disable_training=True, disable_validation=True, dst_dir='/root/TEST/', epochs=4, learning_rate=0.0001, minibatch_size=16, padding=10, print_loss=False, stride=20)
+Cuda is NOT available
+LoadNextAudio: audioindex of current mixture:  0 / 15
+LoadNextAudio: audioindex of current mixture:  0 / 15
+Trainign directory:  /root/TEST/2020-03-13_20:47_X1_R1/
+Epoch  0  started at  2020-03-13 20:47:18.866773
+>> __len__
+__len__: 1 < 15  Returns:  33760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  33760
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 33760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  33760
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  1 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  41760
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 41760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  41760
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  2 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  3 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  28522
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  4 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  5 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  6 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  24914
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  7 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  50412
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 50412
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  50412
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  8 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  47522
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 47522
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  47522
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  9 / 15
+16
+tools-train_collate:  torch.Size([16, 32000]) torch.Size([16, 32000])
+batch_cnt:  0
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  45969
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 45969
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  45969
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  10 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  29920
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  11 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  38725
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 38725
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  38725
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  12 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  42087
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 42087
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  42087
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  13 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  55054
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 55054
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  55054
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  14 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  43921
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 43921
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  43921
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  15 / 15
+SegmentDataset.loadNextAudio: POZOR: audioindex >= len(self.mixtures)  15 / 15 , iterace by mela skoncit a nachystat se nove epocha. (Return None that will rise StopIteration exception.)
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+SegmentDataset.getSegmen: segmentGenerator stops --> Prepare Next Epoch!
+SegmentGenerator.getSegment: audioindex =  15  and len(self.mixtures) =  15
+LoadNextAudio: audioindex of current mixture:  0 / 15
+SegmentGenerator.getSegment: audioindex =  1  and len(self.mixtures) =  15
+SegmentDataset.__getitem__: StopIteration raised
+>>Epoch ends. Post epoch operations:
+Checkpoint has been created after epoch.
+batch_cnt:  0  segment-cnt:  16
+Epoch  0  finished - processed in  0:00:00.753668 
+
+Warning: Validation skipped
+
+Epoch  1  started at  2020-03-13 20:47:19.622799
+>> __len__
+__len__: 1 < 15  Returns:  41760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  41760
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 41760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  41760
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  1 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  47522
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 47522
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  47522
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  2 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  28522
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  3 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  4 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  5 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  42087
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 42087
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  42087
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  6 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  55054
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 55054
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  55054
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  7 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  24914
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  8 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  38725
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 38725
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  38725
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  9 / 15
+16
+tools-train_collate:  torch.Size([16, 32000]) torch.Size([16, 32000])
+batch_cnt:  0
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  43921
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 43921
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  43921
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  10 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  50412
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 50412
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  50412
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  11 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  12 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  33760
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 33760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  33760
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  13 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  29920
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  14 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  45969
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 45969
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  45969
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  15 / 15
+SegmentDataset.loadNextAudio: POZOR: audioindex >= len(self.mixtures)  15 / 15 , iterace by mela skoncit a nachystat se nove epocha. (Return None that will rise StopIteration exception.)
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+SegmentDataset.getSegmen: segmentGenerator stops --> Prepare Next Epoch!
+SegmentGenerator.getSegment: audioindex =  15  and len(self.mixtures) =  15
+LoadNextAudio: audioindex of current mixture:  0 / 15
+SegmentGenerator.getSegment: audioindex =  1  and len(self.mixtures) =  15
+SegmentDataset.__getitem__: StopIteration raised
+>>Epoch ends. Post epoch operations:
+Checkpoint has been created after epoch.
+batch_cnt:  0  segment-cnt:  16
+Epoch  1  finished - processed in  0:00:00.729553 
+
+Warning: Validation skipped
+
+Epoch  2  started at  2020-03-13 20:47:20.355560
+>> __len__
+__len__: 1 < 15  Returns:  48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  1 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  28522
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  2 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  43921
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 43921
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  43921
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  3 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  42087
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 42087
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  42087
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  4 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  5 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  45969
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 45969
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  45969
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  6 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  24914
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  7 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  33760
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 33760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  33760
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  8 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  50412
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 50412
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  50412
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  9 / 15
+16
+tools-train_collate:  torch.Size([16, 32000]) torch.Size([16, 32000])
+batch_cnt:  0
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  38725
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 38725
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  38725
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  10 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  41760
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 41760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  41760
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  11 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  29920
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  12 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  55054
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 55054
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  55054
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  13 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  14 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  47522
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 47522
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  47522
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  15 / 15
+SegmentDataset.loadNextAudio: POZOR: audioindex >= len(self.mixtures)  15 / 15 , iterace by mela skoncit a nachystat se nove epocha. (Return None that will rise StopIteration exception.)
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+SegmentDataset.getSegmen: segmentGenerator stops --> Prepare Next Epoch!
+SegmentGenerator.getSegment: audioindex =  15  and len(self.mixtures) =  15
+LoadNextAudio: audioindex of current mixture:  0 / 15
+SegmentGenerator.getSegment: audioindex =  1  and len(self.mixtures) =  15
+SegmentDataset.__getitem__: StopIteration raised
+>>Epoch ends. Post epoch operations:
+Checkpoint has been created after epoch.
+batch_cnt:  0  segment-cnt:  16
+Epoch  2  finished - processed in  0:00:00.698044 
+
+Warning: Validation skipped
+
+Epoch  3  started at  2020-03-13 20:47:21.056136
+>> __len__
+__len__: 1 < 15  Returns:  42087
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  42087
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 42087
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  42087
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  1 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  43921
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 43921
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  43921
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  2 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  28522
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  3 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  33760
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 33760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  33760
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  4 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  5 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  6 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  50412
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 50412
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  50412
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  7 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  47522
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 47522
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  47522
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  8 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  24914
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  9 / 15
+16
+tools-train_collate:  torch.Size([16, 32000]) torch.Size([16, 32000])
+batch_cnt:  0
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  45969
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 45969
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  45969
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  10 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  29920
+seg_gen: segptr:  0
+Nahravka je kratsi nez  32000 , takze doplnime nulama a vemem dalsi.
+LoadNextAudio: audioindex of current mixture:  11 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  55054
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 55054
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  55054
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  12 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  41760
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 41760
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  41760
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  13 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  38725
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 38725
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  38725
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  14 / 15
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  0
+if Dalsi 4s k dispozici:  32000 < 48992
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+seg_gen: curr_mix_len:  48992
+seg_gen: segptr:  32000
+else presahli bychom konec, takze vezmeme 4s od konce a nahrajem dalsi.
+LoadNextAudio: audioindex of current mixture:  15 / 15
+SegmentDataset.loadNextAudio: POZOR: audioindex >= len(self.mixtures)  15 / 15 , iterace by mela skoncit a nachystat se nove epocha. (Return None that will rise StopIteration exception.)
+SegmentDataset.__getitem__(): call getSegment() and return segments of mix, s1, s2
+SegmentDataset.getSegmen: segmentGenerator stops --> Prepare Next Epoch!
+SegmentGenerator.getSegment: audioindex =  15  and len(self.mixtures) =  15
+LoadNextAudio: audioindex of current mixture:  0 / 15
+SegmentGenerator.getSegment: audioindex =  1  and len(self.mixtures) =  15
+SegmentDataset.__getitem__: StopIteration raised
+>>Epoch ends. Post epoch operations:
+Checkpoint has been created after epoch.
+batch_cnt:  0  segment-cnt:  16
+Epoch  3  finished - processed in  0:00:00.671345 
+
+Warning: Validation skipped
+
+Finished Training

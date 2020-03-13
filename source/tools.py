@@ -36,20 +36,21 @@ def train_collate(batch):
     list_s1 = []
     list_s2 = []
 
-    if(len(batch) > 1):
-        for audio in batch:
-            list_mix.append(audio[0][0])  # pripadne bez te posledni [0], pokud bych oddelal squ      eeze v __get_item__()
-            list_s1.append(audio[1][0])
-            list_s2.append(audio[2][0])
+    # if(len(batch) > 1):
+    for audio in batch:
+        list_mix.append(audio[0][0])  # pripadne bez te posledni [0], pokud bych oddelal squ      eeze v __get_item__()
+        list_s1.append(audio[1][0])
+        list_s2.append(audio[2][0])
 
-        padded_mix = torch.nn.utils.rnn.pad_sequence(list_mix, batch_first=True)
-        padded_s1 = torch.nn.utils.rnn.pad_sequence(list_s1, batch_first=True)
-        padded_s2 = torch.nn.utils.rnn.pad_sequence(list_s2, batch_first=True)
-    else:
-        print("Doplneno nul: ", 32000 - len(batch[0]))
-        zero = torch.zeros(32000 - len(batch[0]))
-        minibatch_mix = torch.cat((batch[0], zero), 0)
+    padded_mix = torch.nn.utils.rnn.pad_sequence(list_mix, batch_first=True)
+    padded_s1 = torch.nn.utils.rnn.pad_sequence(list_s1, batch_first=True)
+    padded_s2 = torch.nn.utils.rnn.pad_sequence(list_s2, batch_first=True)
+    # else:
+        # print("Doplneno nul: ", 32000 - len(batch[0]))
+        # zero = torch.zeros(32000 - len(batch[0]))
+        # minibatch_mix = torch.cat((batch[0], zero), 0)
 
+    # print("tools-train_collate: ", padded_mix.shape, padded_s1.shape)
     # return padded_mix, padded_s1, padded_s2
     return padded_mix.unsqueeze(1), padded_s1.unsqueeze(1), padded_s2.unsqueeze(1)
 

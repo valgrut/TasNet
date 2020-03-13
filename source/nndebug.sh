@@ -5,7 +5,7 @@ python3 train.py \
     --dst-dir="$HOME/TEST/" \
     --disable-validation \
     --disable-training \
-    --minibatch-size 3 
+    --minibatch-size 5
     # --debug
 
 exit 0

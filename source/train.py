@@ -179,18 +179,17 @@ if __name__== "__main__":
     # Note: We shuffle the loading process of train_dataset to make the learning process
     # independent of data order, but the order of test_loader
     # remains so as to examine whether we can handle unspecified bias order of inputs.
-    trainloader = data_utils.DataLoader(trainset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = False)
-    validloader = data_utils.DataLoader(validset, batch_size = MINIBATCH_SIZE, shuffle=False, collate_fn = train_collate, drop_last = False)
+    trainloader = data_utils.DataLoader(dataset=trainset,
+            batch_size = MINIBATCH_SIZE,
+            shuffle=False,
+            collate_fn = train_collate,
+            drop_last = False)
 
-    # TESTING of Dataloading
-    # itr = iter(trainloader)
-    # for audio_cnt, data in enumerate(trainloader, 0):
-    #     # test collate_fn:
-    #     print("cnt: ", audio_cnt)
-    #     print("ITER.next: ", itr.next())
-    #     print(itr.next())
-    # print("konec")
-    # exit(1)
+    validloader = data_utils.DataLoader(dataset=validset,
+            batch_size = MINIBATCH_SIZE,
+            shuffle=False,
+            collate_fn = train_collate,
+            drop_last = False)
 
     # Create directory for loss file, reconstructions and checkpoints
     training_dir = args.dst_dir + learning_started_date + "_X"+str(X) + "_R" + str(R) + "/"
@@ -210,6 +209,20 @@ if __name__== "__main__":
     log("pytorch version: " + torch.__version__)
     log("Creating Trainign directory: " + training_dir)
 
+
+    # TESTING of Dataloading
+    # itr = iter(trainloader)
+    # for audio_cnt, data in enumerate(trainloader, 0):
+    # #     # test collate_fn:
+    #     print("cnt: ", audio_cnt)
+    #     bat = itr.next()
+    #     print("ITER.next: ", len(bat))
+    #     # print(itr.next())
+    #     input("Press Enter to continue...\n\n")
+    # print("konec")
+    # exit(1)
+
+
     best_validation_result = 42   #initial value
     # graph_x = []
     # graph_y = []
@@ -223,16 +236,19 @@ if __name__== "__main__":
         print("Epoch ", epoch, " started at ", epoch_start)
         log("## Epoch " + str(epoch) + " started at " + str(epoch_start))
 
+        loss = 0
         running_loss = 0.0
         segment_cnt = 0
         valid_segment_cnt = 0
+        batch_cnt = 0
 
-        epoch = epoch + cont_epoch
-        for batch_cnt, data in enumerate(trainloader, 0):
+        # epoch = epoch + cont_epoch
+        for batch_cnt, data in enumerate(trainloader, 1):
+            print("batch_cnt: ", (batch_cnt))
             global_segment_cnt += MINIBATCH_SIZE
             segment_cnt += MINIBATCH_SIZE
 
-            torch.autograd.set_detect_anomaly(True)
+            # torch.autograd.set_detect_anomaly(True)
 
             if (segment_cnt/MINIBATCH_SIZE) % (print_controll_check) == 0.0:
                 # print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
@@ -313,6 +329,7 @@ if __name__== "__main__":
 
         # ### End of epoch ###
         epoch_end = datetime.now()
+        print(">>Epoch ends. Post epoch operations:")
 
         # Create checkpoint at the end of epoch
         torch.save({
@@ -344,7 +361,7 @@ if __name__== "__main__":
             running_loss = 0.0
             current_validation_result = 0
             with torch.no_grad():
-                for batch_cnt, data in enumerate(validloader, 0):
+                for batch_cnt, data in enumerate(validloader, 1):
                     valid_segment_cnt += MINIBATCH_SIZE
 
                     # torch.autograd.set_detect_anomaly(True)
