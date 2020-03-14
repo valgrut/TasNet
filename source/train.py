@@ -183,7 +183,7 @@ if __name__== "__main__":
             batch_size = MINIBATCH_SIZE,
             shuffle=False,
             collate_fn = train_collate,
-            drop_last = False)
+            drop_last = True)
 
     validloader = data_utils.DataLoader(dataset=validset,
             batch_size = MINIBATCH_SIZE,
@@ -244,7 +244,7 @@ if __name__== "__main__":
 
         # epoch = epoch + cont_epoch
         for batch_cnt, data in enumerate(trainloader, 1):
-            print("batch_cnt: ", (batch_cnt))
+            # print("batch_cnt: ", (batch_cnt))
             global_segment_cnt += MINIBATCH_SIZE
             segment_cnt += MINIBATCH_SIZE
 
