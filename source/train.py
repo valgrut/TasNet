@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 08")
+    print("Version 13")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -126,7 +126,7 @@ if __name__== "__main__":
 
     # hodnota je rovna poctu zpracovanych batchu
     # (pocet_segmentu = pocet_batchu * velikost_batche)
-    print_controll_check = 100
+    print_controll_check = 50
     print_loss_frequency = 100 # za kolik segmentu (minibatchu) vypisovat loss
     print_valid_loss_frequency = 100
     #log_loss_frequency = 5000
@@ -183,7 +183,7 @@ if __name__== "__main__":
             batch_size = MINIBATCH_SIZE,
             shuffle=False,
             collate_fn = train_collate,
-            drop_last = True)
+            drop_last = False)
 
     validloader = data_utils.DataLoader(dataset=validset,
             batch_size = MINIBATCH_SIZE,
@@ -245,8 +245,13 @@ if __name__== "__main__":
         # epoch = epoch + cont_epoch
         for batch_cnt, data in enumerate(trainloader, 1):
             # print("batch_cnt: ", (batch_cnt))
-            global_segment_cnt += MINIBATCH_SIZE
-            segment_cnt += MINIBATCH_SIZE
+
+            actual_batch_size = len(data[0])
+
+            # global_segment_cnt += MINIBATCH_SIZE
+            # segment_cnt += MINIBATCH_SIZE
+            global_segment_cnt += actual_batch_size
+            segment_cnt += actual_batch_size
 
             # torch.autograd.set_detect_anomaly(True)
 
@@ -278,12 +283,12 @@ if __name__== "__main__":
 
             # TODO pozn neni potreba, protoze segmenty jsou upravovany v collate_fn a dale.
             # A proc to furt potreba je... nekde se to z nejakyho duvodu nici
-            if(s1.shape[2] != target_source1.shape[2] != s2.shape[2] != target_source2.shape[2]):
-                smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
-                s1 = s1.narrow(2, 0, smallest)
-                s2 = s2.narrow(2, 0, smallest)
-                target_source1 = target_source1.narrow(2, 0, smallest)
-                target_source2 = target_source2.narrow(2, 0, smallest)
+            # if(s1.shape[2] != target_source1.shape[2] != s2.shape[2] != target_source2.shape[2]):
+                # smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
+                # s1 = s1.narrow(2, 0, smallest)
+                # s2 = s2.narrow(2, 0, smallest)
+                # target_source1 = target_source1.narrow(2, 0, smallest)
+                # target_source2 = target_source2.narrow(2, 0, smallest)
 
 
             # Loss calculation
@@ -293,7 +298,7 @@ if __name__== "__main__":
             # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
             optimizer.zero_grad()
             loss = 0
-            for batch_id in range(MINIBATCH_SIZE):
+            for batch_id in range(actual_batch_size):
                 loss += min(batch_loss1[batch_id], batch_loss2[batch_id])
                 # loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
                 # loss.backward(retain_graph=True)
@@ -302,8 +307,10 @@ if __name__== "__main__":
                 loss.backward()
                 optimizer.step()
 
+
             # calculate average loss
             running_loss += loss.item()
+
 
             # === print loss ===
             if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == 0.0:
@@ -311,8 +318,8 @@ if __name__== "__main__":
                 # Write loss to file
                 with open(training_dir + "training_loss.log", "a") as logloss:
                     logloss.write(str(global_segment_cnt)+","+str(running_loss/print_loss_frequency)+"\n")
-
                 running_loss = 0.0
+
 
             # === Create checkpoint ===
             if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == 0.0:
@@ -362,7 +369,10 @@ if __name__== "__main__":
             current_validation_result = 0
             with torch.no_grad():
                 for batch_cnt, data in enumerate(validloader, 1):
-                    valid_segment_cnt += MINIBATCH_SIZE
+                    # valid_segment_cnt += MINIBATCH_SIZE
+
+                    actual_batch_size = len(data[0])
+                    valid_segment_cnt += actual_batch_size
 
                     # torch.autograd.set_detect_anomaly(True)
 
@@ -399,7 +409,7 @@ if __name__== "__main__":
 
                     # calculate MIN for each col (batch pair) of batches in range(0,batch_size-1)
                     loss = 0
-                    for batch_id in range(MINIBATCH_SIZE):
+                    for batch_id in range(actual_batch_size):
                         loss += min(batch_loss1[batch_id], batch_loss2[batch_id])
 
                     # calculate average loss

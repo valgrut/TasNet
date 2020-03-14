@@ -62,16 +62,16 @@ class SegmentDataset(data_utils.Dataset):
     def __len__(self):
         """
         """
-        # print(">> __len__")
+        print(">> __len__")
         if(self.audioindex < self.dataset_len):
             if(self.isAudioPrepared == False):
                 self.loadNextAudio()
                 self.isAudioPrepared = True
                 self.generator = self.segment_generator()
-            # print("__len__:", self.audioindex, "<", self.dataset_len, " Returns: ", len(self.current_mixture))
+            print("__len__:", self.audioindex, "<", self.dataset_len, " Returns: ", len(self.current_mixture))
             return len(self.current_mixture)
         else:
-            # print("SegmentDataset.__len__:", self.audioindex, ">=", self.dataset_len, " Returns: ", self.dataset_len)
+            print("POZOR, tohle tu normalne neni: __len__:", self.audioindex, ">=", self.dataset_len, " Returns: ", self.dataset_len)
             return self.dataset_len
 
 
@@ -86,7 +86,7 @@ class SegmentDataset(data_utils.Dataset):
                 self.loadNextAudio()
                 self.generator = self.segment_generator()
         except StopIteration:
-            # print("    __getitem__(): NELZE NACHYSTAT DALSI AUDIO: StopIteration raised")
+            print("    __getitem__(): NELZE NACHYSTAT DALSI AUDIO: StopIteration raised")
             raise StopIteration
 
         try:
@@ -97,7 +97,7 @@ class SegmentDataset(data_utils.Dataset):
             s2_seg.unsqueeze_(0)
             return mix_seg, s1_seg, s2_seg
         except StopIteration:
-            # print("    __getitem__(): cant return segments: StopIteration raised")
+            print("    __getitem__(): cant return segments: StopIteration raised")
             raise StopIteration
 
 
@@ -181,7 +181,7 @@ class SegmentDataset(data_utils.Dataset):
         # check whether some audio mixtures are available to load
         # All mixtures used.
         if self.audioindex >= self.dataset_len:
-            # print("    loadNextAudio: POZOR: audioindex >= len(self.mixtures) ", self.audioindex, "/", len(self.mixtures) ,", iterace by mela skoncit a nachystat se nove epocha. (Return None that will rise StopIteration exception.)")
+            print("    loadNextAudio: POZOR: audioindex >= len(self.mixtures) ", self.audioindex, "/", len(self.mixtures) ,", iterace by mela skoncit a nachystat se nove epocha. (Return None that will rise StopIteration exception.)")
             self.prepareNewEpoch()
             return None #raises StopIteration exception
 
