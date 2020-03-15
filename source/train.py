@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 14")
+    print("Version 15")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -224,17 +224,15 @@ if __name__== "__main__":
 
 
     best_validation_result = 42   #initial value
-    # graph_x = []
-    # graph_y = []
 
     global_segment_cnt = 0
     cont_epoch = 0
 
     log("##### Training started #####")
-    for (epoch) in range(epochs):
+    for (epoch) in range(1,epochs+1):
         epoch_start = datetime.now()
-        print("Epoch ", epoch, " started at ", epoch_start)
-        log("## Epoch " + str(epoch) + " started at " + str(epoch_start))
+        print("Epoch ", epoch, "/",epochs," started at ", epoch_start)
+        log("## Epoch " + str(epoch) + "/" + str(epochs) + " started at " + str(epoch_start))
 
         loss = 0
         running_loss = 0.0
@@ -247,9 +245,6 @@ if __name__== "__main__":
             # print("batch_cnt: ", (batch_cnt))
 
             actual_batch_size = len(data[0])
-
-            # global_segment_cnt += MINIBATCH_SIZE
-            # segment_cnt += MINIBATCH_SIZE
             global_segment_cnt += actual_batch_size
             segment_cnt += actual_batch_size
 
@@ -322,17 +317,17 @@ if __name__== "__main__":
 
 
             # === Create checkpoint ===
-            if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == 0.0:
-                # Create snapshot - checkpoint
-                torch.save({
-                  'epoch': epoch,
-                  'audio_cnt': segment_cnt,
-                  'model_state_dict': tasnet.state_dict(),
-                  'optimizer_state_dict': optimizer.state_dict(),
-                  'loss': loss,
-                }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
-                print("Checkpoint has been created.")
-                log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
+            # if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == 0.0:
+            #     # Create snapshot - checkpoint
+            #     torch.save({
+            #       'epoch': epoch,
+            #       'audio_cnt': segment_cnt,
+            #       'model_state_dict': tasnet.state_dict(),
+            #       'optimizer_state_dict': optimizer.state_dict(),
+            #       'loss': loss,
+            #     }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
+            #     print("Checkpoint has been created.")
+            #     log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
 
         # ### End of epoch ###
         epoch_end = datetime.now()
@@ -419,8 +414,6 @@ if __name__== "__main__":
                     # === print loss ===
                     if valid_segment_cnt % print_valid_loss_frequency == print_valid_loss_frequency - 1:
                         print('[%d, %5d] loss: %.5f' % (epoch, valid_segment_cnt, running_loss/print_valid_loss_frequency))
-                        # graph_x.append(valid_segment_cnt)
-                        # graph_y.append(running_loss/print_valid_loss_frequency)
 
                         # Write loss to file
                         with open(training_dir + "validation_loss.log", "a") as logloss:
@@ -452,7 +445,4 @@ if __name__== "__main__":
     log("Created Inference checkpoint: " + training_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(global_segment_cnt)+'.pkl')
     print('Finished Training')
     log("##### Training Finished #####")
-
-    # plt.plot(graph_x, graph_y)
-    # plt.show()
 
