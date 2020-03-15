@@ -61,18 +61,25 @@ class SegmentDataset(data_utils.Dataset):
 
     def __len__(self):
         """
+        Funkce vraci delku datasetu, ktery dataloader bude prochazet.
+        Pozor, tato funkce je zavolana pouze jednou, takze je nutne vedet
+        od zacatku delku datasetu, protoze dalsi zmeny uz nebudou mit vliv.
+
+        Pokud nevite delku datasetu, je lepsi zvolit velkou hodnotu a 
+        ukonceni cyklu si vzit na starosti sam.
         """
-        # print(">> __len__")
-        if(self.audioindex < self.dataset_len):
-            if(self.isAudioPrepared == False):
-                self.loadNextAudio()
-                self.isAudioPrepared = True
-                self.generator = self.segment_generator()
-            # print("__len__:", self.audioindex, "<", self.dataset_len, " Returns: ", len(self.current_mixture))
-            return len(self.current_mixture)
-        else:
-            # print("POZOR, tohle tu normalne neni: __len__:", self.audioindex, ">=", self.dataset_len, " Returns: ", self.dataset_len)
-            return self.dataset_len
+        return 100000
+        # # print(">> __len__")
+        # if(self.audioindex < self.dataset_len):
+        #     if(self.isAudioPrepared == False):
+        #         self.loadNextAudio()
+        #         self.isAudioPrepared = True
+        #         self.generator = self.segment_generator()
+        #     print("__len__:", self.audioindex, "<", self.dataset_len, " Returns: ", len(self.current_mixture))
+        #     return len(self.current_mixture)
+        # else:
+        #     print("POZOR, tohle tu normalne neni: __len__:", self.audioindex, ">=", self.dataset_len, " Returns: ", self.dataset_len)
+        #     return self.dataset_len
 
 
     def __getitem__(self, index):
@@ -97,7 +104,8 @@ class SegmentDataset(data_utils.Dataset):
             s2_seg.unsqueeze_(0)
             return mix_seg, s1_seg, s2_seg
         except StopIteration:
-            # print("    __getitem__(): cant return segments: StopIteration raised")
+            print("     audioindex ", self.audioindex, "/", len(self.mixtures))
+            print("    __getitem__(): cant return segments: StopIteration raised")
             raise StopIteration
 
 
