@@ -17,7 +17,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 13")
+    print("Version 14")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -130,7 +130,7 @@ if __name__== "__main__":
     print_loss_frequency = 100 # za kolik segmentu (minibatchu) vypisovat loss
     print_valid_loss_frequency = 100
     #log_loss_frequency = 5000
-    create_checkpoint_frequency = 500
+    create_checkpoint_frequency = 800
 
 ####################################################################################################################################################################################
 
