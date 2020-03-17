@@ -16,6 +16,18 @@ from ResBlock import ResBlock
 from tools import *
 from snr import *
 
+
+def log(info):
+    """
+    Write string from parameter 'info' into the file.
+    """
+    if os.path.exists(training_dir):
+        with open(training_dir + "training.log", "a") as trainlog:
+            trainlog.write(str(info) + "\n")
+    else:
+        print("Error: Cant write log into the file because directory does not exist.")
+
+
 if __name__== "__main__":
     print("Version 15")
 
@@ -130,7 +142,7 @@ if __name__== "__main__":
     print_loss_frequency = 100 # za kolik segmentu (minibatchu) vypisovat loss
     print_valid_loss_frequency = 100
     #log_loss_frequency = 5000
-    create_checkpoint_frequency = 800
+    #create_checkpoint_frequency = 800
 
 ####################################################################################################################################################################################
 
@@ -150,6 +162,7 @@ if __name__== "__main__":
 ####################################################################################################################################################################################
 
     # load NN from checkpoint and continue training
+    loaded_epoch = 0
     if args.checkpoint_file:
         checkpoint = None
         if use_cuda and torch.cuda.is_available():
@@ -159,12 +172,12 @@ if __name__== "__main__":
 
         tasnet.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-        epoch = checkpoint['epoch']
-        loss = checkpoint['loss']
+        loaded_epoch = checkpoint['epoch']
+        loaded_loss = checkpoint['loss']
 
         tasnet.train()
 
-        print("Z checkpointu nactena epocha a loss: ", str(epoch), str(loss))
+        print("Z checkpointu nactena epocha a loss: ", str(loaded_epoch), str(loaded_loss))
 
 ####################################################################################################################################################################################
 
@@ -192,16 +205,29 @@ if __name__== "__main__":
             drop_last = False)
 
     # Create directory for loss file, reconstructions and checkpoints
-    training_dir = args.dst_dir + learning_started_date + "_X"+str(X) + "_R" + str(R) + "/"
-    print("Trainign directory: ", training_dir)
-    if not os.path.exists(training_dir):
-        os.makedirs(training_dir)
-        os.makedirs(training_dir+"reconstruction")
-        os.makedirs(training_dir+"inference")
+    training_dir = ""
+    if not args.checkpoint_file:
+        # Start training
+        training_dir = args.dst_dir + learning_started_date + "_X"+str(X) + "_R" + str(R) + "/"
+        print("Trainign directory: ", training_dir)
+        if not os.path.exists(training_dir):
+            os.makedirs(training_dir)
+            os.makedirs(training_dir+"reconstruction")
+            os.makedirs(training_dir+"inference")
 
-    def log(info):
-        with open(training_dir + "training.log", "a") as trainlog:
-            trainlog.write(str(info) + "\n")
+        start_epoch = 1
+    else:
+        # Training will continue from given checkpoint
+        training_dir = args.dst_dir
+        if not os.path.exists(training_dir):
+            print("Error: Training cant continue, because given directory does not exist.")
+            exit(6)
+        print("Continue trainign in directory: ", training_dir)
+        log("Training continues from checkpoint "+args.checkpoint_file)
+
+        start_epoch = loaded_epoch + 1
+
+    epochs = loaded_epoch + epochs
 
     log(str(datetime.now()))
     log(args)
@@ -209,27 +235,11 @@ if __name__== "__main__":
     log("pytorch version: " + torch.__version__)
     log("Creating Trainign directory: " + training_dir)
 
-
-    # TESTING of Dataloading
-    # itr = iter(trainloader)
-    # for audio_cnt, data in enumerate(trainloader, 0):
-    # #     # test collate_fn:
-    #     print("cnt: ", audio_cnt)
-    #     bat = itr.next()
-    #     print("ITER.next: ", len(bat))
-    #     # print(itr.next())
-    #     input("Press Enter to continue...\n\n")
-    # print("konec")
-    # exit(1)
-
-
     best_validation_result = 42   #initial value
-
     global_segment_cnt = 0
-    cont_epoch = 0
 
     log("##### Training started #####")
-    for (epoch) in range(1,epochs+1):
+    for (epoch) in range(start_epoch, epochs + 1):
         epoch_start = datetime.now()
         print("Epoch ", epoch, "/",epochs," started at ", epoch_start)
         log("## Epoch " + str(epoch) + "/" + str(epochs) + " started at " + str(epoch_start))
@@ -240,7 +250,6 @@ if __name__== "__main__":
         valid_segment_cnt = 0
         batch_cnt = 0
 
-        # epoch = epoch + cont_epoch
         for batch_cnt, data in enumerate(trainloader, 1):
             # print("batch_cnt: ", (batch_cnt))
 
@@ -329,9 +338,8 @@ if __name__== "__main__":
             #     print("Checkpoint has been created.")
             #     log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
 
-        # ### End of epoch ###
+        ### End of epoch ###
         epoch_end = datetime.now()
-        print(">>Epoch ends. Post epoch operations:")
 
         # Create checkpoint at the end of epoch
         torch.save({
@@ -345,16 +353,15 @@ if __name__== "__main__":
         print("Checkpoint has been created after epoch.")
         log("Checkpoint created after epoch: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
 
-        print("batch_cnt: ", batch_cnt, " segment-cnt: ", segment_cnt)
+        # print("batch_cnt: ", batch_cnt, " segment-cnt: ", segment_cnt)
 
-        print("Epoch ", epoch, " finished - processed in ", (epoch_end - epoch_start), "\n")
-        log("## Epoch " + str(epoch) + " finished - processed in " + str((epoch_end - epoch_start))+ "\n")
+        print("Epoch ", epoch, "/",epochs," finished - processed in ", (epoch_end - epoch_start),"\n")
+        log("## Epoch " + str(epoch) + "/" + str(epochs) + " finished - processed in " + str((epoch_end - epoch_start))+ "\n")
         # ====== End Of Epoch ======
 
 
         # ====== VALIDACE na konci epochy ======
         if not args.disable_validation:
-            print("")
             print("Validace")
             log("## Validation started")
             validation_start = datetime.now()

@@ -65,7 +65,7 @@ class SegmentDataset(data_utils.Dataset):
         Pozor, tato funkce je zavolana pouze jednou, takze je nutne vedet
         od zacatku delku datasetu, protoze dalsi zmeny uz nebudou mit vliv.
 
-        Pokud nevite delku datasetu, je lepsi zvolit velkou hodnotu a 
+        Pokud nevite delku datasetu, je lepsi zvolit velkou hodnotu a
         ukonceni cyklu si vzit na starosti sam.
         """
         return 100000
@@ -104,8 +104,8 @@ class SegmentDataset(data_utils.Dataset):
             s2_seg.unsqueeze_(0)
             return mix_seg, s1_seg, s2_seg
         except StopIteration:
-            print("     audioindex ", self.audioindex, "/", len(self.mixtures))
-            print("    __getitem__(): cant return segments: StopIteration raised")
+            # print("     audioindex ", self.audioindex, "/", len(self.mixtures))
+            # print("    __getitem__(): cant return segments: StopIteration raised")
             raise StopIteration
 
 
@@ -189,7 +189,7 @@ class SegmentDataset(data_utils.Dataset):
         # check whether some audio mixtures are available to load
         # All mixtures used.
         if self.audioindex >= self.dataset_len:
-            print("    loadNextAudio: POZOR: audioindex >= len(self.mixtures) ", self.audioindex, "/", len(self.mixtures) ,", iterace by mela skoncit a nachystat se nove epocha. (Return None that will rise StopIteration exception.)")
+            # print("    loadNextAudio: POZOR: audioindex >= len(self.mixtures) ", self.audioindex, "/", len(self.mixtures) ,", iterace by mela skoncit a nachystat se nove epocha. (Return None that will rise StopIteration exception.)")
             self.prepareNewEpoch()
             return None #raises StopIteration exception
 
