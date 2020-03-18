@@ -29,7 +29,7 @@ def log(info):
 
 
 if __name__== "__main__":
-    print("Version 15")
+    print("Version 18")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -163,6 +163,7 @@ if __name__== "__main__":
 
     # load NN from checkpoint and continue training
     loaded_epoch = 0
+    loaded_segments = 0
     if args.checkpoint_file:
         checkpoint = None
         if use_cuda and torch.cuda.is_available():
@@ -174,10 +175,12 @@ if __name__== "__main__":
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         loaded_epoch = checkpoint['epoch']
         loaded_loss = checkpoint['loss']
+        if 'glob_seg_cnt' in checkpoint.keys():
+            loaded_segments = checkpoint['glob_seg_cnt']
 
         tasnet.train()
 
-        print("Z checkpointu nactena epocha a loss: ", str(loaded_epoch), str(loaded_loss))
+        print("Z checkpointu nactena epocha, loss a pocet segmentu: ", str(loaded_epoch), str(loaded_loss), str(loaded_segments))
 
 ####################################################################################################################################################################################
 
@@ -236,7 +239,7 @@ if __name__== "__main__":
     log("Creating Trainign directory: " + training_dir)
 
     best_validation_result = 42   #initial value
-    global_segment_cnt = 0
+    global_segment_cnt = 0 + loaded_segments
 
     log("##### Training started #####")
     for (epoch) in range(start_epoch, epochs + 1):
@@ -345,6 +348,7 @@ if __name__== "__main__":
         torch.save({
           'epoch': epoch,
           'audio_cnt': segment_cnt,
+          'glob_seg_cnt': global_segment_cnt,
           'model_state_dict': tasnet.state_dict(),
           'optimizer_state_dict': optimizer.state_dict(),
           'loss': loss,
