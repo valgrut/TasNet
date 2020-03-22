@@ -39,6 +39,12 @@ if __name__== "__main__":
             type=int,
             help='number of epochs for training')
 
+    parser.add_argument('--segment-length',
+            dest='segment_length',
+            default=32000,
+            type=int,
+            help='length of segments, default is 32k (4s)')
+
     parser.add_argument('--padding',
             dest='padding',
             default=10,
@@ -133,6 +139,7 @@ if __name__== "__main__":
     bias_enabled    = False
     padd            = args.padding
     nn_stride       = args.stride
+    segment_length  = args.segment_length
 
     use_cuda        = True
     epochs          = args.epochs
@@ -141,7 +148,7 @@ if __name__== "__main__":
     # (pocet_segmentu = pocet_batchu * velikost_batche)
     print_controll_check = 50
     print_loss_frequency = 100 # za kolik segmentu (minibatchu) vypisovat loss
-    print_valid_loss_frequency = 2 #100
+    print_valid_loss_frequency = 100 #100
     #log_loss_frequency = 5000
     #create_checkpoint_frequency = 800
 
@@ -195,8 +202,8 @@ if __name__== "__main__":
     train_data_path = BASE_DATA_PATH+"tr/"
     valid_data_path = BASE_DATA_PATH+"cv/"
 
-    trainset = SegmentDataset(train_data_path)
-    validset = SegmentDataset(valid_data_path)
+    trainset = SegmentDataset(train_data_path, segment_length)
+    validset = SegmentDataset(valid_data_path, segment_length)
 
     # Note: We shuffle the loading process of train_dataset to make the learning process
     # independent of data order, but the order of test_loader

@@ -15,10 +15,12 @@ class SegmentDataset(data_utils.Dataset):
     """
     Dataset of speech mixtures for speech separation.
     """
-    def __init__(self, path):
+    def __init__(self, path, segment_length=32000):
         # print(">> __init__ ", path)
         super(SegmentDataset, self).__init__()
-        self.SEGMENT_LEN = 32000 #4seconds, 32k samples
+        
+        # Default: 32000 == 4seconds == 32k samples
+        self.SEGMENT_LEN = segment_length
 
         self.path = path
 
