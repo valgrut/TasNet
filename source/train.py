@@ -386,23 +386,16 @@ if __name__== "__main__":
                     running_loss += loss.item()
                     current_validation_result += loss.item()
 
-                    # === print loss ===
-                    if valid_segment_cnt % print_valid_loss_frequency == print_valid_loss_frequency - 1:
-                        print('[%d, %5d] loss: %.5f' % (epoch, valid_segment_cnt, running_loss/print_valid_loss_frequency))
-
-                        # Write loss to file
-                        with open(training_dir + "validation_loss.log", "a") as logloss:
-                            logloss.write(str(valid_segment_cnt)+","+str(running_loss/print_valid_loss_frequency)+"\n")
-
-                        running_loss = 0.0
-
-                # TODO vykreslit i tuto loss, ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou rpes sebe. (GIT)
                 # Modify learning rate if loss not improved in 3 consecutive epochs
                 current_validation_result /= valid_segment_cnt # prumer
                 print("new: ", current_validation_result, " old: ", best_validation_result)
                 scheduler.step(current_validation_result)
                 if current_validation_result < best_validation_result:
                     best_validation_result = current_validation_result
+
+                # Write current validation loss to file
+                with open(training_dir + "validation_loss.log", "a") as logloss:
+                    logloss.write(str(epoch)+","+str(best_validation_result)+"\n")
 
                 # == Validacni dataset je zpracovan, Vyhodnoceni validace ==
                 validation_end = datetime.now()
