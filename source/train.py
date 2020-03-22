@@ -300,16 +300,6 @@ if __name__== "__main__":
             # Outputs: eval. s1, s2 = torch.size([N, 1, 32000])
             #          ref.  s1, s2 = torch.size([N, 1, 32000])
 
-            # TODO pozn neni potreba, protoze segmenty jsou upravovany v collate_fn a dale.
-            # A proc to furt potreba je... nekde se to z nejakyho duvodu nici
-            # if(s1.shape[2] != target_source1.shape[2] != s2.shape[2] != target_source2.shape[2]):
-                # smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
-                # s1 = s1.narrow(2, 0, smallest)
-                # s2 = s2.narrow(2, 0, smallest)
-                # target_source1 = target_source1.narrow(2, 0, smallest)
-                # target_source2 = target_source2.narrow(2, 0, smallest)
-
-
             # Loss calculation
             batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
             batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
@@ -319,17 +309,13 @@ if __name__== "__main__":
             loss = 0
             for batch_id in range(actual_batch_size):
                 loss += min(batch_loss1[batch_id], batch_loss2[batch_id])
-                # loss = min(batch_loss1[batch_id], batch_loss2[batch_id])
-                # loss.backward(retain_graph=True)
 
             if not args.disable_training:
                 loss.backward()
                 optimizer.step()
 
-
             # calculate average loss
             running_loss += loss.item()
-
 
             # === print loss ===
             if (segment_cnt/MINIBATCH_SIZE) % (print_loss_frequency) == 0.0:
