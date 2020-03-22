@@ -1,5 +1,6 @@
 import torch
 import torch.optim as optim
+import torch.optim.lr_scheduler as lr_sched
 import torch.nn as nn
 import torch.utils.data as data_utils
 from torch.autograd import Variable
@@ -29,7 +30,7 @@ def log(info):
 
 
 if __name__== "__main__":
-    print("Version 18")
+    print("Version 19")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -58,7 +59,7 @@ if __name__== "__main__":
 
     parser.add_argument('--lr',
             dest='learning_rate',
-            default='0.0001',
+            default='0.001',
             type=float,
             help='set learning rate')
 
@@ -140,7 +141,7 @@ if __name__== "__main__":
     # (pocet_segmentu = pocet_batchu * velikost_batche)
     print_controll_check = 50
     print_loss_frequency = 100 # za kolik segmentu (minibatchu) vypisovat loss
-    print_valid_loss_frequency = 100
+    print_valid_loss_frequency = 2 #100
     #log_loss_frequency = 5000
     #create_checkpoint_frequency = 800
 
@@ -158,12 +159,13 @@ if __name__== "__main__":
 
     # Optimizer
     optimizer = optim.Adam(tasnet.parameters(), lr = learning_rate, weight_decay=opt_decay)
-
+    scheduler = lr_sched.ReduceLROnPlateau(optimizer, patience=3, mode='min', factor=0.5, verbose=True)
 ####################################################################################################################################################################################
 
     # load NN from checkpoint and continue training
     loaded_epoch = 0
     loaded_segments = 0
+    best_validation_result = 50 #init value
     if args.checkpoint_file:
         checkpoint = None
         if use_cuda and torch.cuda.is_available():
@@ -177,6 +179,10 @@ if __name__== "__main__":
         loaded_loss = checkpoint['loss']
         if 'glob_seg_cnt' in checkpoint.keys():
             loaded_segments = checkpoint['glob_seg_cnt']
+        if 'best_validation_result' in checkpoint.keys():
+            best_validation_result = checkpoint['best_validation_result']
+        # if 'learning_rate' in checkpoint.keys():
+            # learning_rate = checkpoint['learning_rate']
 
         tasnet.train()
 
@@ -238,7 +244,6 @@ if __name__== "__main__":
     log("pytorch version: " + torch.__version__)
     log("Creating Trainign directory: " + training_dir)
 
-    best_validation_result = 42   #initial value
     global_segment_cnt = 0 + loaded_segments
 
     log("##### Training started #####")
@@ -327,35 +332,8 @@ if __name__== "__main__":
                     logloss.write(str(global_segment_cnt)+","+str(running_loss/print_loss_frequency)+"\n")
                 running_loss = 0.0
 
-
-            # === Create checkpoint ===
-            # if (segment_cnt/MINIBATCH_SIZE) % (create_checkpoint_frequency) == 0.0:
-            #     # Create snapshot - checkpoint
-            #     torch.save({
-            #       'epoch': epoch,
-            #       'audio_cnt': segment_cnt,
-            #       'model_state_dict': tasnet.state_dict(),
-            #       'optimizer_state_dict': optimizer.state_dict(),
-            #       'loss': loss,
-            #     }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
-            #     print("Checkpoint has been created.")
-            #     log("Checkpoint created: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
-
         ### End of epoch ###
         epoch_end = datetime.now()
-
-        # Create checkpoint at the end of epoch
-        torch.save({
-          'epoch': epoch,
-          'audio_cnt': segment_cnt,
-          'glob_seg_cnt': global_segment_cnt,
-          'model_state_dict': tasnet.state_dict(),
-          'optimizer_state_dict': optimizer.state_dict(),
-          'loss': loss,
-        }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
-
-        print("Checkpoint has been created after epoch.")
-        log("Checkpoint created after epoch: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
 
         # print("batch_cnt: ", batch_cnt, " segment-cnt: ", segment_cnt)
 
@@ -402,13 +380,6 @@ if __name__== "__main__":
                     s1 = separated_sources[0].unsqueeze(1)
                     s2 = separated_sources[1].unsqueeze(1)
 
-                    if(s1.shape[2] != target_source1.shape[2]):
-                        smallest = min(input_mixture.shape[2], s1.shape[2], s2.shape[2], target_source1.shape[2], target_source2.shape[2])
-                        s1 = s1.narrow(2, 0, smallest)
-                        s2 = s2.narrow(2, 0, smallest)
-                        target_source1 = target_source1.narrow(2, 0, smallest)
-                        target_source2 = target_source2.narrow(2, 0, smallest)
-
                     # loss calculation
                     batch_loss1 = np.add(np.negative(siSNRloss(s1, target_source1)), np.negative(siSNRloss(s2, target_source2)))
                     batch_loss2 = np.add(np.negative(siSNRloss(s1, target_source2)), np.negative(siSNRloss(s2, target_source1)))
@@ -432,24 +403,42 @@ if __name__== "__main__":
 
                         running_loss = 0.0
 
+                # TODO vykreslit i tuto loss, ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou rpes sebe. (GIT)
+                # Modify learning rate if loss not improved in 3 consecutive epochs
+                current_validation_result /= valid_segment_cnt # prumer
+                print("new: ", current_validation_result, " old: ", best_validation_result)
+                scheduler.step(current_validation_result)
+                if current_validation_result < best_validation_result:
+                    best_validation_result = current_validation_result
+
                 # == Validacni dataset je zpracovan, Vyhodnoceni validace ==
                 validation_end = datetime.now()
                 print('Validation Finished in ', (validation_end - validation_start))
                 log('## Validation Finished in ' + str((validation_end - validation_start)))
                 print('')
 
-                # TODO vykreslit i tuto loss, ukladat a upravit funkci aby vykreslila obe dve z trenovani i validacni a jinou barvou rpes sebe. (GIT)
-                current_validation_result /= valid_segment_cnt # prumer
-                print(current_validation_result, " ", best_validation_result)
-                if current_validation_result >= best_validation_result:
-                    learning_rate /= 2 #TODO zjistit kdy se to ma delit
-                else:
-                    best_validation_result = current_validation_result
-
         # ===== Validation skipped
         else:
             print('Warning: Validation skipped\n')
             log('Warning: Validation skipped\n')
+
+
+        # Create checkpoint at the end of epoch
+        torch.save({
+          'epoch': epoch,
+          'audio_cnt': segment_cnt,
+          'glob_seg_cnt': global_segment_cnt,
+          'model_state_dict': tasnet.state_dict(),
+          'optimizer_state_dict': optimizer.state_dict(),
+          'loss': loss,
+          'best_validation_result': best_validation_result,
+        }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'.tar')
+
+        # Print log message
+        print("Checkpoint has been created after epoch.\n")
+        log("Checkpoint created after epoch: "+training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(segment_cnt)+'.tar')
+        # ====== END OF EPOCH =====
+
 
     # Save Network For Inference in the end of training
     torch.save(tasnet.state_dict(), training_dir+'tasnet_model_inference'+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'_a'+str(global_segment_cnt)+'.pkl')

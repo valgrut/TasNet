@@ -132,6 +132,9 @@ if __name__== "__main__":
         loss = checkpoint['loss']
 
         tasnet.eval() # For inference and testing
+    else:
+        print("Error: Checkpoint is required for evaluation.")
+        exit(6)
 
     training_dir = args.dst_dir
     with open(training_dir + "testing.log", "a") as testlog:
@@ -159,7 +162,7 @@ if __name__== "__main__":
             global_audio_cnt += 1
 
             if (global_audio_cnt) % 500 == 0.0:
-                print("") # Kvuli Google Colab je nutne minimalizovat vypisovani na OUT
+                print("")
                 print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
                 with open(training_dir + "testing.log", "a") as testlog:
                     testlog.write("Audio_cnt: " + str(audio_cnt) + " SDR: " + str(sdr_sum/global_audio_cnt) + "\n")
