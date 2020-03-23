@@ -12,7 +12,8 @@ class Net(nn.Module):
         self.conv1 = nn.Conv1d(1, 256, 20, bias=False, stride=nn_stride, padding=padd)
         self.deconv = nn.ConvTranspose1d(512, 2, 20, padding=padd, bias=False, stride=nn_stride, groups=2)
 
-        self.layer_norm = nn.LayerNorm(256)
+        self.layer_norm = nn.LayerNorm([256, 1601])
+        # self.layer_norm = nn.LayerNorm(256)
         self.bottleneck1 = nn.Conv1d(256, 256, 1) #TODO padding, stride???
         self.bottleneck2 = nn.Conv1d(256, 512, 1) #TODO 512 = NxC
         self.softmax = nn.Softmax(2)
@@ -43,8 +44,8 @@ class Net(nn.Module):
             print("Net: advanced representation created", representation.shape)
 
         # separation - estimate masks
-        #representation = self.layer_norm(representation) # TODO -layer norm
-        data = self.bottleneck1(representation)
+        representation_input = self.layer_norm(representation) # TODO -layer norm
+        data = self.bottleneck1(representation_input)
 
         data = self.TCN(data)
 

@@ -30,7 +30,7 @@ def log(info):
 
 
 if __name__== "__main__":
-    print("Version 19")
+    print("Version 20")
 
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
@@ -190,6 +190,8 @@ if __name__== "__main__":
             best_validation_result = checkpoint['best_validation_result']
         # if 'learning_rate' in checkpoint.keys():
             # learning_rate = checkpoint['learning_rate']
+        if 'scheduler_state_dict' in checkpoint.keys():
+            scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
 
         tasnet.train()
 
@@ -416,6 +418,7 @@ if __name__== "__main__":
           'glob_seg_cnt': global_segment_cnt,
           'model_state_dict': tasnet.state_dict(),
           'optimizer_state_dict': optimizer.state_dict(),
+          'scheduler_state_dict': scheduler.state_dict(),
           'loss': loss,
           'best_validation_result': best_validation_result,
         }, training_dir + 'tasnet_model_checkpoint_'+str(datetime.now().strftime('%Y-%m-%d'))+'_X'+str(X)+'_R'+str(R)+'_e'+str(epoch)+'.tar')
