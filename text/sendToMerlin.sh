@@ -1,6 +1,6 @@
 #! /bin/bash
 
-FILES="proj3.tex Makefile"
+FILES="projekt.tex Makefile"
 LOGIN="xpeska05"
 VERBOSE=""
 

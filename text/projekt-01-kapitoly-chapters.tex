@@ -4,25 +4,41 @@
 
 \todo{reference na kapitoly ..ref..}
 
-Má práce s názvem "Separace mluvčích v časové doméně" má za cíl zreplikovat výsledky studie\ref{referencni_studie}, kde se hluboká neuronová síť dokázala naučit separovat dva mluvčí, jež jsou zaznamenaní na jednokanálové nahrávce, pomocí konvolučního autoenkodéru a hlubokých konvolučních sítí, které dokážou udržovat závislosti ve zpracovávaném vstupním vzorku.
+1) 5 radku obecny uvod
+Zpracování řeči hraje v dnešní době důležitou roli v mnoha rozličných oborech. Mezi jedny z hlavních úkolů bezesporu patří separace zdrojů v nějakém zaznamenaném signálu, který může být složen ze signálů N mluvčích, ale i nechtěnému hluku okolí. Vyřešení problému je předpoklad k dalším úkonům jako identifikace konkrétního mluvčího nebo třeba přepis mluveného slova na text. Se stále se zrychlujícím vývojem počítačů a s jejich zvyšujícím se výkonem se do popředí dostávají metody zpracování řeči založené na neuronových sítích, které v mnoha ohledech předčily doposud používané algoritmy.
 
-Separace v časové doméně dosahuje mimořádných výsledků v porovnání s dosavadními metodami, které jsou založeny na převodu signálu z časové domény do frekvenční domény. Takový převod totiž nedokáže zachovat časové závislosti ve vstupním signálu. V referenční studii je vstupní signál převeden do nezáporné reprezentace, která jse optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která dokáže zachovat dlouhodobé závislosti ve vstupním signálu.
+2) proc je prace v dane oblasti dulezita, vyznam pro svet a pro nas
+Separace mluvčích v časové doméně dosahuje mimořádných výsledků v porovnání s dosavadními metodami LSTM založenými na převodu signálu z časové domény do frekvenční domény. Taková reprezentace signálu není optimální pro udržení časových závislostí, které jsou při zpracování řeči podstatné. V referenční studii je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která dokáže zachovat dlouhodobé závislosti v signálu.
 
+3) o minulosti, stav dnes a vyhlidky do budoucna
+
+
+4) proc se tematu chci venovat, proc je podle me perspektivni = motivace
+Téma v oblasti neuronových sítí jsem si vybral, jelikož ty zažívají obrovský rozmach a pomalu se stávají součástí téměř všech odvětví.
+\todo{nejak to jeste dopsat tohle.}
+
+
+5) co je cilem me prace - vlastnimi slovy
+Má práce si klade za cíl implementovat neuronovu síť podle architektury TasNet pro separaci mluvčích, která byla navržena a popsána ve studii\ref{referencni_studie}. Následně tuto neuronovou síť natrénovat s různými kombinacemi hodnot hyperparametrů ovlivňujících velikost sítě a její vlastnosti a nakonec porovnat přesnost mezi jednotlivými sitěmi a mezi výsledky studie. Přesnost separace je vypočítána za pomoci míry si--snr, udávající poměr mezi chtěným signálem a hlukem na pozadí.
+\todo{reference na sisnr na wiki nebo v nejake studii???}
+
+
+6) struktura prace - popsat kapitoly
+\todo{prepsat podle novejch kapitol co jsem navrhoval - doplnit popsani datasetu}
 V první části práce jsou popsány základní prvky neuronových sítí, struktura umělého neuronu, jeho vstupy a výstupy, váhy a role aktivační funkce. V návaznosti na to je popsán proces učení neuronové sítě. Ten se skládá z několika souvisejících částí, které zahrnují výpočet výstupu neuronové sítě metodou feed forward, který transformuje vstupní hodnoty a počítá na základě nich výstup, který propaguje do dalších vrstev neuronové sítě. Dále je rozebrán výpočet chyby, která vzniká během procesu učení, metodou gradient descent a nakonec úprava vah neuronů metodou backpropagation, která se počítá na základě rozdílu mezi vstupními hodnotami a očekávánými výstupními hodnotami.
 
-\todo{asi popsat trochu jinak = popsat lepe co ta konv. dela a pripadne jak toho vyuzivam ja v teto praci.}
 Předtím, než jsou představeny konvoluční sítě, tak je vysvětlena samotná konvoluce.
 Dále je vysvětlen princip konvolučních neuronových sítí, které se používají nejčastěji pro zpracování obrazu kvůli vlastnostem, které umožňují extrahovat příznaky s různou úrovní složitosti od základních útvarů jako úsečka, barva a podobně až po například část obličeje -- ucho, nos, či úplně celý obličej. Tohoto lze využít i při zpracování zvuku, kde jsou tyto extrahované příznaky dvourozměrné.
 
 Se znalostí principu konvolučních sítí je představen konvoluční auto-enkodér, který převádí vstupní nahrávku směsi mluvčích na reprezentaci optimalizovanou pro separaci jednotlivých mluvčích.
 
-Druhá část je věnována separaci. V této kapitole je popsána architektura separačního modelu, jeho stavební bloky a princip. Postupně je znovu zmíněn konvoluční auto-enkodér, u nějž je vysvětlen jeho úkol v separačním modelu a následně konvoluční blok, který se sám sestává z konvolučních vrstev, normalizací a aktivačních funkcí. Tyto bloky jsou skládány za sebe se zvyšující se časovou dilatací a tvoří jádro separačního modelu.
-\todo{popsat operaci The hadamard product}
+Druhá část je věnována architektuře TasNet. V této kapitole je popsána podoba separačního modulu, jeho stavební bloky a princip. Postupně je znovu zmíněn konvoluční auto-enkodér, u nějž je vysvětlen jeho úkol v separačním modulu a následně konvoluční blok, který se sám sestává z konvolučních vrstev, normalizací a aktivačních funkcí. Tyto bloky jsou skládány za sebe se zvyšující se časovou dilatací a tvoří jádro separačního modulu.
 
-Třetí část se zabývá návrhem a implementací konvoluční sítě a separačního modelu. Je popsán a odůvodněn zvolený framework pytorch, vuyžité prostředky a metody a podobně.
+Třetí část se zabývá implementací neuronové sítě. Je popsán a odůvodněn zvolený framework pytorch, využité prostředky a metody.
 \todo{nejak to jeste dopsat tohle.}
 
 Na závěr jsou popsány experimenty s modelem - rychlost učení, vliv hyper-parametrů na učení sítě, na výsledky a přesnost výstupu v závislosti na zvolených parametrech, optimalizacích a počtu konvolučních bloků a pod. Výstup sítě v podobě separovaných mluvčích je porovnán s referenční studií.
+\todo{Zminit zde taky sisnr hodnoceni a pod.}
 
 % ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \todo {Teorie: Co bylo potreba nastudovat;; uvod do problematiky;; pisu to pro nekoho, kdo chce vychazet z me bakalarky.}
@@ -125,13 +141,14 @@ Parametrizovaná ReLU je nelineární aktivační funkce, která se používá v
 \end{figure}
 
 
-\\###################################################################################
+
 \section{Proces učení neuronových sítí}
 \blindtext{1}
 
 \subsection{Objektivní funkce}
 = cost funkce
 -popis, co to je, k cemu to je, proc to je...
+
 \subsection*{MSELoss}
 - vzorecek
 \subsection*{Cross Entrophy}
@@ -143,8 +160,11 @@ Parametrizovaná ReLU je nelineární aktivační funkce, která se používá v
 
 \subsection*{Optimalizační algoritmy}
  [1 deep learning str 301]
+
 \subsection*{Adam}
+
 \todo{Kniha strana 301}
+
 Adam je jeden z algoritmů s adaptivním učením. Jeho název byl odvozen z fráze "adaptive moments".  [1 deep learning str 301]
 
 
@@ -152,12 +172,16 @@ Adam je jeden z algoritmů s adaptivním učením. Jeho název byl odvozen z fr�
 - zpetne sireni chyby
 - adaptacni algoritmus, podil neuronu na chybe,
 - 3 opakujici se faze uceni:
+
 \todo{dodelat zde podkapitoly v lepsim poradi}
+
 1) feedforward - dopredu
 2) zpetne sireni chyby - Backpropagation
 3) uprava vah a biasu na zaklade chyby
 - chain rule
+
 \blindtext{1}
+
 
 \subsection*{Feed Forward}
 \blindtext{1}
@@ -168,6 +192,7 @@ Adam je jeden z algoritmů s adaptivním učením. Jeho název byl odvozen z fr�
 \subsection{Overfitting a generalizace}
 \blindtext{1}
 
+% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 \chapter{Konvoluční neuronové sítě}
@@ -178,30 +203,37 @@ Adam je jeden z algoritmů s adaptivním učením. Jeho název byl odvozen z fr�
 \blindtext{1}
 
 
+% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 \chapter{TasNet - Time--Domain Audio Separation Network}
 \label{tasnet}
 \todo{Architektura full -- obrázek, bloky...}
+
 \blindtext{1}
 
 \section{Konvoluční auto--enkodér}
 \todo{Konvoluční autoenkodér, vstup, výstup...}
+
 - schema bez separacniho modulu
 - non negative representation of audio
+
 \blindtext{1}
 
 \section{Separační modul}
 - odhad masek pro jednotlive mluvci
 - schema se separacnim modulem
+
 \blindtext{1}
 
 \subsection{Konvoluční bloky}
 - Z čeho se skládá -- konvoluční vrstvy, normalizace
 - diagram konv bloku.
 - Mozna: Dilatace a time perception
+
 \blindtext{1}
 
+% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -226,6 +258,7 @@ Pocet a popis nahravek.
 \subsection{Implementace modelu}
 - pytorch, scripty, python3, bash, tridy, moduly, parametry a volby spusteni.
 
+% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 \chapter{Experimenty a vyhodnocení}
@@ -239,14 +272,17 @@ Pocet a popis nahravek.
 - pametova narocnost modelu
 
 
-\subsection{Možná rozšíření}
+\section{Možná rozšíření}
 - variabilnější dataset, mikrofony, šum a bordel prostředí
 - separace více mluvčích
 - hlučné prostředí
 - identifikace konkrétního řečníka
 - realtime separace
 
+% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 \chapter{Závěr}
 \label{zaver}
 - co jak dopadlo, vysledky a vyhodnoceni velikosti modelu a jaky byl nejlepsi,...
+
 \blindtext[3]

@@ -130,19 +130,28 @@
   supervisor.title.p={ing.},   %titul před jménem (nepovinné) / title before the name (optional)
   supervisor.title.a={},    %titul za jménem (nepovinné) / title after the name (optional)
   % Klíčová slova / keywords
-  keywords.cs={Neuronová síť, konvoluční neuronová síť, autoenkodér, separace, časová doména, ...}, % klíčová slova v českém či slovenském jazyce / keywords in czech or slovak language
-  keywords.en={Neural networks, convolutional neural networks, autoencoder, separation, time domain, ...}, % klíčová slova v anglickém jazyce / keywords in english
+  keywords.cs={Neuronová síť, konvoluční neuronová síť, autoenkodér, separace mluvčích, časová doména, ...}, % klíčová slova v českém či slovenském jazyce / keywords in czech or slovak language
+  keywords.en={Neural networks, convolutional neural networks, autoencoder, speech separation, time domain, ...}, % klíčová slova v anglickém jazyce / keywords in english
   %keywords.en={Here, individual keywords separated by commas will be written in English.},
   % Abstrakt / Abstract
   abstract.cs={
-  \TODO{tento abstract asi zkratit a napsat rozsireny abstract.}
-  \TODO{dopsat jeste zbyvajici dve casti abstraktu, ktere se budou zabyvat implementaci a vysledkama.}
-  Práce se zabývá tvorbou hluboké konvoluční neuronové sítě a jejím využitím na separaci dvou mluvčích v časové doméně. Cílem práce je implementovat a naučit neuronovou síť separovat jednotlivé mluvčí na vstupní jednokanálové nahrávce a vytvořit dvě oddělené nahrávky, kde na každé bude záznam jednoho ze dvou mluvčích.
+  Práce se zabývá využitím konvolučních neuronových sítí pro automatickou separaci mluvčích v akustickém prostředí. Cílem je implementovat neuronovou síť podle architektury TasNet za použití frameworku pytorch, natrénovat síť s různými hodnotami hyperparametrů a porovnat kvalitu separací vzhledem k velikosti síťě.
 
-  K dosažení výsledku bylo použito konvolučního autoenkodéru, který vstupní směs transformuje na reprezentaci optimalizovanou k extrakci jednotlivých mluvčích. Dále zde figuruje separační část, která se skládá z posloupnosti konvolučních bloků a mnoha konvolučních vrstev se snižující se dilatací, což umožňuje uchovávat dlouhodobé časové závislosti ve zpracovávané nahrávce. Tyto bloky slouží k odhadu masek, které se aplikují na výstup enkodéru, čímž se dosáhne separace. K implementaci jsem použil jazyk python a framework určený k modelování neuronových sítí jménem pytorch.}, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
-  abstract.en={\todo{Práce se zabývá tvorbou hluboké konvoluční neuronové sítě a jejím využitím na separaci dvou mluvčích v časové doméně. Cílem práce je implementovat a naučit neuronovou síť separovat jednotlivé mluvčí na vstupní jednokanálové nahrávce a vytvořit dvě oddělené nahrávky, kde na každé bude záznam jednoho ze dvou mluvčích.
+  Architektura oproti dosavadním metodám, které převáděly vstupní směs do časově--frekvenční reprezentace, používá konvoluční autoenkodér, který vstupní směs převádí do nezáporné reprezentace, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek, které jsou odhadnuty v separačním modulu. Modul tvoří opakující se posloupnost konvolučních bloků se zvyšující se dilatací, která napomáhá k modelování časových závislostí ve zpracovávané směsi.
 
-  K dosažení výsledku bylo použito konvolučního autoenkodéru, který vstupní směs transformuje na reprezentaci optimalizovanou k extrakci jednotlivých mluvčích. Dále zde figuruje separační část, která se skládá z posloupnosti konvolučních bloků a mnoha konvolučních vrstev se snižující se dilatací, což umožňuje uchovávat dlouhodobé časové závislosti ve zpracovávané nahrávce. Tyto bloky slouží k odhadu masek, které se aplikují na výstup enkodéru, čímž se dosáhne separace. K implementaci jsem použil jazyk python a framework určený k modelování neuronových sítí jménem pytorch.}}, % abstrakt v anglickém jazyce / abstract in english
+  K vyhodnocení přesnosti bylo použita metrika SDR (Sound to Distortion Ratio), která určuje poměr zastoupení šumu a zvuku v nahrávce. Natrénováním několika modelů s různými hodnotami hyperparametrů bylo možno zpozorovat závislost mezi velikostí sítě a hodnotou SDR. Zatímco menší síť dosahovala, po X epochách trénování, přesnosti XY, větší síť dosahovala až XX.
+
+  \todo {Jeste neco? 4. cast?}
+
+  \todo {Doplnit SDR presnost do odstavce vyse.}
+
+  },
+  % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
+  abstract.en={
+  \todo{Prelozit do anglictiny CZ abstrakt}
+
+  },
+  % abstrakt v anglickém jazyce / abstract in english
   %abstract.en={An abstract of the work in English will be written in this paragraph.},
   % Prohlášení (u anglicky psané práce anglicky, u slovensky psané práce slovensky) / Declaration (for thesis in english should be in english)
   declaration={Prohlašuji, že jsem tuto bakalářskou práci vypracoval samostatně pod vedením ing. Kateřiny Žmolíkové.
