@@ -2,15 +2,16 @@
 % Projekt:     IBP - Bakalarska prace
 % Nazev prace: BibTeX styl pro CSN ISO 690 a CSN ISO 690-2
 % Autor:       Radek Pysny, xpysny00
+% Prelozil:    Jaroslav Dytrych
 % URI:         http://www.fit.vutbr.cz/study/DP/BP.php?id=7848
 %
-% Soubor:      czplain.bst (vznikl upravou plain.bst)
-% Datum:       Vytvoren 15. unora 2009.
+% Soubor:      skplain.pst vznikl překladem czplain.bst, který vznikl upravou plain.bst
+% Datum:       Vytvoren 31. cervence 2019.
 %              Posledni uprava 10. kveten 2009, 16:55.
 %              Adam Herout upravil pro šablonu BP/DP FIT: 31.7.2019
 %              Jaroslav Dytrych uvedl do souladu s normou 
 %                pro šablonu BP/DP FIT: 10.10.2019
-% Popis:       Český bibliografický styl.
+% Popis:       Slovenský bibliograficky styl.
 % Pouziti:
 % Kodovani:    UTF-8
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -27,7 +28,6 @@
 % FUNCTION {opt.aa} { #4 }
 FUNCTION {opt.aa} { #5 }
 % FUNCTION {opt.aa} { #99 }
-
 
 % -- Maximalni pocet zpracovanych editoru.
 % Analogie k volbe opt.aa.
@@ -135,7 +135,7 @@ ENTRY
     revised         % datum revize/aktualizace
     secondarytitle  % nazev vedlejsi webove stranky
     school
-    series          % název edice
+    series          % nazev edice
     subtitle        % podtitul
     supervisor      % vedoucí (u akademické práce)
     time            % čas publikování
@@ -179,29 +179,29 @@ STRINGS { s t u }
 %%%%%%%%%%%%%%%%%%%% DEFINICE ZKRATEK -- CESKE NAZVY MESICU %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MACRO {jan} {"leden"}
+MACRO {jan} {"janu\'{a}r"}
 
-MACRO {feb} {"únor"}
+MACRO {feb} {"febru\'{a}r"}
 
-MACRO {mar} {"březen"}
+MACRO {mar} {"marec"}
 
-MACRO {apr} {"duben"}
+MACRO {apr} {"apr\'{i}l"}
 
-MACRO {may} {"květen"}
+MACRO {may} {"m\'{a}j"}
 
-MACRO {jun} {"červen"}
+MACRO {jun} {"j\'{u}n"}
 
-MACRO {jul} {"červenec"}
+MACRO {jul} {"j\'{u}l"}
 
-MACRO {aug} {"srpen"}
+MACRO {aug} {"august"}
 
-MACRO {sep} {"září"}
+MACRO {sep} {"september"}
 
-MACRO {oct} {"říjen"}
+MACRO {oct} {"okt\'{o}ber"}
 
-MACRO {nov} {"listopad"}
+MACRO {nov} {"november"}
 
-MACRO {dec} {"prosinec"}
+MACRO {dec} {"december"}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% MIRNE UPRAVENE FUNKCE PREVZATE Z plain.bst %%%%%%%%%%%%%%%%%%
@@ -846,11 +846,11 @@ FUNCTION {is.ord}
 % Formatovaci retezec pro vkladani jmen dle ceske konvence pomoci funkce
 % 'format.name$'.
 %
-% string cz.name.format ()
+% string sk.name.format ()
 % {
 %   return "{{\scshape\bgroup}ll{ }{\egroup}}{, f.}{ vv}";
 % }
-FUNCTION {cz.name.format}
+FUNCTION {sk.name.format}
 { "{{\sc\bgroup}ll{ }{\egroup}}{, f.}{ vv}" }
 
 % Vraci nominativ mesice.
@@ -858,8 +858,8 @@ FUNCTION {cz.name.format}
 % /** prepis pseudokodu do funkce pracujici s polem **/
 % string get.month.n (int n)
 % {
-%   int month = { 1 => "leden", "únor", "březen", "duben", "květen", "červen",
-%                "červenec", "srpen", "září", "říjen", "listopad", "prosinec" };
+%   int month = { 1 => "január", "február", "marec", "apríl", "máj", "jún",
+%                "júl", "august", "september", "október", "november", "december" };
 %   if ( (n > 0) && (n < 13) )
 %   {
 %     return month[n];
@@ -871,29 +871,29 @@ FUNCTION {cz.name.format}
 % }
 FUNCTION {get.month.n}
 { duplicate$ #1 =
-  { "leden" swap$ pop$ }
+  { "január" swap$ pop$ }
   { duplicate$ #2 =
-    { "únor" swap$ pop$ }
+    { "február" swap$ pop$ }
     { duplicate$ #3 =
-      { "březen" swap$ pop$ }
+      { "marec" swap$ pop$ }
       { duplicate$ #4 =
-        { "duben" swap$ pop$ }
+        { "apríl" swap$ pop$ }
         { duplicate$ #5 =
-          { "květen" swap$ pop$ }
+          { "máj" swap$ pop$ }
           { duplicate$ #6 =
-            { "červen" swap$ pop$ }
+            { "jún" swap$ pop$ }
             { duplicate$ #7 =
-              { "červenec" swap$ pop$ }
+              { "júl" swap$ pop$ }
               { duplicate$ #8 =
-                { "srpen" swap$ pop$ }
+                { "august" swap$ pop$ }
                 { duplicate$ #9 =
-                  { "září" swap$ pop$ }
+                  { "september" swap$ pop$ }
                   { duplicate$ #10 =
-                    { "říjen" swap$ pop$ }
+                    { "október" swap$ pop$ }
                     { duplicate$ #11 =
-                      { "listopad" swap$ pop$ }
+                      { "november" swap$ pop$ }
                       { duplicate$ #12 =
-                        { "prosinec" swap$ pop$ }
+                        { "december" swap$ pop$ }
                         { "" "Month must be between 1 and 12!" warning$ }
                         if$
                       }
@@ -923,29 +923,29 @@ FUNCTION {get.month.n}
 % Vraci nominativ mesice s velkym prvnim pismenem.
 FUNCTION {get.u.month.n}
 { duplicate$ #1 =
-  { "Leden" swap$ pop$ }
+  { "Január" swap$ pop$ }
   { duplicate$ #2 =
-    { "Únor" swap$ pop$ }
+    { "Február" swap$ pop$ }
     { duplicate$ #3 =
-      { "Březen" swap$ pop$ }
+      { "Marec" swap$ pop$ }
       { duplicate$ #4 =
-        { "Duben" swap$ pop$ }
+        { "Apríl" swap$ pop$ }
         { duplicate$ #5 =
-          { "Květen" swap$ pop$ }
+          { "Máj" swap$ pop$ }
           { duplicate$ #6 =
-            { "Červen" swap$ pop$ }
+            { "Jún" swap$ pop$ }
             { duplicate$ #7 =
-              { "Červenec" swap$ pop$ }
+              { "Júl" swap$ pop$ }
               { duplicate$ #8 =
-                { "Srpen" swap$ pop$ }
+                { "August" swap$ pop$ }
                 { duplicate$ #9 =
-                  { "Září" swap$ pop$ }
+                  { "September" swap$ pop$ }
                   { duplicate$ #10 =
-                    { "Říjen" swap$ pop$ }
+                    { "Október" swap$ pop$ }
                     { duplicate$ #11 =
-                      { "Listopad" swap$ pop$ }
+                      { "November" swap$ pop$ }
                       { duplicate$ #12 =
-                        { "Prosinec" swap$ pop$ }
+                        { "December" swap$ pop$ }
                         { "" "Month must be between 1 and 12!" warning$ }
                         if$
                       }
@@ -977,8 +977,8 @@ FUNCTION {get.u.month.n}
 % /** prepis pseudokodu do funkce pracujici s polem **/
 % string get.month.g (int n)
 % {
-%   int month = { 1 => "ledna", "února", "března", "dubna", "května", "června",
-%                "července", "srpna", "září", "října", "listopadu", "prosince"};
+%   int month = { 1 => "januára", "februára", "marca", "apríla", "mája", "júna",
+%                "júla", "augusta", "septembra", "októbra", "novembra", "decembra"};
 %   if ( (n > 0) && (n < 13) )
 %   {
 %     return month[n];
@@ -990,29 +990,29 @@ FUNCTION {get.u.month.n}
 % }
 FUNCTION {get.month.g}
 { duplicate$ #1 =
-  { "ledna" swap$ pop$ }
+  { "januára" swap$ pop$ }
   { duplicate$ #2 =
-    { "února" swap$ pop$ }
+    { "februára" swap$ pop$ }
     { duplicate$ #3 =
-      { "března" swap$ pop$ }
+      { "marca" swap$ pop$ }
       { duplicate$ #4 =
-        { "dubna" swap$ pop$ }
+        { "apríla" swap$ pop$ }
         { duplicate$ #5 =
-          { "května" swap$ pop$ }
+          { "mája" swap$ pop$ }
           { duplicate$ #6 =
-            { "června" swap$ pop$ }
+            { "júna" swap$ pop$ }
             { duplicate$ #7 =
-              { "července" swap$ pop$ }
+              { "júla" swap$ pop$ }
               { duplicate$ #8 =
-                { "srpna" swap$ pop$ }
+                { "augusta" swap$ pop$ }
                 { duplicate$ #9 =
-                  { "září" swap$ pop$ }
+                  { "septembra" swap$ pop$ }
                   { duplicate$ #10 =
-                    { "října" swap$ pop$ }
+                    { "októbra" swap$ pop$ }
                     { duplicate$ #11 =
-                      { "listopadu" swap$ pop$ }
+                      { "novembra" swap$ pop$ }
                       { duplicate$ #12 =
-                        { "prosince" swap$ pop$ }
+                        { "decembra" swap$ pop$ }
                         { "" "Month must be between 1 and 12!" warning$ }
                         if$
                       }
@@ -1084,7 +1084,7 @@ FUNCTION {output.authors}
 %   int nameptr = 1;
 %   while ( (namesleft > 0) && (nameptr <= opt.aa()) )
 %   {
-%     t = format.name$(s, nameptr, cz.name.format());
+%     t = format.name$(s, nameptr, sk.name.format());
 %     if (nameptr == 1)
 %     {
 %       push(t);
@@ -1123,7 +1123,7 @@ FUNCTION {format.names}
     and
   }
   { % cyklus zpracovani jednotlivych jmen
-    s nameptr cz.name.format format.name$ 't :=
+    s nameptr sk.name.format format.name$ 't :=
     nameptr #1 =
     { t }                           % prvni jmeno
     { namesleft #1 >                % dalsi jmena
@@ -1147,7 +1147,6 @@ FUNCTION {format.names}
   if$
 }
 
-
 % Formatovani jmen editoru.
 %
 % string format.names.ed (string names)
@@ -1158,7 +1157,7 @@ FUNCTION {format.names}
 %   int nameptr = 1;
 %   while ( (namesleft > 0) && (nameptr <= opt.aa()) )
 %   {
-%     t = format.name$(s, nameptr, cz.name.format());
+%     t = format.name$(s, nameptr, sk.name.format());
 %     if (nameptr == 1)
 %     {
 %       if (opt.ed.all())
@@ -1221,7 +1220,7 @@ FUNCTION {format.names.ed}
     and
   }
   { % cyklus zpracovani jednotlivych jmen
-    s nameptr cz.name.format format.name$ 't :=
+    s nameptr sk.name.format format.name$ 't :=
     nameptr #1 =                    % prvni jmeno
     { t
       opt.ed.all
@@ -1289,9 +1288,10 @@ FUNCTION {format.authors}
 FUNCTION {format.supervisor}
 { supervisor empty$
   { "" }
-  { "Vedoucí práce " supervisor format.names *}
+  { "Vedúci práce " supervisor format.names * }
   if$
 }
+
 
 % Formatovani jmen editoru.
 % Pokud je neprazdna polozka 'editor', provede formatovani jmen pomoci funkce
@@ -1848,7 +1848,7 @@ FUNCTION {format.range}
 %   {
 %     if (is.ord(volume))
 %     {
-%       push("sv. " * volume);
+%       push("zv. " * volume);
 %     } else
 %     {
 %       push(volume);
@@ -1890,7 +1890,7 @@ FUNCTION {format.cvolume}
 }
 
 
-% Formatovani edice a čísla edice knihy ci sborníku konference.
+% Formatovani edice a cisla edice knihy ci sborníku konference.
 %
 % string format.cseries ()
 % {
@@ -2054,7 +2054,7 @@ FUNCTION {format.chapter}
 %   {
 %     if (is.ord(volume))
 %     {
-%       s = comma.connect(s, "sv.~" * volume);
+%       s = comma.connect(s, "zv.~" * volume);
 %     } else
 %     {
 %       s = comma.connect(s, volume);
@@ -2091,7 +2091,7 @@ FUNCTION {format.journal.issue}
   volume empty$
   'skip$
   { volume is.ord
-    { "sv.~" volume *
+    { "zv.~" volume *
       s swap$ comma.connect 's :=
     }
     { s volume comma.connect 's := }
@@ -2260,7 +2260,7 @@ FUNCTION {conference.basics}
   if$
 }
 
-			
+
 % Formatuje informace o akademicke (diplomova, dizertacni atp.) praci.
 % Odlisuje se od beznych nakladatelskych informaci pouzitymi polozkami.
 %
@@ -2450,7 +2450,7 @@ FUNCTION {format.report.type}
 %
 % int empty.misc.check ()
 % {
-%   if ( (empty$(author)) && (empty$(title)) && 
+%   if ( (empty$(author)) && (empty$(title)) && (empty$()) &&
 %        (empty$(howpublished)) && (empty$(month)) && (empty$(year)) &&
 %        (empty$(note)) && (!empty$(key)) )
 %   {
@@ -2682,12 +2682,12 @@ FUNCTION {book}
 % @Booklet je pouhy odkaz na @Book.
 FUNCTION {booklet} { book }
 
-% Zpracuje zaznamy typu @Conference, @InProceedings, @InCollection a @InBook.
+% Zpracuje zaznamy typu @Conference a @InProceedings, @InCollection a @InBook
 % Bibliograficke citace monografickych publikaci (knih).
 %
 % Povinne polozky:   author, title, editor nebo organization, booktitle,
 %       edition, address, publisher, year, pages, isbn or issn.
-% Volitelne polozky: subtitle, booksubtitle, contrybutory, month, series, editionnumber, number, volume, note, chapter, doi, url*.
+% Volitelne polozky: subtitle, booksubtitle, contrybutory, month, series, editionnumber, number nebo volume, chapter, note, doi url*.
 % Polozky el. dok.:  howpublished*, revised*, cited*, version.
 %
 % * Povinna polozka pro el. dok.
@@ -2811,7 +2811,7 @@ FUNCTION {proceedings}
 %
 % Povinne polozky:   Alespon jedna z volitelnych!
 % Volitelne polozky: author, secondarytitle, title, subtitle, howpublished, contrybutory, edition, month, doi, issn
-%       year, revised*, cited, note, url, version, path
+%       year, revised*, cited, note, url, version
 %
 % Pozn.: Protestuje, pokud neni vyplneny rok. Nemel by tedy volat format.date...
 FUNCTION {misc}
@@ -2895,7 +2895,7 @@ FUNCTION {website} { misc }
 % Zpracuje zaznamy typu @Manual, @TechReport a @Unpublished.
 %
 % Povinne polozky:   author, title, edition, address, organization nebo institution, month, year, revised
-% Volitelne polozky:  note, number, url*
+% Volitelne polozky: note, number, url*
 % Polozky el. dok.:  howpublished*, cited*
 FUNCTION {techreport}
 { output.bibitem
@@ -2932,7 +2932,7 @@ FUNCTION {manual} { unpublished }
 %
 % Zakladni verze -- v choose.thesis ma hodnotu #0.
 %
-% Povinne polozky:   author, title, address nebo location, school, year, type
+% Povinne polozky:   author, title, address or location, school, year, type
 % Volitelne polozky: subtitle, pages, inserts, note, url, isbn, howpublished
 FUNCTION {thesis}
 { output.bibitem
@@ -2955,10 +2955,10 @@ FUNCTION {thesis}
   new.block %% rozsah akademicke prace a jejich priloh (volitelne)
   type$ "l" change.case$
   duplicate$ "bachelorsthesis" =
-    { pop$ "Bakalářská práce" }
+    { pop$ "Bakalárska práca" }
     { "mastersthesis" =
-        { "Diplomová práce" }
-        { "Disertační práce" }
+        { "Diplomová práca" }
+        { "Dizertačná práca" }
       if$
     }
   if$
@@ -2976,7 +2976,7 @@ FUNCTION {thesis}
 }%@BachelorsThesis, @MastersThesis a @PhdThesis
 
 % Zaznamy typu @BachelorsThesis jsou zpracovany funkci thesis.
-FUNCTION {bachelorsthesis}{ thesis }
+FUNCTION {bachelorthesis}{ thesis }
 
 % Zaznamy typu @MastersThesis jsou zpracovany funkci thesis.
 FUNCTION {mastersthesis} { thesis }
@@ -3053,7 +3053,7 @@ FUNCTION {author.sort}
     { author empty$
       editor empty$
       and
-	    { "to sort, need author or key in " cite$ * warning$
+        { "to sort, need author or key in " cite$ * warning$
           ""
         }
         { author empty$
@@ -3066,6 +3066,7 @@ FUNCTION {author.sort}
     { key sortify }
   if$
 }
+
 % Dytrych: Původní funkce upřednostní jméno před klíčem a ten pak nelze použít k opravě českého řazení.
 % FUNCTION {author.sort}
 % { author empty$

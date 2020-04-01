@@ -1,5 +1,3 @@
-%===============================================================================
-% Autoři: Michal Bidlo, Bohuslav Křena, Jaroslav Dytrych, Petr Veigend a Adam Herout 2018
 \chapter{Úvod}
 
 \todo{reference na kapitoly ..ref..}
@@ -28,7 +26,7 @@ Má práce si klade za cíl implementovat neuronovu síť podle architektury Tas
 V první části práce jsou popsány základní prvky neuronových sítí, struktura umělého neuronu, jeho vstupy a výstupy, váhy a role aktivační funkce. V návaznosti na to je popsán proces učení neuronové sítě. Ten se skládá z několika souvisejících částí, které zahrnují výpočet výstupu neuronové sítě metodou feed forward, který transformuje vstupní hodnoty a počítá na základě nich výstup, který propaguje do dalších vrstev neuronové sítě. Dále je rozebrán výpočet chyby, která vzniká během procesu učení, metodou gradient descent a nakonec úprava vah neuronů metodou backpropagation, která se počítá na základě rozdílu mezi vstupními hodnotami a očekávánými výstupními hodnotami.
 
 Předtím, než jsou představeny konvoluční sítě, tak je vysvětlena samotná konvoluce.
-Dále je vysvětlen princip konvolučních neuronových sítí, které se používají nejčastěji pro zpracování obrazu kvůli vlastnostem, které umožňují extrahovat příznaky s různou úrovní složitosti od základních útvarů jako úsečka, barva a podobně až po například část obličeje -- ucho, nos, či úplně celý obličej. Tohoto lze využít i při zpracování zvuku, kde jsou tyto extrahované příznaky dvourozměrné.
+Dále je vysvětlen princip konvolučních neuronových sítí, které se používají nejčastěji pro zpracování obrazu kvůli vlastnostem, které umožňují extrahovat příznaky s různou úrovní složitosti od základních útvarů jako úsečka, barva a podobně až po například část obličeje -- ucho, nos, či úplně celý obličej. Tohoto lze využít i při zpracování zvuku, kde jsou tyto extrahované příznaky jednorozměrné.
 
 Se znalostí principu konvolučních sítí je představen konvoluční auto-enkodér, který převádí vstupní nahrávku směsi mluvčích na reprezentaci optimalizovanou pro separaci jednotlivých mluvčích.
 
@@ -40,7 +38,7 @@ Třetí část se zabývá implementací neuronové sítě. Je popsán a odůvod
 Na závěr jsou popsány experimenty s modelem - rychlost učení, vliv hyper-parametrů na učení sítě, na výsledky a přesnost výstupu v závislosti na zvolených parametrech, optimalizacích a počtu konvolučních bloků a pod. Výstup sítě v podobě separovaných mluvčích je porovnán s referenční studií.
 \todo{Zminit zde taky sisnr hodnoceni a pod.}
 
-% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \todo {Teorie: Co bylo potreba nastudovat;; uvod do problematiky;; pisu to pro nekoho, kdo chce vychazet z me bakalarky.}
 
 \chapter{Separace mluvčích}
@@ -67,8 +65,8 @@ Základní stavební jednotka neuronových sítí je neuron, nebo přesněji per
 \todo{obrazek neuronu a popis}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{obrazky-figures/placeholder.pdf}
-    \caption{\label{fig:neuron}Perceptron}
+    \includegraphics[scale=0.5]{obrazky-figures/perceptron.png}
+    \caption{\label{fig:neuron}Schéma umělého neuronu -- perceptron}
 \end{figure}
 
 Hodnota bias $b \in R$, která je přičtena k sumě násobků vah a vstupních hodnot, modifikuje dobu, kdy se aktivuje perceptron a změní svůj výstup. Je to prahová hodnota, na základě níž je měněn výstup. Matematicky to znamená, že s aktivační funkcí horizontálně pohybuje doleva nebo doprava v závislosti na tom, je-li bias pozitivní nebo negativní. Bias se učí zároveň s ostatními váhami během učícího procesu.
@@ -86,10 +84,10 @@ y = a((\sum_{n=1} w_nx_n) + b)
 kde $a$ je nějaká aktivační funkce, $x_n \in R$ je vstupní hodnota, $w_n \in R$ je váha, kterou se vstupní hodnota vynásobí a $b \in R$ je hodnota bias, která je přičtena k celkové sumě předtím, než se výsledek předá aktivační funkci.
 
 
-\subsection{Aktivační funkce}
-Aktivační, neboli prahová funkce určuje výstupní hodnotu neuronu. Funkce se vybírá na základě problému, který se má neuronová síť naučit řešit. Správná volba prahové funkce vede k lepší konvergenci učení sítě. Naopak špatná volba může vést ke stále větší odchylce od správného řešení -- může divergovat. Povaha problému může vyžadovat specifické vlastnosti aktivační funkce - lineární nebo nelineární -- sigmoidní a podobně. Pro správnou volbu aktivační funkce je pro nestandartní problémy experimentálně zjistit, která bude nejlépe vyhovovat.
+\section{Aktivační funkce}
+Aktivační, neboli prahová funkce určuje výstupní hodnotu neuronu. Funkce se vybírá na základě problému, který se má neuronová síť naučit řešit. Správná volba prahové funkce vede k lepší konvergenci učení sítě. Naopak špatná volba může vést ke stále větší odchylce od správného řešení -- může divergovat. Povaha problému může vyžadovat specifické vlastnosti aktivační funkce - lineární nebo nelineární -- sigmoidní a podobně. Pro správnou volbu aktivační funkce je pro nestandardní problémy potřeba experimentálně zjistit, která bude nejlépe vyhovovat.
 
-\subsection{Sigmoid}
+\subsection*{Sigmoid}
 \begin{equation}
   f(x) = \frac{1}{1+\exp(-z)}
 \end{equation}
@@ -100,18 +98,18 @@ Aktivační, neboli prahová funkce určuje výstupní hodnotu neuronu. Funkce s
     \caption{\label{fig:sigmoid}Graf aktivační funkce sigmoid}
 \end{figure}
 
-\subsection{Softmax}
+\subsection*{Softmax}
 \begin{equation}
   f(x) = \frac{1}{1+\exp(-z)}
 \end{equation}
 \blindtext{1}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.2]{obrazky-figures/sigmoid.png}
-    \caption{\label{fig:sigmoid}Graf aktivační funkce sigmoid}
+    \includegraphics[scale=0.2]{obrazky-figures/softmax.png}
+    \caption{\label{fig:softmax}Graf aktivační funkce softmax}
 \end{figure}
 
-\subsection{ReLU}
+\subsection*{ReLU}
 Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje-li neuronová síť nějakou nelinearitu, je RelU pro většinu případů ideální. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$.
 \begin{equation}
    f(x)=max(0,x)
@@ -124,7 +122,7 @@ Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje
 \end{figure}
 
 
-\subsection{PReLU}
+\subsection*{PReLU}
 Parametrizovaná ReLU je nelineární aktivační funkce, která se používá v případě, že chceme produkovat na výstup malý nenulový gradient i v případě záporné vstupní hodnoty $x$. V tom případě je vstupní hodnota vynásobena parametrem $\alpha$ a to představuje výsledek. Parametr $\alpha$ se společně s ostatními váhami učí během učícího procesu.
 \begin{equation}
   f(x) =
@@ -158,7 +156,7 @@ Parametrizovaná ReLU je nelineární aktivační funkce, která se používá v
 \todo{Mozna, Kniha strana 292}
 
 
-\subsection*{Optimalizační algoritmy}
+\subsection{Optimalizační algoritmy}
  [1 deep learning str 301]
 
 \subsection*{Adam}
@@ -192,24 +190,25 @@ Adam je jeden z algoritmů s adaptivním učením. Jeho název byl odvozen z fr�
 \subsection{Overfitting a generalizace}
 \blindtext{1}
 
-% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-\chapter{Konvoluční neuronové sítě}
-\label{konvolucni-site}
+\section{Konvoluční neuronové sítě}
 \blindtext{1}
 
-\section{Konvoluční operace}
+\subsection{Konvoluce}
 \blindtext{1}
 
 
-% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 \chapter{TasNet - Time--Domain Audio Separation Network}
 \label{tasnet}
 \todo{Architektura full -- obrázek, bloky...}
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{obrazky-figures/tasnet-pipe.png}
+    \caption{\label{fig:tasnet-pipe}Zjednodušený model architektury}
+\end{figure}
 \blindtext{1}
 
 \section{Konvoluční auto--enkodér}
@@ -217,12 +216,21 @@ Adam je jeden z algoritmů s adaptivním učením. Jeho název byl odvozen z fr�
 
 - schema bez separacniho modulu
 - non negative representation of audio
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{obrazky-figures/tasnet-autoencoder.png}
+    \caption{\label{fig:tasnet-autoencoder}Schéma konvolučního autoenkodéru}
+\end{figure}
 \blindtext{1}
 
 \section{Separační modul}
 - odhad masek pro jednotlive mluvci
 - schema se separacnim modulem
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{obrazky-figures/tasnet-architecture.png}
+    \caption{\label{fig:tasnet-modul}Schéma architektury TasNet}
+\end{figure}
 
 \blindtext{1}
 
@@ -230,25 +238,56 @@ Adam je jeden z algoritmů s adaptivním učením. Jeho název byl odvozen z fr�
 - Z čeho se skládá -- konvoluční vrstvy, normalizace
 - diagram konv bloku.
 - Mozna: Dilatace a time perception
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{obrazky-figures/conv-res-block.png}
+    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok}
+\end{figure}
 
 \blindtext{1}
 
-% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
 \chapter{Implementace a trénování sítě}
 \label{implementace}
-- pozn: colab, pytorch, stroj, bash, hyperparams, vykon a cas trenovani, seg_len, popis trid.
+Pozn: colab, pytorch, stroj, bash, hyperparams, vykon a cas trenovani, seg--len, popis trid.
 
 \section{Dataset}
-\subsection{Radio Journal Dataset}
-Ukazat zde vykreslenou vlnu nahravek mix, s1, s2.
-Pocet a popis nahravek.
+\todo{Ukazat zde vykreslenou vlnu nahravek mix, s1, s2}
+\todo{popsat co je dataset a k cemu to slouzi}
+Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z Wall Street Journal (WSJ0) a vytvořením směsi. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu].
+\todo{doplnit info o zero means a jendotkove varianci}
 
-\subsection{Význam validační sady}
+\subsection{Význam validační množiny v trénování}
+Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v průběhu nemění, protože hodnoty by bylo obtížné optimalizovat. 
+Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k přetrénováníoverfitting) v důsledku \todo{CEHO??}. Pro tento případ potřebujeme validační sadu, která je odlišná od trénovací sady.
+Po každém zpracování trénovací sady následuje validační sada, po jejímž skončení jsou optimalizovány hyperparametry[][].
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.35]{obrazky-figures/dataset-mix.png}
+    \caption{\label{fig:ref-mixture}Ukázka nahrávky směsi dvou mluvčích}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.35]{obrazky-figures/dataset-s1.png}
+    \caption{\label{fig:ref-s1}První mluvčí ze směsi}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.35]{obrazky-figures/dataset-s2.png}
+    \caption{\label{fig:ref-s2}Druhý mluvčí ze směsi}
+\end{figure}
+Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku (ref obr1) a obrázku (ref obr2) dostaneme přesně signál směsi, což lze vyjádřit vztahem
+\begin{equation}
+  x(t) = \sum_{i=1}^C s_i(t)
+\end{equation}
+, kde $x(t) \in R^{1 \times T}$ je diskrétní signál směsi a $s_i(t) \in \mathbb{R}^{1 \times T}$, kde $i = 1,\ldots,C$, je jeden z $C$ zdrojů[ref studie str3 vlevo]. 
+\todo{[kniha 117-118] kap 5.3 = Hyperparameters and validation set} 
+\todo{najit jeste nejakej zdroj s popisem a pripadne nejaky zajimavejsi info.}
 
-\section{Cíl trénování a metriky}
+\section{Vyhodnocovací metriky}
 - minimalizovat objektivni-hodnotici funkci sisnr.
 \subsection{Signal to noise ration}
 \subsection*{Source Distortion Ratio -- SDR}
@@ -258,7 +297,7 @@ Pocet a popis nahravek.
 \subsection{Implementace modelu}
 - pytorch, scripty, python3, bash, tridy, moduly, parametry a volby spusteni.
 
-% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 \chapter{Experimenty a vyhodnocení}
@@ -272,17 +311,17 @@ Pocet a popis nahravek.
 - pametova narocnost modelu
 
 
-\section{Možná rozšíření}
+\section{Možná rozšíření a navrhnutá vylepšení}
 - variabilnější dataset, mikrofony, šum a bordel prostředí
 - separace více mluvčích
 - hlučné prostředí
 - identifikace konkrétního řečníka
 - realtime separace
 
-% ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \chapter{Závěr}
 \label{zaver}
 - co jak dopadlo, vysledky a vyhodnoceni velikosti modelu a jaky byl nejlepsi,...
-
 \blindtext[3]
+

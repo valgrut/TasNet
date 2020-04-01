@@ -1,7 +1,7 @@
 % ----------------------------------------------------------------------------
 % FIT thesis
 % ----------------------------------------------------------------------------
-% Autoři / Authors: 2007 Zdeněk Vašíček, 2008 Michal Bidlo, 2018 Jaroslav Dytrych
+% Autoři / Authors: 2007 Zdeněk Vašíček, 2008 Michal Bidlo, 2019 Jaroslav Dytrych
 % ----------------------------------------------------------------------------
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{fitthesis}[2017/11/07 Sablona pro BP/DP]
@@ -10,6 +10,7 @@
 \newif\ifczech \let\ifczech\iftrue
 \newif\ifslovak \let\ifslovak\iffalse
 \newif\ifenslovak \let\ifenslovak\iffalse
+\newif\ifenglish \let\ifenglish\iffalse
 \newif\ifczechslovak \let\ifczechslovak\iftrue
 \newif\ifcover \let\ifcover\iffalse
 \newif\ifCOPEN \let\ifCOPEN\iffalse
@@ -27,7 +28,7 @@
 % Parametry tridy (odkomentovani zakomentovanych na vlastni nebezpeci)
 % Class parameters (uncommenting of commented one is only on your own risk)
 %-----------------------------------------------------------------------------
-\DeclareOption{english}{\let\ifczech\iffalse\let\ifczechslovak\iffalse}
+\DeclareOption{english}{\let\ifenglish\iftrue\let\ifczech\iffalse\let\ifczechslovak\iffalse}
 \DeclareOption{slovak}{\let\ifslovak\iftrue\let\ifczech\iffalse}
 \DeclareOption{enslovak}{\let\ifenslovak\iftrue}
 \DeclareOption{cover}{\let\ifcover\iftrue}
@@ -59,9 +60,11 @@
 %-----------------------------------------------------------------------------
 % Balicky / Packages
 %-----------------------------------------------------------------------------
+\ifenglish
+  \PassOptionsToPackage{main=english}{babel}
+\fi
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage[]{opensans}
 \usepackage[czech,slovak,english]{babel}
 \usepackage[utf8]{inputenc} %kodovani / encoding
 \usepackage{cmap}
@@ -97,6 +100,13 @@
 
 \ifslovak
   \toggletrue{slovak_used}
+\fi
+
+\newtoggle{english_used}
+\togglefalse{english_used}
+
+\ifenglish
+  \toggletrue{english_used}
 \fi
 
 \newtoggle{enslovak_used}
@@ -219,14 +229,6 @@
 % \ifEqString{#1}{DP}{Vedúci práce}{\@supervisor@SK}%
  \ifEqString{#1}{DP}{Vedoucí práce}{\@supervisor@SK}%
  \ifEqString{#1}{DP}{Supervisor}{\@supervisor@EN}%
- \ifEqString{#1}{DT}{Teze disertační práce}{\@projecttype@CS}%
-% \ifEqString{#1}{DT}{Tézy dizertačnej práce}{\@projecttype@SK}%
- \ifEqString{#1}{DT}{Teze disertační práce}{\@projecttype@SK}%
- \ifEqString{#1}{DT}{PhD thesis proposal}{\@projecttype@EN}%
- \ifEqString{#1}{DT}{Školitel}{\@supervisor@CS}%
-% \ifEqString{#1}{DT}{Školiteľ}{\@supervisor@SK}%
- \ifEqString{#1}{DT}{Školitel}{\@supervisor@SK}%
- \ifEqString{#1}{DT}{Supervisor}{\@supervisor@EN}%
  \ifEqString{#1}{DR}{Disertační práce}{\@projecttype@CS}%
 % \ifEqString{#1}{DR}{Dizertačná práca}{\@projecttype@SK}%
  \ifEqString{#1}{DR}{Disertační práce}{\@projecttype@SK}%
@@ -362,6 +364,7 @@ Management}{\@fit@EN}%
 \define@key{projinfo}{declaration}{\def\@declaration{#1}}
 \define@key{projinfo}{acknowledgment}{\def\@acknowledgment{#1}}
 \define@key{projinfo}{title.length}{\def\@titlelen{#1}}
+\define@key{projinfo}{sectitle.length}{\def\@sectitlelen{#1}}
 
 %Vychozi hodnoty / Default values
 \setkeys{projinfo}{
@@ -370,8 +373,8 @@ Management}{\@fit@EN}%
   abstract.cs=, abstract.en=, keywords.cs=, keywords.en=,
   author.name=Jméno, author.surname=Příjmení, supervisor.name=Jméno, 
   supervisor.surname=Příjmení, extendedabstract=, 
-  department.cs=,department.en=,title.length=,faculty.cs=,
-  faculty.en=,faculty=FIT
+  department.cs=,department.en=,title.length=,sectitle.length=,
+  faculty.cs=,faculty.en=,faculty=FIT
 }%
 
 \def\projectinfo{\setkeys{projinfo}}
@@ -409,6 +412,11 @@ Management}{\@fit@EN}%
  \def\@titlelen{#1}%
 }
 
+%Délka druhého titulku / Second title length
+\newcommand{\sectitlelength}[1]{%
+ \def\@sectitlelen{#1}%
+}
+
 \newlength{\mkspc}
 \setlength{\mkspc}{2pt}
 
@@ -423,7 +431,9 @@ Management}{\@fit@EN}%
 \newcommand{\mkuctxt}[2]{\vbox{\setfontsize{#1}\noindent\MakeUppercase{#2}}\vspace\mkspc}
 \newcommand{\mkuctxtt}[2]{\vbox{\setfontsize{#1}\fosfamily\bfseries\noindent\MakeUppercase{#2}}\vspace\mkspc}
 % Pro název práce na 2 řádky / For the 2-line thesis title
-\newcommand{\mkuctxttl}[3]{\vbox to 1.0cm{\noindent\parbox{#2}{\setfontsize{#1}\fosfamily\bfseries\noindent\MakeUppercase{#3}}}\vspace\mkspc}
+\newcommand{\mkuctxttl}[3]{\vbox to 1.2cm{\noindent\parbox{#2}{\setfontsize{#1}\fosfamily\bfseries\noindent\MakeUppercase{#3}}}\vspace\mkspc}
+% Pro 2. název práce na 2 řádky / For the 2-line second thesis title
+\newcommand{\mkuctxttls}[3]{\vbox to 1.0cm{\noindent\parbox{#2}{\setfontsize{#1}\fosfamily\bfseries\noindent\baselineskip=13pt\MakeUppercase{#3}}}\vspace\mkspc}
 \newcommand{\mkuctxtc}[2]{\vbox{\setfontsize{#1}\ifCOPEN\fosfamily\fi\ifCBOPEN\fosfamily\bfseries\fi\noindent\MakeUppercase{#2}}\vspace\mkspc}
 %bold
 \newcommand{\mktxt@b}[2]{\vbox{\setfontsize{#1}\noindent\bf#2}\vspace\mkspc}
@@ -567,12 +577,12 @@ Management}{\@fit@EN}%
 
 \mktxt@b{16}{\ifslovak\@cite@SK\else\ifczech\@cite@CS\else\@cite@EN\fi\fi}
 \iftoggle{slovak_used}{
-  \noindent\MakeUppercase{\@author@s}, \@author@n. \it\@title\rm. Brno, \@year. \@projecttype@SK. \@vut@SK, \@fit@SK. {\@supervisor@SK} {\@supervisor@tp} {\@supervisor@n} {\@supervisor@s}{\ifx\undefined\@supervisor@ta\else,~\@supervisor@ta\fi}
+  \noindent\MakeUppercase{\@author@s}, \@author@n. \it\@title\rm. Brno, \@year. \@projecttype@SK. \@vut@SK, \@fit@SK. {\@supervisor@SK} {\ifx\undefined\@supervisor@tp\else\@supervisor@tp ~\fi}{\@supervisor@n} {\@supervisor@s}{\ifx\undefined\@supervisor@ta\else,~\@supervisor@ta\fi}
 }{
-  \noindent\MakeUppercase{\@author@s}, \@author@n. \it\@title\rm. Brno, \@year. \ifczech\@projecttype@CS\else\@projecttype@EN\fi. \ifczech\@vut@CS\else\@vut@EN\fi, \ifczech\@fit@CS\else\@fit@EN\fi. {\ifczech\@supervisor@CS\else\@supervisor@EN\fi} {\@supervisor@tp} {\@supervisor@n} {\@supervisor@s}{\ifx\undefined\@supervisor@ta\else,~\@supervisor@ta\fi}
+  \noindent\MakeUppercase{\@author@s}, \@author@n. \it\@title\rm. Brno, \@year. \ifczech\@projecttype@CS\else\@projecttype@EN\fi. \ifczech\@vut@CS\else\@vut@EN\fi, \ifczech\@fit@CS\else\@fit@EN\fi. {\ifczech\@supervisor@CS\else\@supervisor@EN\fi} {\ifx\undefined\@supervisor@tp\else\@supervisor@tp ~\fi}{\@supervisor@n} {\@supervisor@s}{\ifx\undefined\@supervisor@ta\else,~\@supervisor@ta\fi}
 }
 %===================================================
-{\sloppy\newpage\fussy}
+\newpage
 
 }
 
@@ -730,10 +740,23 @@ Management}{\@fit@EN}%
   \toggletrue{long_title}
 \fi
 
+% Pro druhý název práce na 2 řádky / For the 2-line second thesis title
+\newtoggle{long_sectitle}
+\togglefalse{long_sectitle}
+
+\ifx\@sectitlelen\@empty
+\else
+  \toggletrue{long_sectitle}
+\fi
+
 % Název práce / Thesis title
 \iftoggle{long_title}{
   \mkuctxttl{18}{\@titlelen}{\ifslovak\@title@CS\else\ifczech\@title@CS\else\@title@EN\fi\fi}
-  \mkuctxtt{10}{\ifslovak\@title@EN\else\ifczech\@title@EN\else\@title@CS\fi\fi}
+  \iftoggle{long_sectitle}{
+    \mkuctxttls{10}{\@sectitlelen}{\ifslovak\@title@EN\else\ifczech\@title@EN\else\@title@CS\fi\fi}
+  }{
+    \mkuctxtt{10}{\ifslovak\@title@EN\else\ifczech\@title@EN\else\@title@CS\fi\fi}
+  }
 }{
   \mkuctxtt{18}{\ifslovak\@title@CS\else\ifczech\@title@CS\else\@title@EN\fi\fi}
   \mkuctxtt{10}{\ifslovak\@title@EN\else\ifczech\@title@EN\else\@title@CS\fi\fi}
@@ -959,6 +982,8 @@ Management}{\@fit@EN}%
 
 % Balíčky
 % Packages
+\usepackage[czech,slovak,english]{babel}
+\usepackage[]{opensans}
 \usepackage{float}
 \usepackage{calc}
 \usepackage{longtable,booktabs}
@@ -966,6 +991,7 @@ Management}{\@fit@EN}%
 \usepackage{multirow}
 \usepackage{tabularx}
 \usepackage{graphicx}
+\usepackage{url}
 \DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
 \def\UrlBreaks{\do\/\do-}
 
