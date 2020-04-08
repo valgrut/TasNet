@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+
+echo sending
+./sendToMerlin.sh
+
+echo building
+# ssh xpeska05@merlin.fit.vutbr.cz 'cd Bakalarka && ./prep'
+
+## TOTO je bozi:
+# ssh -t xpeska05@eva.fit.vutbr.cz 'ssh xpeska05@merlin.fit.vutbr.cz'
+
+ssh -t xpeska05@eva.fit.vutbr.cz 'ssh xpeska05@merlin.fit.vutbr.cz "cd Bakalarka && ./prep"'
+
+echo waiting
+sleep 10
+
+echo getting
+./getFromMerlin.sh
