@@ -22,25 +22,49 @@ V poslední části, která je pokryta v kapitole \ref{experimenty} jsou shrnuty
 \label{neuronovky}
 V dnešní době zažívají neuronové sítě díky výkonosti počítačů velký rozmach. Jejich využití prostupuje skrze mnohé vědní obory a dokáží řešit celou řadu problémů, ve kterých dosahují výborných výsledků, které zdaleka předčily dosavadní postupy. 
 
-Neuronové sítě jsou výpočetní model, který je inspirovaný strukturou lidského mozku, ve kterém je obrovské množství propojených a komunikujících neuronů. Ty se skládají ze vstupních dendridů, výstupních axonů a samotného těla neuronu. Na základě vnitřního potenciálu a vstupních hodnot je po přesažení prahové hodnoty neuron vybuzen a je vyslán signál na výstupní axon. Signál je nakonec předán dalším neuronům skrze jejich vstupní dendridy\cite[p.~65--66]{mitdeeplearning_small}.
+Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model, který je inspirovaný strukturou lidského mozku, ve kterém je obrovské množství propojených a komunikujících neuronů. Ty se skládají ze vstupních dendridů, výstupních axonů a samotného těla neuronu. Na základě vnitřního potenciálu a vstupních hodnot je po přesažení prahové hodnoty neuron vybuzen a je vyslán signál na výstupní axon. Signál je nakonec předán dalším neuronům skrze jejich vstupní dendridy\cite[p.~65--66]{mitdeeplearning_small}.
 
-Účelem neuronové sítě je naučit se plnit zadanou úlohu. Rozdíl oproti běžným algoritmům je ale ten, že způsob, jakým síť má problém řešit, není explicitně naprogramován, ale je postupně naučen. Základní způsoby učení jsou s učitelem (supervised) a bez učitele (unsupervised). Mezi problémy, které se dají řešit neuronovými sítěmi patří problémy v oblasti klasifikace a regrese. Konkrétní příklad z oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. V této práci se budu zaměřovat na feed forward neuronové sítě, které jsou typ umělých neuronových sítí, kde se nevyskytují ve výpočetním grafu cykly, tedy zpětná propojení vrstev.
+Účelem neuronové sítě je naučit se plnit zadanou úlohu. Rozdíl oproti běžným algoritmům je ale ten, že způsob, jakým síť má problém řešit, není explicitně naprogramován, ale je postupně naučen. Základní způsoby učení jsou s učitelem (\textit{supervised}) a bez učitele (\textit{unsupervised}). 
 
-Strukturu neuronové sítě tvoří 
+\textbf{Učení s učitelem} spočívá v \todo{bla bla (dve tri vety)}.
+\textbf{Učení bez učitele} spočívá v \todo{bla bla (dve tri vety)}.
+
+Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. 
+
+
+
+
+\section{Organizace feedforward sítí}
+Feed forward neuronové sítě jsou typ umělých neuronových sítí, kde se nevyskytují cykly ve výpočetním grafu, tedy zpětná propojení vrstev, takže informace se pohybuje pouze jedním směrem, od vstupní vrstvy přes skryté vrstvy až do vrstvu výstupní. Sítě, které obsahují cykly, se nazývají rekurentní. Rozdíl znázorňuje obrázek \ref{fig:netcomparison}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{obrazky-figures/feedforward_vs_recurrent.png}
+    \caption{\label{fig:netcomparison}Příklad grafu feed forward sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u feed forward sítě, které směřují pouze jedním směrem, zatímco u rekurentní sítě šipky směřují i k předešlým uzlům grafu.}
+\end{figure}
+
+Struktura neuronové sítě je organizována do vrstev, které se skládají z neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázek \ref{fig:mlp}). Každá vrstva může obsahovat až $n, n \in \mathbb{N}\setminus\{0\}$ neuronů. Vstupní vrstva slouží k předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup. S počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojmem hluboká neuronová síť se označuje taková síť, která má dvě nebo více skrytých vrstev. Vrstvy se ještě dále rozdělují na plně propojené, pooling, s přeskočením či na konvoluční vrstvy.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1.3]{obrazky-figures/mlp.png}
+    \caption{\label{fig:mlp}Schéma neuronové sítě, která má 2 skryté vrstvy}
+\end{figure}
+
+
 
 \section{Umělý neuron}
-\todo{perceptron asi neni nejzakladnejsi prvek siti. je to starej algoritmus linearni separace.}
-Základní stavební jednotka neuronových sítí je neuron, neboli přesněji perceptron (viz obrázek \ref{fig:neuron}). Tento model je založen na principu reálných neuronů, které se nacházejí v organizmech. Perceptron obsahuje libovolně mnoho vstupních propojení, přes které se mu předávají data v podobě vstupního vektoru $\overrightarrow{x} = [x_1, x_2, \dots, x_n], x_n \in \mathbb{R}$. Sám neuron obsahuje hodnotu bias $b \in \mathbb{R}$ a vektor vah $\overrightarrow{w} = [w_1, w_2, \dots, w_n], w_n \in \mathbb{R}$, jehož modifikace představuje princip učení neuronu.
+Základní stavební jednotka neuronových sítí je umělý neuron (\textit{artificial neuron}) (viz obrázek \ref{fig:neuron}). Tento model je založen na principu reálných neuronů, které se nacházejí v organizmech. Umělý neuron obsahuje libovolně mnoho vstupních propojení, přes které se mu předávají data v podobě vstupního vektoru $\overrightarrow{x} = [x_1, x_2, \dots, x_n], x_n \in \mathbb{R}$. Sám neuron obsahuje hodnotu bias $b \in \mathbb{R}$ a vektor vah $\overrightarrow{w} = [w_1, w_2, \dots, w_n], w_n \in \mathbb{R}$, jenž je upravován během trénování neuronu.
 
-Výstupní hodnota závisí na vstupních datech, aktuálním vnitřním stavu (hodnoty vah a biase) a na zvolené aktivační funkci. Vstupní hodnoty jsou váhovány, což znamená, že každá vstupní hodnota je vynásobena s váhou na daném vstupním spojení, neboli, s použitím definovaných vektorů, lze napsat, že vstupní vektor je vynásoben s vektorem vah.
+Výstupní hodnota závisí na vstupních datech, aktuálním vnitřním stavu (hodnoty vah a biase) a na zvolené aktivační funkci. Vstupní hodnoty jsou váhovány, což znamená, že každá vstupní hodnota je vynásobena s váhou na daném vstupním spojení. S použitím definovaných vektorů lze napsat, že vstupní vektor je vynásoben s vektorem vah.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/perceptron.png}
-    \caption{\label{fig:neuron}Schéma umělého neuronu -- perceptron}
+    \caption{\label{fig:neuron}Schéma umělého neuronu}
 \end{figure}
 
-Hodnota bias $b$, která je přičtena k sumě násobků vah a vstupních hodnot, je prahová hodnota modifikující dobu, kdy se aktivuje perceptron a změní svůj výstup. Matematicky to znamená, že s grafem aktivační funkce horizontálně pohybuje doleva nebo doprava v závislosti na tom, je-li hodnota biasu pozitivní nebo negativní. Toto posunutí je znázorněno na obrázku \ref{fig:bias}. V závislosti na řešeném problému může být žádoucí, aby i hodnota bias byla modifikována během učení společně s ostatními váhami. V opačném případě je hodnota nastavena pevně na nějakou konstantní hodnotu, obvykle na jedna.
+Hodnota bias $b$, která je přičtena k sumě násobků vah a vstupních hodnot, je prahová hodnota modifikující dobu, kdy se aktivuje neuron a změní svůj výstup. Matematicky to znamená, že s grafem aktivační funkce horizontálně pohybuje doleva nebo doprava v závislosti na tom, je-li hodnota biasu pozitivní nebo negativní. Toto posunutí je znázorněno na obrázku \ref{fig:bias}. V závislosti na řešeném problému může být žádoucí, aby i hodnota bias byla modifikována během učení společně s ostatními váhami. V opačném případě je hodnota nastavena pevně na nějakou konstantní hodnotu, obvykle na hodnotu jedna.
 
 \begin{figure}[H]
     \centering
@@ -48,14 +72,27 @@ Hodnota bias $b$, která je přičtena k sumě násobků vah a vstupních hodnot
     \caption{\label{fig:bias}Vliv hodnoty bias na aktivační funkci}
 \end{figure}
 
-Výstup neuronu se tedy vypočítá jako
+
+
+
+Výstup neuronu se vypočítá jako
 \begin{equation}
-y = f((\sum_{k=1}^n w_kx_k) + b)
+	y = f\big((\sum_{k=1}^n w_kx_k) + b\big)
 \end{equation}
 kde $f$ je nějaká aktivační funkce, $x_k \in \mathbb{R}$ je vstupní hodnota, $w_k \in \mathbb{R}$ je váha, kterou se vstupní hodnota vynásobí a $b \in \mathbb{R}$ je hodnota bias, která je přičtena k celkové sumě předtím, než je výsledek předán aktivační funkci.
 
-\subsection{Aktivační funkce}
-Aktivační, neboli prahová funkce určuje výstupní hodnotu neuronu. Funkce se vybírá na základě problému, který se má neuronová síť naučit řešit. Správná volba prahové funkce vede k lepší konvergenci učení sítě. Naopak špatná volba může vést ke stále větší odchylce od správného řešení -- může divergovat. Povaha problému může vyžadovat specifické vlastnosti aktivační funkce - lineární nebo nelineární -- sigmoidní a podobně. Pro nestandardní problémy je obvykle potřeba experimentálně zjistit, která funkce bude nejlépe vyhovovat danému problému. 
+
+
+
+
+\section{Aktivační funkce}
+Aktivační, neboli prahová funkce určuje výstupní hodnotu neuronu. Funkce se vybírá na základě problému, který se má neuronová síť naučit řešit. Správná volba prahové funkce vede k lepší konvergenci učení sítě. Naopak špatná volba může vést ke stále větší odchylce od správného řešení -- může divergovat. Povaha problému může vyžadovat specifické vlastnosti aktivační funkce - lineární nebo nelineární. Pro nestandardní problémy je obvykle potřeba experimentálně zjistit, která funkce bude nejlépe vyhovovat danému problému. 
+
+Pokud by veškeré aktivační funkce v modelu byly lineární, tak celkové mapování sítě by bylo omezeno pouze na lineární mapování vstupu na výstup. Reálné problémy ale lineární obvykle nejsou a v případě pokusu modelovat takovým modelem nelineární vztahy by vedlo k velice nepřesným výsledkům, který by byl zapříčiněn podučením (\textit{underfitting}), což znamená, že model, který se učí zakódovat nějaký vzor v datasetu, je příliš jednoduchý. Proto je potřeba zavést do modelu i nelineární aktivační funkce, které tento problém řeší\cite[p.~77--78]{mitdeeplearning_small}.
+
+Z pohledu učení je také důležité, aby aktivační funkce byla diferencovatelná. To umožňuje použití učících metod založených na výpočtu gradientu.
+
+
 
 \subsection*{Sigmoid}
 \begin{equation}
@@ -70,6 +107,8 @@ Aktivační, neboli prahová funkce určuje výstupní hodnotu neuronu. Funkce s
     \caption{\label{fig:sigmoid}Graf aktivační funkce sigmoid}
 \end{figure}
 
+
+
 \subsection*{Softmax}
 \begin{equation}
   f(x) = \frac{1}{1+\exp(-z)}
@@ -83,7 +122,8 @@ Aktivační, neboli prahová funkce určuje výstupní hodnotu neuronu. Funkce s
     \caption{\label{fig:softmax}Graf aktivační funkce softmax}
 \end{figure}
 
-Pokud by veškeré aktivační funkce v modelu byly lineární, tak celkové mapování sítě by bylo omezeno pouze na lineární mapování vstupu na výstup. Reálné problémy ale lineární obvykle nejsou a v případě pokusu modelovat takovým modelem nelineární vztahy by vedlo k velice nepřesným výsledkům, který by byl zapříčiněn podučením (underfitting), což znamená, že model, který se učí zakódovat nějaký vzor v datasetu, je příliš jednoduchý. Proto je potřeba zavést do modelu i nelineární aktivační funkce, které tento problém řeší\cite[p.~77--78]{mitdeeplearning_small}.
+
+
 
 \subsection*{ReLU}
 Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje-li neuronová síť nějakou nelinearitu, je ReLU pro většinu případů ideální. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$, jak udává rovnice 
@@ -96,6 +136,8 @@ Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje
     \includegraphics[scale=0.2]{obrazky-figures/ReLU.png}
     \caption{\label{fig:relu}Graf aktivační funkce ReLU}
 \end{figure}
+
+
 
 
 \subsection*{PReLU}
@@ -114,22 +156,49 @@ Parametrizovaná ReLU je nelineární aktivační funkce, která se používá v
     \caption{\label{fig:prelu}Graf aktivační funkce PReLU}
 \end{figure}
 
-Jeden neuron však dokáže řešit klasifikaci pouze do 2 tříd, jak znázorňuje obrázek \ref{fig:perceptron_separable}, a tím je pro složitější problémy nepoužitelný, ale propojením neuronů do vícevrstvé hierarchie lze řešit téměř libovolně komplexní problém. Takové seskupení se označuje jako vícevrstvý perceptron (Multi Layer Perceptron, MLP), neboli neuronová síť.
+
+
+Síť složená z jediného neuronu by byla omezena pouze na klasifikaci lineárně separovatelných dat. To jsou taková data, která lze rozdělit, existuje-li alespoň jedna přímka v rovině taková, že na jedné straně přímky jsou všechna data klasifikována do první třídy, a na druhé straně data klasifikována do třídy druhé, jak lze vidět na obrázku \ref{fig:linear_separable}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/Perceptron_cant_choose.png}
-    \caption{\label{fig:perceptron_separable}Two classes of points, and two of the infinitely many linear boundaries that separate them. Even though the boundaries are at nearly right angles to one another, the perceptron algorithm has no way of choosing between them [TODO wiki perceptron].} 
+    \includegraphics[scale=0.38]{obrazky-figures/linear_separable.png}
+    \caption{\label{fig:linear_separable}Lineárně separovatelná (vlevo) a neseparovatelná (vpravo) data} 
 \end{figure}
 
+Mějme množinu dat, kterou tvoří dvě rozdílné třídy objektů $\Omega_1, \Omega_2 \subset \mathbb{R}^m$. Třídy jsou lineárně separovatelné, jestliže existuje $w \in 
+\mathbb{R}^m$ a $\theta \in \mathbb{R}$ takové, že 
+\begin{equation}
+   \forall x \in \Omega_1 : x^Tw > \theta
+\end{equation}
+\begin{equation}
+   \forall x \in \Omega_2 : x^Tw < \theta
+\end{equation}
 
-Nejzákladnější neuronová síť je tvořena třemi typy vrstev (viz obrázek \ref{fig:mlp}). Každá vrstva může obsahovat až $n, n \in \mathbb{N}/{0}$ neuronů. Vstupní vrstva slouží k předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup. S počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojmem hluboká neuronová síť se označuje taková síť, která má dvě nebo více skrytých vrstev. Takto propojené neurony tvoří acyklický graf. Neuronové síti, která ve svém grafu nemá žádné cykly, se nazývá feedforward neural network.
+Problém lze zobecnit tak, že řešením bude separace tříd pomocí hyper roviny v prostoru $\mathbb{R}^m$, jak zachycuje obrázek \ref{fig:hyperplane_separable}
+\cite{linearseparability}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1.3]{obrazky-figures/mlp.png}
-    \caption{\label{fig:mlp}Schéma neuronové sítě, která má 2 skryté vrstvy}
+    \includegraphics[scale=0.8]{obrazky-figures/hyperplane_separable.jpeg}
+    \caption{\label{fig:hyperplane_separable}Separace pomocí hyper roviny} 
 \end{figure}
+
+Neuron se nedokáže ale naučit klasifikovat třeba funkci XOR, protože ta není lineárně separovatelná. Byly by zapotřebí minimálně dvě přímky pro rozdělení dat, jak zobrazuje obrázek \ref{fig:xor}\todo{ocitovat xor}.  
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.3]{obrazky-figures/xor.png}
+    \caption{\label{fig:xor}Graf funkce XOR, jejíž výstup není lineárně separovatelný} 
+\end{figure}
+
+K překonání tohoto problému se neurony spojují do podoby neuronové sítě, která dokáže řešit libovolně komplexní problémy.
+
+
+
+
+\section{Hyperparametry}
+\todo{co to je, ze se to nastavuje pred trenovanim site, neni to meneno behem trenovani... learning rate, X, R, stride, padding, receptive field, ...}
 
 
 
@@ -139,9 +208,6 @@ Nejzákladnější neuronová síť je tvořena třemi typy vrstev (viz obrázek
 \todo{v ramci tohoto proces uceni, cil uceni a objektivni funkce, MLP, }
 
 Feedforward sítě (MLP) jsou nejzákladnější modely hlubokého učení. Cílem takové neuronové sítě je aproximovat nějakou funkci $f^\ast$. Síti je předána vstupní hodnota $x$, pro kterou síť definuje mapování na výstupní hodnotu jako $y = f(x; \theta)$, kde $\theta$ je parametr, který se síť učí tak, aby dosáhla nejlepší aproximace funkce. \cite[p.~163]{mitdeeplearning}.
-
-
-
 
 
 \subsection{Objektivní funkce}
@@ -183,7 +249,7 @@ Mozna kaslat.
 
 
 \section{Konvoluce a konvoluční neuronové sítě}
-Konvoluční neuronové sítě jsou speciální typ feedforward sítí.
+Konvoluční neuronové sítě jsou typ feedforward sítí.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/conv_nn_audio.jpg}
@@ -193,19 +259,19 @@ Konvoluční neuronové sítě jsou speciální typ feedforward sítí.
 
 \subsection{Konvoluce}
 Diskrétní konvoluce je definována jako
-\begin{equation}
-   (f \star g)_k = \sum_{i=-\inf}^\inf f_i * g_{k-i} = \sum_{i=-\inf}^\inf f_{k-i} * g_{i}
-\end{equation}
+
+%\begin{equation}
+%   (f \star g)_k = \sum_{i=-\inf}^\inf f_i * g_{k-i} = \sum_{i=-\inf}^\inf f_{k-i} * g_{i}
+%\end{equation}
+
 kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je konvoluční jádro a $f_i$ a $g_i$ jsou hodnoty funkce na indexu $i$.
 
 
 
 
+
+
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 \chapter{TasNet - Time--Domain Audio Separation Network}
 \label{tasnet}
 \todo{Architektura full -- obrázek, bloky...}
@@ -279,11 +345,11 @@ Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahr
     \includegraphics[scale=0.35]{obrazky-figures/dataset-s2.png}
     \caption{\label{fig:ref-s2}Druhý mluvčí ze směsi}
 \end{figure}
-Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku (ref obr1) a obrázku (ref obr2) dostaneme přesně signál směsi, což lze vyjádřit vztahem
+Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku \ref{fig:ref-s1} a \ref{fig:ref-s2} dostaneme přesně signál směsi, což lze vyjádřit vztahem
 \begin{equation}
-  x(t) = \sum_{i=1}^C s_i(t)
+  x[t] = \sum_{i=1}^C s_i[t]
 \end{equation}
-, kde $x(t) \in \mathbb{R}^{1 \times T}$ je diskrétní signál směsi a $s_i(t) \in \mathbb{R}^{1 \times T}$, kde $i = 1,\ldots,C$, je jeden z $C$ zdrojů[ref studie str3 vlevo]. 
+, kde $x[t] \in \mathbb{R}^{1 \times T}$ je diskrétní signál směsi a $s_i[t] \in \mathbb{R}^{1 \times T}$, kde $i = 1,\ldots,C$, je jeden z $C$ zdrojů[cite studie str3 vlevo]. 
 \todo{doplnit info o zero means a jendotkove varianci}
 
 \section{Trénování}
