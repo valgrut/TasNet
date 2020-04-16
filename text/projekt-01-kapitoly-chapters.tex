@@ -17,6 +17,81 @@ Model prošel během implementace několika úpravami. Pro účely trénování 
 
 V~poslední části, která je pokryta v~kapitole \ref{experimenty} jsou shrnuty experimenty s~modelem a vyhodnocení výsledků, v~rámci něhož je zkoumán vliv hyper-parametrů na učení sítě, na výsledky a přesnost separace v~závislosti na zvolených parametrech nebo počtu konvolučních bloků. Výstup sítě v~podobě separovaných mluvčích je porovnán také s~výsledky referenční studie. Kvalita separace, neboli přesnost, je vypočítána pomocí si--snr metriky která udává poměr zastoupení chtěného signálu a hluku na pozadí. Je zde vyhodnoceno, jaký vliv má velikost sítě na přesnost separace a jsou zde shrnuty jednotlivé výsledky.
 
+
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\chapter{Separace mluvčích}
+\label{separace}
+Živočichové mají vrozenou schopnost zaměřit se na jeden konkrétní zvuk, zatímco všechny ostatní dokážou potlačit. Naučit ale této dovednosti počítač se ukázalo jako obtížný úkol, který je překážkou ASR (\textit{automatic speech recognition}) systémům v rozsáhlejším nasazení do běžného života. Tento problém se nazývá koktejl párty. Vyřešení tohoto problému, tedy separování zdrojů, umožňuje širokou aplikaci v oblasti zpracování řeči, jako  přepis konverzací na text, ovládání počítače hlasem, používání hlasových asistentů či identifikace konkrétního mluvčího v prostředí s mnoha současně mluvícími lidmi.
+
+\section{Koktejl párty efekt}
+Tento problém se nejlépe dá popsat jako schopnost soustředit se na jeden konkrétní zdroj zvuku z mnoha souběžných zdrojů jako hudba, konkrétní hudební nástroj, řeč dalších lidí či okolní zvuky, a přepínat mezi nimi dynamicky pozornost. 
+
+\todo{vzniklo pro jeho vyreseni hafo altofirmu, ktere dosahovaly nejakych vysledku. jeho vyresenim by se mohlo pouzivat asr na prepis reci an text a pod. Nejlepsich vysledku dosahly hluboke neuronove site.}
+
+
+\section{Metody pro separaci jednokanálových nahrávek}
+Pro separaci zdrojových signálů z nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z nichž asi nejznámější jsou CASA (\textit{computational auditory scene analysis})\todo{ref?} a NMF (\textit{non-negative matrix factorization}) \todo{ref?}, používané pro separaci jednokanálových nahrávek. V posledních letech se do popředí dostaly přistupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody \textit{beamforming} nebo state--of--the--art \textit{Multi-channel blind source separation}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v článku\cite{speechseparation}.
+
+
+\subsection{CASA -- computational auditory scene analysis}
+Metoda CASA je založena na procesu v lidském mozku, který separuje zdroje ze směsi mluvčích a simuluje vysokoúrovňové chování lidského sluchu. Pro separaci jsou většinou manuálně navrhnuta segmentační pravidla pro operování nad nízkoúrovňovými příznaky k odhadu časově frekvenční (\textit{T--F}) masky, která izoluje komponenty signálu jednotlivých mluvčích a následně je použita pro rekonstrukci všech zdrojů.
+\todo{Hodit sem teda ty zdroje jako v 3.1 pro ASA, CASA a pod? jak jsou tam asi 3 po sobe?}
+
+Přestože tato metoda byla i nadále rozvíjena, tak má mnoho nevýhod jako špatnou generalizaci v důsledku manuálního vytváření pravidel, nemožnost automatického učení z dat nebo nemožnost použití na separaci jiných zdrojů než je lidská řeč, které značně omezují její použití v mnoha reálných případech.
+
+
+\subsection{NMF -- non-negative matrix factorization}
+Nezáporná maticová faktorizace (\textit{NMF}) \todo{[(Lee and Seung, 2001)]} patří mezi daty řízené metody a je založena na předpokladu, že struktura spektrogramu může být reprezentována malým počtem bází.
+
+Pro NMF platí
+
+\begin{equation}
+  Y = \sum{s}W_sH_s
+\end{equation}
+
+kde každý zdroj $s$ je modelován aproximací nízkého řádu nezápornými maticemi $W_s$, která reprezentuje slovník a $H_s$, která reprezentuje aktivační funkci. Ty jsou sečteny a dohromady tvoří výslednou směs $Y$.
+
+Metoda prochází trénovací a testovací fází.
+V trénovací fázi je každý zdroj dekomponován a mapován na množinu bází a aktivací a tím je zformován slovník $W$ pro tento zdroj.
+V testovací fázi jsou naučené slovníky jednotlivých zdrojů $s$ spojeny do jednoho, který dále není upravován. Následuje optimalizace aktivační matice $H$ pro každý zdroj. Každý zdroj je následně ze směsi rekonstruován s použitím výsledných bází a aktivací.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{obrazky-figures/nmf.png}
+    \caption{\label{fig:nmf}Znázornění trénovací a testovací fáze. Obrázek byl inspirován \cite{speechseparation}}
+\end{figure}
+
+Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použití pro řešení reálných problémů separace.
+
+
+\subsection{Hluboké neuronové sítě}
+Nejlépe si při řešení problému koktejl párty vedou postupy založené na hlubokém učení a neuronových sítích.
+Metody převáděly směs do časově--frekvenční reprezentace  znázorněné na obrázku \ref{fig:spektrum} pomocí STFT (\textit{short time fourier transformation}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{obrazky-figures/spektrum.png}
+    \caption{\label{fig:spektrum}Časově--frekvenční reprezentace řeči, neboli spektrum}
+\end{figure}
+
+
+
+
+\section{Vyhodnocovací metriky}
+Pro vyhodnocení kvality separace se používají metriky.
+
+\subsection{Signal to noise ration}
+\subsection{Source Distortion Ratio -- SDR}
+\subsection{Artifacts Ratio -- SAR}
+\subsection{Inference Ratio -- SIR}
+\subsection{STOI}
+
+
+Bylo navrženo mnoho konvenčních přístupů a metod pro řešení problému koktejl párty a s ním spojené separace mluvčích, ale většina z nich nedosahuje dostatečné přesnosti nebo výkonu k použití v reálných situacích. Přístupy založené na hlubokém učení a neuronových sítích předčily dosavadní techniky jak v přesnosti, tak ve výkonu, což umožňuje jejich nasazení v běžném životě.
+
+
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Neuronové sítě}
 \label{neuronovky}
@@ -26,10 +101,9 @@ Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model,
 
 Účelem neuronové sítě je naučit se plnit zadanou úlohu. Rozdíl oproti běžným algoritmům je ale ten, že způsob, jakým síť má problém řešit, není explicitně naprogramován, ale je postupně naučen. Základní způsoby učení jsou s~učitelem (\textit{supervised}) a bez učitele (\textit{unsupervised}). 
 
-\textbf{Učení s~učitelem} spočívá v~\todo{bla bla (dve tri vety)}.
-\textbf{Učení bez učitele} spočívá v~\todo{bla bla (dve tri vety)}.
+\textbf{Učení s~učitelem}, pod které spadá tato práce, spočívá v~\todo{bla bla (dve tri vety)}.
 
-Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. 
+Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči.
 
 
 
@@ -198,6 +272,7 @@ Neuron se nedokáže ale naučit klasifikovat třeba funkci XOR, protože ta nen
 
 
 \section{Konvoluce a konvoluční neuronové sítě}
+\todo{Nebo to pojmenovat jako Konvolucni vrstva?}.
 Konvoluční neuronové sítě jsou typ feedforward sítí, které neobsahují pouze plně propojené vrstvy, ale také vrstvy konvoluční.
 \begin{figure}[H]
     \centering
@@ -217,10 +292,8 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
 
 
 
-
-
 \section{Hyperparametry}
-Hyperparametry jsou parametry určující nastavení neuronové sítě. Tyto parametry musí být určeny před začátkem trénování a nelze je později měnit. Mohou určovat například počet skrytých vrstev, velikost záběrného pole, velikost filtrů a další.
+Hyperparametry jsou parametry určující nastavení neuronové sítě a trénovacího algoritmu. Tyto parametry musí být určeny před začátkem trénování a většinu nelze později měnit. Mohou určovat kapacitu modelu, velikost záběrného pole, velikost filtrů a podobně.
 
 
 
@@ -277,23 +350,26 @@ Generalizace, neboli \textit{test error}, je vlastnost modelu, která udává, j
 Testovací chyba by měla být stejná, jako \textit{learning error} \todo{mam psat learning error nebo ucici chyba???}. Z rozdílu mezi těmito chybovými hodnotami se dají diagnostikovat problémy s naučením sítě -- podučení (\textit{underfitting}) a přeučení(\textit{overfitting}). 
 
 \textit{Underfitting} nastane v případě, že model se již nedokáže v důsledku jeho kapacity zmenšit dostatečně jeho chybovou hodnotu na trénovacím datasetu.
+
 \textit{Overfitting} nastane, když rozdíl mezi trénovací chybou a testovací chybou je příliš velký.
 
 Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. V případě nízké kapacity se model nedokáže naučit všechny příznaky z trénovacích dat a v případě vysoké kapacity se mohou přeučit zapamatováním si jejich příznaků a tím sice dosáhnou nízké trénovací chyby, ale špatných výsledků během testování\cite[p107]{mitdeeplearning}.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{obrazky-figures/capacity_vs_error.svg}
+    \includegraphics[scale=0.3]{obrazky-figures/capacity_vs_error.jpg}
     \caption{\label{fig:gradientdescent}Vliv kapacity modelu trénovací a testovací chybu}
 \end{figure}
 
 
 \subsection{Regularizace}
-Regularizace je souhrn postupů, které slouží k zabránění přeučení nebo podučení.
+Regularizace je souhrn postupů, které říkají, jak modifikovat učící algoritmus tak, aby se zredukovala chyba generalizace, zatímco testovací chyba zůstane stejná\cite[p117]{mitdeeplearning}.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{TasNet - Time--Domain Audio Separation Network}
 \label{tasnet}
-\todo{Architektura full -- obrázek, bloky...}
+
+\todo{Architektura full -- obrázek, bloky... Na zacatku zminit ze kapitola vychazi ze studie ref studie. Kapitola NEBUDE moc dlouha, cca 5-6 stran max.}
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/tasnet-pipe.png}
@@ -338,12 +414,29 @@ Regularizace je souhrn postupů, které slouží k zabránění přeučení nebo
 
 
 
-\chapter{Implementace a trénování sítě}
+\chapter{Implementace sítě a nástrojů}
 \label{implementace}
-Pozn: colab, pytorch, stroj, bash, hyperparams, vykon a cas trenovani, seg--len, popis trid.
+\todo{Úvod - Pozn: colab + stroj, pytorch, bash, konkretni hyperparams, vykon a cas trenovani, seg--len, popis trid.}.
+
+\todo{POZN: NN neni tak moc o implementaci, ale ze shrnout zajimave casti a s cim byl problem. impl: co treba jsem resil a co delalo problemy, a pro nekoho kdo to bude pokracovat tak aby treba vedel jak se to vyresi. Tato kapitola NEBUDE DLOUHA (tak kolem 5 stran)}
+
+\todo{obrazek hierarchie adresářů v rámci úvodu}
 
 \section{Implementace modelu}
-- pytorch, scripty, python3, bash, tridy, moduly, parametry a volby spusteni.
+\todo{Pozn: pytorch, scripty, python3, bash, tridy, moduly, parametry a volby spusteni.}
+
+
+\section{Segmentace nahrávek}
+Pro trénování byly nahrávky, v závislosti na hodnotě hyperparametru, rozděleny na segmenty o délce 4, případně 2 sekund.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.60]{obrazky-figures/segmentation.jpg}
+    \caption{\label{fig:segmentace}Způsob segmentace nahrávek}
+\end{figure}
+
+
+\section{Pomocné skripty}
+
 
 \section{Dataset}
 \todo{Ukazat zde vykreslenou vlnu nahravek mix, s1, s2}
@@ -372,6 +465,25 @@ Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku 
 \todo{doplnit info o~zero means a jendotkove varianci}
 
 \section{Trénování}
+\todo{https://www.tablesgenerator.com/}.
+Síť byla trénována s různými parametry, velikosti a pod na stroji google blabla.
+
+\begin{table}[hbt]
+\centering
+\caption{Hodnoty hyperparametrů trénovaných sítí a jejich přesnost}
+\label{hodnoty}
+\begin{tabular}{|l|c|c|c|}
+\hline
+ & X & R & segment length  \\
+ &  &  & sisnr  \\ \hline
+2 & 2 & 4 & 8.3 \\ \hline
+3 & 2 & 4& 9.45 \\ \hline
+4 & 3 & 4 & 10.2 \\ \hline
+8 & 4 & 2 & 13.6 \\ \hline
+\end{tabular}
+\end{table}
+
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{obrazky-figures/some-loss.png}
@@ -392,13 +504,6 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 \todo{[kniha 117-118] kap 5.3 = Hyperparameters and validation set} 
 \todo{najit jeste nejakej zdroj s~popisem a pripadne nejaky zajimavejsi info.}
 
-\section{Vyhodnocovací metriky}
-- minimalizovat objektivni-hodnotici funkci sisnr.
-\subsection{Signal to noise ration}
-\subsection*{Source Distortion Ratio -- SDR}
-\subsection*{Artifacts Ratio -- SAR}
-\subsection*{Inference Ratio -- SIR}
-
 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -414,6 +519,11 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 - grafy trenovani loss a vysledkuu.
 - pametova narocnost modelu
 
+
+rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
+
+experimenty:
+sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat. 
 
 \section{Možná rozšíření a navrhnutá vylepšení}
 - variabilnější dataset, mikrofony, šum a bordel prostředí
