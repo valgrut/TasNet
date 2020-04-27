@@ -9,6 +9,7 @@ from datetime import datetime
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+from pystoi import stoi
 
 from AudioDataset import AudioDataset
 from TasNet import Net
@@ -17,7 +18,7 @@ from tools import *
 from snr import *
 
 if __name__== "__main__":
-    print("Version 10")
+    print("Version 14")
     parser = argparse.ArgumentParser(description='Setup and init neural network')
 
     parser.add_argument('--padding',
@@ -151,6 +152,7 @@ if __name__== "__main__":
     sdr_sum = 0
     sir_sum = 0
     sarn_sum = 0
+    stoi_sum = 0
     perm_sum = 0
 
     global_audio_cnt = 0
@@ -165,6 +167,7 @@ if __name__== "__main__":
                 print("")
                 print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
                 with open(training_dir + "testing.log", "a") as testlog:
+                    # Note: value of sdr is decreasing, because global_audio_cnt is increasing and sdr is divided by that value in this log
                     testlog.write("Audio_cnt: " + str(audio_cnt) + " SDR: " + str(sdr_sum/global_audio_cnt) + "\n")
 
             input_mixture  = data[0]
@@ -192,8 +195,7 @@ if __name__== "__main__":
                 target_source2 = target_source2.narrow(2, 0, smallest)
                 input_mixture = input_mixture.narrow(2, 0, smallest)
 
-            # Vypocet metrik
-
+            # Calculation of metrics
             s1.squeeze_(0)
             s2.squeeze_(0)
             target_source1.squeeze_(0)
@@ -223,11 +225,24 @@ if __name__== "__main__":
             (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources, estimated_sources, compute_permutation=True)
             # print(sdr, sir, sarn, perm)
 
+            # stoi function taken from https://github.com/mpariente/pystoi
+            stoi1 = stoi(ref_sources[0], estimated_sources[0], 8000, extended=False)
+            stoi2 = stoi(ref_sources[0], estimated_sources[1], 8000, extended=False)
+            stoi3 = stoi(ref_sources[1], estimated_sources[0], 8000, extended=False)
+            stoi4 = stoi(ref_sources[1], estimated_sources[1], 8000, extended=False)
+            # print(stoi1, stoi2, stoi3, stoi4)
+            stoi_max1 = max(stoi1, stoi2)
+            stoi_max2 = max(stoi3, stoi4)
+            # print(stoi_max1, stoi_max2)
+
+            # Short Term Objective Intelligibility (STOI)
+            stoi_sum += max(stoi_max1, stoi_max2)
+
             # TODO MOZNA zde asi taky bude potreba udelat to samo jako pro pocitani loss
             # protoze taky nemuzu vedet, ze mix[0] odpovida s1, nebo jestli odpovida s2
 
             # Signal to Distortion Ratios (SDR)
-            sdr_sum += max(sdr) # pricitam to vetsi z dvojice vysledku
+            sdr_sum += max(sdr) #add larger of two values
 
             # Source to Interference Ratios (SIR)
             sir_sum += max(sir)
@@ -239,14 +254,16 @@ if __name__== "__main__":
             # Just permutation - tells position of the best value when comparing cross sources. (s1-t1, s1-t2, s2-t1, s2-t2)
             # perm_sum += perm
 
-    print("Final SDR: " + str(sdr_sum/global_audio_cnt))
-    print("Final SIR: " + str(sir_sum/global_audio_cnt))
-    print("Final SAR: " + str(sarn_sum/global_audio_cnt))
+    print("Final SDR:  " + str(sdr_sum/global_audio_cnt))
+    print("Final SIR:  " + str(sir_sum/global_audio_cnt))
+    print("Final SAR:  " + str(sarn_sum/global_audio_cnt))
+    print("Final STOI: " + str(stoi_sum/global_audio_cnt))
 
     # Save results into the
     with open(training_dir + "testing.log", "a") as testlog:
-        testlog.write("Final SDR: " + str(sdr_sum/global_audio_cnt) + "\n")
-        testlog.write("Final SIR: " + str(sir_sum/global_audio_cnt) + "\n")
-        testlog.write("Final SAR: " + str(sarn_sum/global_audio_cnt) + "\n")
+        testlog.write("Final SDR:  " + str(sdr_sum/global_audio_cnt) + "\n")
+        testlog.write("Final SIR:  " + str(sir_sum/global_audio_cnt) + "\n")
+        testlog.write("Final SAR:  " + str(sarn_sum/global_audio_cnt) + "\n")
+        testlog.write("Final STOI: " + str(stoi_sum/global_audio_cnt) + "\n")
 
     print('Finished Testing')

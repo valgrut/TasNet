@@ -61,13 +61,14 @@ class AudioDataset(data_utils.Dataset):
 
     def __len__(self):
         """
-        Vraci celkovy pocet dat, ktere jsou zpracovavane
+        Returns the length of loaded audios in dataset
         """
         return len(self.mixtures)
 
     def __getitem__(self, index):
         """
         v2: transformovane a nachystane audio, ale pouze jeden segment v podobe tensoru
+        returns one segment of currently loaded mix, s1 and s2.
         """
         if self.DEBUG:
             print("getItem: index:",index, " path: ", self.mixtures_path + self.mixtures[index])
@@ -83,14 +84,14 @@ class AudioDataset(data_utils.Dataset):
 
     def getAudioSamples(self, audio_file_path):
         """
-        Precte a vrati vsechny vzorky zadaneho audio souboru
+        Reads and returns all samples of given audio file
         """
         rate, samples = wav.read(audio_file_path)
         return self.prepare(samples)
 
     def prepare(self, samples):
         """
-        Funkce prevede vstupni vzorky na numpy array a nasledne na tensor.
+        Function prepares and transforms raw audio samples into numpy array and then into tensor.
         """
         # normalisation - zero mean & jednotkova variance (unit variation)
         numpy = np.array(samples)
