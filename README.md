@@ -148,4 +148,9 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     [DONE] scripty pro gdrive
     [DONE] proc loss klesa do minusu
 
-    
+### 14. 4. 2020 - Online konzultace
+    - veci kolem textu a experimentu
+
+### 20. 4. 2020 - Online konzultace
+    - veci kolem textu a experimentu
+

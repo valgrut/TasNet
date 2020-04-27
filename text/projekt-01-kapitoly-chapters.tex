@@ -42,6 +42,7 @@ Metoda CASA je založena na procesu v lidském mozku, který separuje zdroje ze 
 Přestože tato metoda byla i nadále rozvíjena, tak má mnoho nevýhod jako špatnou generalizaci v důsledku manuálního vytváření pravidel, nemožnost automatického učení z dat nebo nemožnost použití na separaci jiných zdrojů než je lidská řeč, které značně omezují její použití v mnoha reálných případech.
 
 
+
 \subsection{NMF -- non-negative matrix factorization}
 Nezáporná maticová faktorizace (\textit{NMF}) \todo{[(Lee and Seung, 2001)]} patří mezi daty řízené metody a je založena na předpokladu, že struktura spektrogramu může být reprezentována malým počtem bází.
 
@@ -66,6 +67,7 @@ V testovací fázi jsou naučené slovníky jednotlivých zdrojů $s$ spojeny do
 Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použití pro řešení reálných problémů separace.
 
 
+
 \subsection{Hluboké neuronové sítě}
 Nejlépe si při řešení problému koktejl párty vedou postupy založené na hlubokém učení a neuronových sítích.
 Metody převáděly směs do časově--frekvenční reprezentace  znázorněné na obrázku \ref{fig:spektrum} pomocí STFT (\textit{short time fourier transformation}).
@@ -80,12 +82,35 @@ Metody převáděly směs do časově--frekvenční reprezentace  znázorněné 
 
 
 \section{Vyhodnocovací metriky}
-Pro vyhodnocení kvality separace se používají metriky.
+Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba závisí na řešeném problému.
 
-\subsection{Signal to noise ration}
-\subsection{Source Distortion Ratio -- SDR}
-\subsection{Artifacts Ratio -- SAR}
-\subsection{Inference Ratio -- SIR}
+
+
+\subsection{Signal--to--noise ratio}
+Nejzákladnější metrika pro určení kvality separace je signal--to--noise ratio (SNR), která porovnává zastoupení chtěného signálu a šumu v pozadí a je definována jako poměr energie originálního (ideálního) signálu a energie rozdílu mezi originálním a rekonstruovaným signálem.
+
+\begin{equation}
+  SNR = \frac{E_s}{E_N}
+\end{equation}
+
+Výsledný poměr často bývá vyjádřen v decibelech jako
+
+\begin{equation}
+  SNR(dB) = 10log_{10}\frac{E_s}{E_N}
+\end{equation}
+
+kde kladná SNR hodnota udává, že zastoupení signálu je větší, než zastoupení šumu \todo{citovat https://labrosa.ee.columbia.edu/~dpwe/pubs/Ellis04-sepeval.pdf}.
+
+
+
+\subsection{SDR -- Source Distortion Ratio}
+SDR je jedna z nejznámějších metrik pro měření kvality řečového signálu.
+
+
+\subsection{PESQ -- Perceptual evaluation of speech qualit}
+Procentuální vyhodnocení kvality řeči (PESQ\cite{pesq-itut}) je standardizovaná metrika pro vyhodnocování kvality řeči. Jeho hodnota se pohybuje od -0.5 do 4.5 s tím, že vyšší hodnota znamená lepší procentuální kvalitu\cite{DBLP:journals/corr/abs-1901-09146}.
+
+
 \subsection{STOI}
 
 
@@ -416,32 +441,137 @@ Regularizace je souhrn postupů, které říkají, jak modifikovat učící algo
 
 \chapter{Implementace sítě a nástrojů}
 \label{implementace}
-\todo{Úvod - Pozn: colab + stroj, pytorch, bash, konkretni hyperparams, vykon a cas trenovani, seg--len, popis trid.}.
-
 \todo{POZN: NN neni tak moc o implementaci, ale ze shrnout zajimave casti a s cim byl problem. impl: co treba jsem resil a co delalo problemy, a pro nekoho kdo to bude pokracovat tak aby treba vedel jak se to vyresi. Tato kapitola NEBUDE DLOUHA (tak kolem 5 stran)}
 
-\todo{obrazek hierarchie adresářů v rámci úvodu}
+Pro implementaci neuronových sítí vzniklo mnoho frameworků jako pytorch, tensorflow, keras a další, které umožňují síť poskládat z již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s datasety, funkce pro vykreslování grafů a pro matematické operace.
 
+V rámci zadání jsem zvolil framework s názvem pytorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. Pytorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2). Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
+
+
+Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet pro separaci mluvčích v časové doméně, k čemuž jsem použil framework pytorch, který nabízí, krom jiného, mnoho modulů pro správu a manipulaci s datasetem, ke konstrukci hluboké neuronové sítě a pro různé transformace dat.
+
+
+\todo{Pozn: pytorch, scripty, tridy, moduly, parametry a volby spusteni}
 \section{Implementace modelu}
-\todo{Pozn: pytorch, scripty, python3, bash, tridy, moduly, parametry a volby spusteni.}
+\todo{(nacitani dat a jejich transformace, cyklus, main.py, parametry, .py soubory)}
+Model se skládá ze separační části, která se skládá z konvolučních bloků, dále z...
+
+
+
+
+\subsection*{Třídy SegmentDataset a AudioDataset}
+zpracovani datasetu, jedna segmentuje, druha ne..
+
+\subsection*{Třída Tasnet}
+Třída Tasnet.py reprezentuje model neuronové sítě.
+
+\subsection*{Třída ResBlock}
+
+
+Základní jednotkou, se kterou síť pracuje, je tensor. V pytorchi je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána samotné síti ke zpracování.
+
+
+\todo{Pseudo algoritmus programu}
+\item 
+spusteni a predani parametru a nastaveni velikosti site.
+\item
+nacteni datasetu
+
 
 
 \section{Segmentace nahrávek}
 Pro trénování byly nahrávky, v závislosti na hodnotě hyperparametru, rozděleny na segmenty o délce 4, případně 2 sekund.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.60]{obrazky-figures/segmentation.jpg}
+    \includegraphics[scale=0.30]{obrazky-figures/segmentation.jpg}
     \caption{\label{fig:segmentace}Způsob segmentace nahrávek}
 \end{figure}
 
+Algoritmus \ref{alg:segmentace} představuje proces, jakým jsou nahrávky segmentovány, jak zobrazuje obrázek \ref{fig:segmentace}.
+Funkce $segmentGenerator()$, která slouží jako generátor, pracuje současně se třemi nahrávkami -- se směsí dvou mluvčích, s nahrávkou prvního mluvčího a s nahrávkou druhého mluvčího, které jsou do atributů $self.current_mixture$, $self.current_source1$ a $self.current_source2$ třídy $SegmentDataset$ nahrávány funkcí $loadNextAudio()$ po zpracování předchozí trojice nahrávek.
+
+\begin{algorithm}[H]
+ \KwData{this text}
+ \KwResult{how to write algorithm with \LaTeX2e }
+ initialization\;
+ \While{not at end of this document}{
+  read current\;
+  \eIf{understand}{
+   go to next section\;
+   current section becomes this one\;
+   }{
+   go back to the beginning of current section\;
+  }
+ }
+ \caption{Algoritmus segmenace nahrávek používá python generátor, který po vrácení hodnoty příkazem yield neztrácí svůj vnitřní stav a po jeho zavolání pokračuje tam, kde skončil}
+\end{algorithm}
+
+
+%\begin{algorithm}[H]
+% \KwData{$self.current_mixture$}
+% \KwData{$self.current_source1$}
+% \KwData{$self.current_source2$}
+% \KwData{$segptr = 0$}
+% \KwResult{$segmentovaná data o délce SEGMENT_LENGTH$}
+% $mix_segment = []$\;
+% $s1_segment = []$\;
+% $s2_segment = []$\;
+% \While{$je dostupná další trojice nahrávek$}{
+%  %read current\;
+%  \eIf{$self.current_mixture_len < SEGMENT_LENGTH$}{
+%    $mix_segment = self.current_mixture[:]$\;
+% 	$s1_segment = self.current_source1[:]$\;
+% 	$s2_segment = self.current_source2[:]$\;
+%	$new_required = True$\;    
+%    $self.isAudioPrepared = False$\;
+%    yield mix_segment, s1_segment, s2_segment\;
+%   }{
+%	 \eIf{$segptr + self.SEGMENT_LEN < self.current_mixture_len$}{
+%       $mix_segment = self.current_mixture[segptr:(segptr+self.SEGMENT_LEN)]$\;
+% 	   $s1_segment = self.current_source1[(segptr+self.SEGMENT_LEN)]$\;
+% 	   $s2_segment = self.current_source2[(segptr+self.SEGMENT_LEN)]$\;
+% 	   $segptr += self.SEGMENT_LENGTH$\;
+%       $self.isAudioPrepared = True$\;
+%       yield mix_segment, s1_segment, s2_segment\;
+%    }{
+%       $mix_segment = self.current_mixture[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]$\;
+% 	   $s1_segment = self.current_source1[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]$\;
+% 	   $s2_segment = self.current_source2[(self.current_mixture_len - self.SEGMENT_LEN):self.current_mixture_len]$\;
+%       $self.isAudioPrepared = False$\;
+%       $new_required = True$\;
+%       yield mix_segment, s1_segment, s2_segment\;
+%    }
+%  }
+% }
+% \caption{Algoritmus segmenace nahrávek používá python generátor, který po vrácení hodnoty příkazem yield neztrácí svůj vnitřní stav a po jeho zavolání pokračuje tam, kde skončil}
+% \label{alg:segmentace}
+%\end{algorithm}
+
 
 \section{Pomocné skripty}
+\todo{dodelat}
+
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+\chapter{Experimenty a vyhodnocení}
+\label{experimenty}
+- trenovani s~ruznymi hyperparametry, uspesnost a tabulky s~hyper parametry a dosazenymi vysledky a hodnotami sisnr, sdr atd.
+- model size comparison.
+- porovnani s~vysledky ze studie
+- obrazky separovanych mluvcich - signalu.
+- spektra
+- grafy trenovani loss a vysledkuu.
+- pametova narocnost modelu
+
 
 
 \section{Dataset}
-\todo{Ukazat zde vykreslenou vlnu nahravek mix, s1, s2}
 \todo{popsat co je dataset a k~cemu to slouzi}
-Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0) a vytvořením směsi. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu].
+Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0) a vytvořením směsi. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci \todo{[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu]}.
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/dataset-mix.png}
@@ -464,7 +594,10 @@ Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku 
 , kde $x[t] \in \mathbb{R}^{1 \times T}$ je diskrétní signál směsi a $s_i[t] \in \mathbb{R}^{1 \times T}$, kde $i = 1,\ldots,C$, je jeden z~$C$ zdrojů[cite studie str3 vlevo]. 
 \todo{doplnit info o~zero means a jendotkove varianci}
 
+
 \section{Trénování}
+\todo{Úvod - Pozn: colab + stroj, konkretni hyperparams, vykon a cas trenovani, seg--len}.
+
 \todo{https://www.tablesgenerator.com/}.
 Síť byla trénována s různými parametry, velikosti a pod na stroji google blabla.
 
@@ -496,6 +629,7 @@ Síť byla trénována s různými parametry, velikosti a pod na stroji google b
     \caption{\label{fig:somelossTODO2}Hodnota loss při trénování modelů s~různou velikostí hyperparametrůx}
 \end{figure}
 
+
 \subsection{Význam validační množiny v~trénování}
 Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v~průběhu nemění, protože hodnoty by bylo obtížné optimalizovat. 
 Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k~přetrénováníoverfitting) v~důsledku \todo{CEHO??}. Pro tento případ potřebujeme validační sadu, která je odlišná od trénovací sady.
@@ -506,18 +640,6 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 
 
 
-%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-\chapter{Experimenty a vyhodnocení}
-\label{experimenty}
-- trenovani s~ruznymi hyperparametry, uspesnost a tabulky s~hyper parametry a dosazenymi vysledky a hodnotami sisnr, sdr atd.
-- model size comparison.
-- porovnani s~vysledky ze studie
-- obrazky separovanych mluvcich - signalu.
-- spektra
-- grafy trenovani loss a vysledkuu.
-- pametova narocnost modelu
 
 
 rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.

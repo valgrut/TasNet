@@ -44,8 +44,8 @@ class Net(nn.Module):
             print("Net: advanced representation created", representation.shape)
 
         # separation - estimate masks
-        representation_input = self.layer_norm(representation) # TODO -layer norm
-        data = self.bottleneck1(representation_input)
+        # representation = self.layer_norm(representation) # TODO -layer norm
+        data = self.bottleneck1(representation)
 
         data = self.TCN(data)
 
