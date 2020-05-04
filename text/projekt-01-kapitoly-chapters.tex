@@ -438,7 +438,7 @@ Regularizace je souhrn postupů, které říkají, jak modifikovat učící algo
 
 
 
-\chapter{Implementace sítě a nástrojů}
+\chapter{Implementace sítě}
 \label{implementace}
 \todo{POZN: NN neni tak moc o implementaci, ale ze shrnout zajimave casti a s cim byl problem. impl: co treba jsem resil a co delalo problemy, a pro nekoho kdo to bude pokracovat tak aby treba vedel jak se to vyresi. Tato kapitola NEBUDE DLOUHA (tak kolem 5 stran)}
 
@@ -460,11 +460,15 @@ Model se skládá ze separační části, která se skládá z konvolučních bl
 
 \subsection*{Třídy SegmentDataset a AudioDataset}
 zpracovani datasetu, jedna segmentuje, druha ne..
+Blizsi popis segmentace v podkapitole \ref{sec:segmentace}.
 
 \subsection*{Třída Tasnet}
-Třída Tasnet.py reprezentuje model neuronové sítě.
+Třída Tasnet.py reprezentuje model neuronové sítě. Atributy třídy představují jednotlivé vrstvy neuronové sítě. Síť obsahuje konvoluční vrstvy, enkodér, dekodér a \textit{temporal convolutionan network}, která je tvořena sekvencí konvolučních bloků, které jsou zmíněny dále. V této třídě jsou také inicializovány váhy algoritmem xavier\todo{citovat}. Ve funkci $forward()$, která je volána, když jsou instanci sítě předána data ke zpracování, jsou sekvenčně volány jednotlivé vrstvy. Během zpracování předaných dat je v této sekvenci vypočítána maska a aplikována na zpracovávanou směs. Tím vzniknou dvě separované nahrávky, které jsou předány na výstup. 
+\todo{zminit stride, padding, a mozna obrazek co to je.}
 
 \subsection*{Třída ResBlock}
+Třída ResBlock reprezentuje jeden konvoluční blok, který je opakován se zvyšující se dilatací v \textit{temporal convolutional network} v separační části určené k odhadu masek. Podobně jako třída Tasnet, obsahuje inicializaci a sekvenci vrstev a aktivačních funkcí, podle architektury TasNet. ResBlock je specifický svým residuálním spojením, kde dochází k rozdělení dat při zpracování, kdy jedna kopie je transformována operacemi v bloku a na konci sečtena s daty, které transformacemi neprošly.
+\todo{Toto chce obrazek residualniho spojeni. Lepe popsat. Citovat odnekud, proc jsou residualni spojeni dobra pro trenovani DeepNN}.
 
 
 Základní jednotkou, se kterou síť pracuje, je tensor. V pytorchi je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána samotné síti ke zpracování.
@@ -479,6 +483,7 @@ nacteni datasetu
 
 
 \section{Segmentace nahrávek}
+\label{sec:segmentace}
 Pro trénování byly nahrávky, v závislosti na hodnotě hyperparametru, rozděleny na segmenty o délce 4, případně 2 sekund.
 \begin{figure}[H]
     \centering
@@ -548,9 +553,19 @@ Funkce $segmentGenerator()$, která slouží jako generátor, pracuje současně
 
 
 \section{Pomocné skripty}
-\todo{dodelat}
+Během implementace se vyskytla potřeba zjednodušit si některé repetetivní úkony a jelikož upřednostňuji práci z terminálu, tak jsem si pro ně naprogramoval několik skriptů za použití jazyků python3 a bash. 
+
+Skript \textit{gupload.sh} pro odesílání zdrojových souborů na \textit{Google Drive}\footnote{\url{https://www.google.com/drive/}}, ze kterého \textit{Google Colab}\footnote{\url{https://colab.research.google.com/notebooks/intro.ipynb}} načítá data a kód, který lze následně po částech spouštět z grafického rozhraní. K interakci s Google Drive jsem použil nástroj \textit{rclone}\footnote{\url{https://rclone.org/}}, který nabízí mnoho operací pro vzdálenou práci s Google Drive z terminálu. S pomocí \textit{rclone} lze stahovat či nahrávat data, vzdáleně měnit adresářovou strukturu, mazat, vytvářet a upravovat soubory a podobně. 
+
+Skript \textit{gdownload.sh} je určený pro snadné stahování dat z Google Drive. Stejně jako předchozí skript, používá operace poskytované nástrojem rsync. Při zavolání stáhne adresář obsahující data z posledního trénování, nebo adresář, jehož název je předán jako argument skriptu v přikazové řádce.   
+Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot $[zpracováno_nahrávek, loss]$, které lze jednoduše vykreslit do grafu, a nakonec soubor s výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
+
+Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textit{nntrain.sh}, pro testování skript \textit{nntest.sh} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textit{nninference.sh}.
 
 
+
+
+Implementace samotného modelu ve frameworku pytorch nebyla náročná. Vzhledem k netriviálnímu úkolu jsem musel implementovat některé části, jako třeba segmentace nahrávek, sám. To přineslo mnoho potíží při odstraňování chyb v samotném modelu. Síť jsem prvně trénoval a ladil na CPU svého notebooku, takže probíhalo velmi pomalu (v řádu desítek hodin i při nízké velikosti modelu), a některé chyby se objevily až v průběhu trénování nebo dokonce na jeho konci. Situaci razantně zlepšil přechod na Google Colab, kde jsem síť trénoval na poskytovaných GPU a trénování tak zabralo \todo{"pouze" (opravit uvozovky)} několik hodin, takže se případná chyba objevila dříve, ale i přesto mi lazení sítě zabralo mnoho času. Pro další usnadnění samotné implementace jsem vytvořil několik skriptů, které mi usnadnily spouštění a lazení sítě.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
