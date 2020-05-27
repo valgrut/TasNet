@@ -495,7 +495,7 @@ Model se skládá ze separační části, která se skládá z konvolučních bl
 
 
 \subsection*{Třídy SegmentDataset a AudioDataset}
-zpracovani datasetu, jedna segmentuje, druha ne..
+\todo{zpracovani datasetu, jedna segmentuje, druha ne}
 Blizsi popis segmentace v podkapitole \ref{sec:segmentace}.
 
 %------------------
@@ -579,7 +579,7 @@ Algoritmus \ref{alg:segmentace_nahravek} a obrázek \ref{fig:generovani_segmentu
 \end{figure}
 
 
-Kód segmentace také umožňuje určit délku, o kterou se segmenty budou překrývat. Této funkcionality je docíleno zavedením proměnné \texttt{overlap}, která obsahuje délku překrytí a při segmentaci je od proměnné \texttt{offset}, který určuje začátek následujícího segmentu, tato hodnota odečtena, jak ukazuje obrázek \ref{fig:segment_overlap}. Při trénování je překrytí nulové, protože by to opět zvyšovalo náročnost výpočtu a tím i délku trénování.
+Kód segmentace také umožňuje určit délku, o kterou se segmenty budou překrývat. Této funkcionality je docíleno zavedením proměnné \texttt{overlap}, která obsahuje délku překrytí a při segmentaci je od proměnné \texttt{offset}, který určuje začátek následujícího segmentu, tato hodnota odečtena, jak ukazuje obrázek \ref{fig:segment_overlap}. Při trénování je překrytí nulové, protože by to zvýšilo počet trénovacích dat jejich částečnou duplikací, což by negativně ovlivnilo délku trénování.
 
 \begin{figure}[H]
     \centering
@@ -618,10 +618,18 @@ Implementace samotného modelu ve frameworku pytorch nebyla náročná. Vzhledem
 - pametova narocnost modelu
 
 
+Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Je proto podstatné, na jakém stroji je síť učena a od toho se odvíjí čas trénování.
+
+Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry, které určují například počet vrstev sítě, velikost segmentace a další vlastnosti.
+
+Cílem experimentů je zjistit, které z hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace mluvčích. Tato kvalita je měřena primárně metrikami STOI, SI--SNR a PESQ, které byly popsány v kapitole \ref{separace}.
+
 
 \section{Dataset}
 \todo{popsat co je dataset a k~cemu to slouzi}
-Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0) a vytvořením směsi. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci \todo{[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu]}.
+Dataset je množina dat, na kterých je síť učena a testována. Dataset se dá rozdělit na 3 podmnožiny, které jsou navzájem exkluzivní. Trénovací dataset je určen k trénování sítě a bývá největší. Validační dataset se prochází po zpracování trénovacího datasetu v průběhu trénování a slouží pro ověření, že hodnota loss na dosud neviděných datech stále klesá a nedochází tak k přetrénování. Při zpracování tohoto datasetu je síti zabráněno v učení. Poslední je testovací dataset, na kterém probíhá vyhodnocení sítě, tedy výpočet hodnot jednotlivých metrik. 
+
+Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0) a vytvořením směsi mluvčích z těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci \todo{[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu]}.
 
 \begin{figure}[H]
     \centering
@@ -646,8 +654,16 @@ Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku 
 \todo{doplnit info o~zero means a jendotkove varianci}
 
 
+%------------------------------------------------------------------------------
+
+
 \section{Trénování}
-\todo{Úvod - Pozn: colab + stroj, konkretni hyperparams, vykon a cas trenovani, seg--len}.
+\todo{miniÚvod - Pozn: colab + stroj, konkretni hyperparams, vykon a cas trenovani, seg--len}.
+
+Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné kvůli nedostatečnému výkonu a vzhledem k náročnosti výpočtu. Začal jsem tedy používat službu Google colab, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnější GPU. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro daný proces. 
+
+\todo{konkretni hyperparams, vykon a cas trenovani, seg--len}.
+
 
 \todo{https://www.tablesgenerator.com/}.
 Síť byla trénována s různými parametry, velikosti a pod na stroji google blabla.
@@ -681,22 +697,24 @@ Síť byla trénována s různými parametry, velikosti a pod na stroji google b
 \end{figure}
 
 
+
 \subsection{Význam validační množiny v~trénování}
+\todo{Mozna ne jako subsekci ale jen jako jeden odstavec}
 Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v~průběhu nemění, protože hodnoty by bylo obtížné optimalizovat. 
 Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k~přetrénováníoverfitting) v~důsledku \todo{CEHO??}. Pro tento případ potřebujeme validační sadu, která je odlišná od trénovací sady.
 Po každém zpracování trénovací sady následuje validační sada, po jejímž skončení jsou optimalizovány hyperparametry[][].
-
 \todo{[kniha 117-118] kap 5.3 = Hyperparameters and validation set} 
 \todo{najit jeste nejakej zdroj s~popisem a pripadne nejaky zajimavejsi info.}
 
 
+%------------------------------------------------------------------------------
 
-
-
+\section{Experimenty}
+\todo{miniÚvod}
 rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
-
 experimenty:
 sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat. 
+
 
 \section{Možná rozšíření a navrhnutá vylepšení}
 - variabilnější dataset, mikrofony, šum a bordel prostředí
@@ -706,10 +724,11 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 - realtime separace
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \chapter{Závěr}
 \label{zaver}
-- co jak dopadlo, vysledky a vyhodnoceni velikosti modelu a jaky byl nejlepsi,...
+\todo{co jak dopadlo, vysledky a vyhodnoceni velikosti modelu a jaky byl nejlepsi}
 
 Cílem práce bylo implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně a porovnat vliv velikosti sítě na kvalitu separace. Síť byla implementována za pomoci frameworku pytorch a jazyku python a natrénována na datasetu obsahujícím jednokanálové směsi dvou mluvčích. Trénování proběhlo na \todo{X} modelech, které se od sebe lišily počtem opakujících se konvolučních bloků, velikostí časové dilatace a délkou vstupních segmentů směsí. Pro účel vyhodnocení modelů byla použita metrika si-snr, která udává poměr chtěného signálu ku šumu na pozadí, tedy obecně kvalitu separace. 
 
@@ -718,7 +737,6 @@ Experimenty ukázaly, že během testování nejlépe dopadla síť, která měl
 Zkoušel jsem separovat také nahrávky, které byly úplně mimo dataset, ale výsledek se nedá hodnotit jako úspěšný, jelikož hraje velkou roli prostředí, mikrofon, šum v~pozadí a další vlivy, na které byla neuronová síť naučena. Tento problém by se dal překonat rozšířením trénovacího datasetu o~větší škálu nahrávek mluvčích, které by byly pořízeny z~různých zařízení v~různě rušném prostředí.
 
 \todo{Doplnit ještě neco eh}
-
 Mozna.
 
 
