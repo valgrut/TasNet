@@ -623,10 +623,10 @@ Neuronové sítě představují mocný nástroj mnoha využití, který ale mus�
 Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry, které určují například počet vrstev sítě, velikost segmentace a další vlastnosti.
 
 Cílem experimentů je zjistit, které z hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace mluvčích. Tato kvalita je měřena primárně metrikami STOI, SI--SNR a PESQ, které byly popsány v kapitole \ref{separace}.
+\todo{ref na zdroje u metrik}
 
 
 \section{Dataset}
-\todo{popsat co je dataset a k~cemu to slouzi}
 Dataset je množina dat, na kterých je síť učena a testována. Dataset se dá rozdělit na 3 podmnožiny, které jsou navzájem exkluzivní. Trénovací dataset je určen k trénování sítě a bývá největší. Validační dataset se prochází po zpracování trénovacího datasetu v průběhu trénování a slouží pro ověření, že hodnota loss na dosud neviděných datech stále klesá a nedochází tak k přetrénování. Při zpracování tohoto datasetu je síti zabráněno v učení. Poslední je testovací dataset, na kterém probíhá vyhodnocení sítě, tedy výpočet hodnot jednotlivých metrik. 
 
 Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0) a vytvořením směsi mluvčích z těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci \todo{[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu]}.
@@ -636,21 +636,26 @@ Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahr
     \includegraphics[scale=0.35]{obrazky-figures/dataset-mix.png}
     \caption{\label{fig:ref-mixture}Ukázka nahrávky směsi dvou mluvčích}
 \end{figure}
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/dataset-s1.png}
     \caption{\label{fig:ref-s1}První mluvčí ze směsi}
 \end{figure}
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/dataset-s2.png}
     \caption{\label{fig:ref-s2}Druhý mluvčí ze směsi}
 \end{figure}
+
 Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku \ref{fig:ref-s1} a \ref{fig:ref-s2} dostaneme přesně signál směsi, což lze vyjádřit vztahem
+
 \begin{equation}
   x[t] = \sum_{i=1}^C s_i[t]
 \end{equation}
 , kde $x[t] \in \mathbb{R}^{1 \times T}$ je diskrétní signál směsi a $s_i[t] \in \mathbb{R}^{1 \times T}$, kde $i = 1,\ldots,C$, je jeden z~$C$ zdrojů[cite studie str3 vlevo]. 
+
 \todo{doplnit info o~zero means a jendotkove varianci}
 
 
@@ -660,13 +665,12 @@ Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku 
 \section{Trénování}
 \todo{miniÚvod - Pozn: colab + stroj, konkretni hyperparams, vykon a cas trenovani, seg--len}.
 
-Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné kvůli nedostatečnému výkonu a vzhledem k náročnosti výpočtu. Začal jsem tedy používat službu Google colab, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnější GPU. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro daný proces. 
+Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
 
-\todo{konkretni hyperparams, vykon a cas trenovani, seg--len}.
-
+\todo{bylo natrenovano nekolik modelu ... konkretni hyperparams, vykon a cas trenovani, seg--len}.
+Bylo natrénováno několik, různě velkých modelů, které se lišily velikostí jejich hyper--parametrů, konkrétně počtem konvolučních bloků, počtem jejich opakování a velikostí segmentů zpracovávaných nahrávek z datasetu. 
 
 \todo{https://www.tablesgenerator.com/}.
-Síť byla trénována s různými parametry, velikosti a pod na stroji google blabla.
 
 \begin{table}[hbt]
 \centering
@@ -693,7 +697,7 @@ Síť byla trénována s různými parametry, velikosti a pod na stroji google b
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{obrazky-figures/loss_triple.png}
-    \caption{\label{fig:somelossTODO2}Hodnota loss při trénování modelů s~různou velikostí hyperparametrůx}
+    \caption{\label{fig:somelossTODO2}Hodnota loss při trénování modelů s~různou velikostí hyperparametrů}
 \end{figure}
 
 
@@ -709,11 +713,27 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 
 %------------------------------------------------------------------------------
 
-\section{Experimenty}
-\todo{miniÚvod}
-rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
+\section{Experimenty s modely}
+\todo{rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
 experimenty:
-sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat. 
+sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat.}
+
+\todo{miniÚvod}
+Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ \todo{mozna ref}.  
+
+\subsection{Vliv hyper--parametru X}
+\todo{zmensovani a zvetsovani X, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy}
+
+\subsection{Vliv hyper--parametru R}
+\todo{zmensovani a zvetsovani Y, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi Y, obrazky, grafy}
+
+\subsection{Vliv hyper--parametru délka--segmentu}
+\todo{zmensovani a zvetsovani SL, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, obrazky, grafy}
+
+\subsection{Vyhodnocení a porovnání modelů}
+\todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s ref studii, obrazky, grafy}
+
+
 
 
 \section{Možná rozšíření a navrhnutá vylepšení}
