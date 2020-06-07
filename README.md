@@ -154,3 +154,10 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 ### 20. 4. 2020 - Online konzultace
     - veci kolem textu a experimentu
 
+### 2. 6. 2020 - Online konzultace
+    - konzultace textu
+    - oznaceni prevzatych funkci ve zdrojovem kodu
+    - komentare k textu
+
+### 9. 6. 2020 - Online konzultace
+
