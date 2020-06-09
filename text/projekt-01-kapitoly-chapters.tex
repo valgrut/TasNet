@@ -140,14 +140,13 @@ Feed forward neuronové sítě (\textit{Multi Layer Perceptron -- MLP}) jsou typ
     \caption{\label{fig:netcomparison}Příklad grafu feed forward sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~feed forward sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu.}
 \end{figure}
 
-Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázek \ref{fig:mlp}). Každá vrstva může obsahovat až $n, n \in \mathbb{N}\setminus\{0\}$ neuronů. Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojmem hluboká neuronová síť se označuje taková síť, která má dvě nebo více skrytých vrstev. Vrstvy se ještě dále rozdělují na plně propojené, pooling, s~přeskočením či na konvoluční vrstvy.
+Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázek \ref{fig:mlp}). Každá vrstva může obsahovat až $n, n \in \mathbb{N}\setminus\{0\}$ neuronů. Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.3]{obrazky-figures/mlp.png}
     \caption{\label{fig:mlp}Schéma neuronové sítě, která má 2 skryté vrstvy}
 \end{figure}
-
 
 
 \section{Umělý neuron}
@@ -177,8 +176,6 @@ Výstup neuronu se vypočítá jako
 	y = f\big((\sum_{k=1}^n w_kx_k) + b\big)
 \end{equation}
 kde $f$ je nějaká aktivační funkce, $x_k \in \mathbb{R}$ je vstupní hodnota, $w_k \in \mathbb{R}$ je váha, kterou se vstupní hodnota vynásobí a $b \in \mathbb{R}$ je hodnota bias, která je přičtena k~celkové sumě předtím, než je výsledek předán aktivační funkci. 
-
-Pokud neuron obsahuje skokovou aktivační funkci, tak se jedná o speciální typ neuronu, kterému se říká perceptron.
 
 
 \section{Aktivační funkce}
@@ -364,7 +361,7 @@ Gradient descent je iterativní optimalizační algoritmus pro hledání lokáln
 
 \subsection{Underfitting a generalizace}
 Generalizace, neboli \textit{test error}, je vlastnost modelu, která udává, jak dobře model pracuje s dříve neviděnými daty, tedy s daty, které nebyly použity pro jeho učení. Během učení vzniká učící chyba, která je trénováním postupně minimalizována, ale kvalita modelu je pak měřena na testovacích datech. 
-Testovací chyba by měla být stejná, jako \textit{learning error} \todo{mam psat learning error nebo ucici chyba???}. Z rozdílu mezi těmito chybovými hodnotami se dají diagnostikovat problémy s naučením sítě -- podučení (\textit{underfitting}) a přeučení(\textit{overfitting}). 
+Testovací chyba by ideálně měla být co nejblíže chybě na trénovací sadě. Z rozdílu mezi těmito chybovými hodnotami se dají diagnostikovat problémy s naučením sítě -- podučení (\textit{underfitting}) a přeučení(\textit{overfitting}). 
 
 \textit{Underfitting} nastane v případě, že model se již nedokáže v důsledku jeho kapacity zmenšit dostatečně jeho chybovou hodnotu na trénovacím datasetu.
 
@@ -454,13 +451,11 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 
 \chapter{Implementace sítě}
 \label{implementace}
-Pro implementaci neuronových sítí vzniklo mnoho frameworků jako pytorch, tensorflow, keras a další, které umožňují síť poskládat z již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s datasety, funkce pro vykreslování grafů a pro matematické operace.
+Pro implementaci neuronových sítí vzniklo mnoho frameworků jako pytorch, tensorflow, keras a další, které umožňují síť poskládat z již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s datasety, funkce pro vykreslování grafů a pro matematické operace. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku pytorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána samotné síti ke zpracování.
 
 Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet pro separaci mluvčích v časové doméně. V rámci zadání jsem si zvolil použít framework s názvem pytorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. Pytorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2) a mimo jiné podporuje práci s datasety, včetně implementace vlastního nahrávání a manipulace s daty. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
 
-Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku pytorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána samotné síti ke zpracování.
-
-\todo{sem pridat to trenovani podle poznamky od vedouci, bude se to hodit i proto ze tu mam ten algoritmus trenovani.}
+Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
 
 \bigskip
 
@@ -615,10 +610,6 @@ Skript \textbf{\textit{gdownload.sh}} je určený pro snadné stahování dat z 
 Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot $[zpracováno_nahrávek, loss]$, které lze jednoduše vykreslit do grafu, a nakonec soubor s výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
 
 Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}.
-
-
-\section{Trénovací prostředí}
-Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
 
 
 \bigskip
