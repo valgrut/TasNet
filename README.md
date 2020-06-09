@@ -158,6 +158,21 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - konzultace textu
     - oznaceni prevzatych funkci ve zdrojovem kodu
     - komentare k textu
+    - pohrat si s Learning rate, pouzit tu co dava nejlepsi vysledky. Zvolit nejakou idealni pro vsechny velikosti site.
+    - Pozn: Vetsi model neznamena lepsi loss
 
 ### 9. 6. 2020 - Online konzultace
+    - konzultace k textu:
+    - info o kapitole TasNet
+        - prvne rozvrhnout podle sebe, pak az kouknout na studii
+        - nejde to vymyslet cele znova
+        - pri parafrazi nejakeho bloku ocitovat i citace z toho bloku a procist si letmo co cituji
+    - uprava algoritmuuu
+        - najit si konvence a upravit podle toho
+        - udelat komentare treba kurzivou, zbytek jinak   
+    - obrazek se segmentaci a minibatchema - mozna do nej zakomponovat alespon 2 nebo 3 nahravky zasebou, ale aby to nebylo zmatene
+    - **moznost osobni konzultace**
+
+### 16. 6. 2020 - Online konzultace
+    - ...
 
