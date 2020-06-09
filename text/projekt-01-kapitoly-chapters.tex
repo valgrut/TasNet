@@ -451,6 +451,9 @@ Pro implementaci neuronových sítí vzniklo mnoho frameworků jako pytorch, ten
 Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet pro separaci mluvčích v časové doméně. V rámci zadání jsem si zvolil použít framework s názvem pytorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. Pytorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2) a mimo jiné podporuje práci s datasety, včetně implementace vlastního nahrávání a manipulace s daty. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
 
 Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku pytorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána samotné síti ke zpracování.
+
+\todo{sem pridat to trenovani podle poznamky od vedouci, bude se to hodit i proto ze tu mam ten algoritmus trenovani.}
+
 \bigskip
 
 \begin{algorithm}[H]
@@ -579,6 +582,16 @@ Kód segmentace také umožňuje určit délku, o kterou se segmenty budou přek
     \centering
     \includegraphics[scale=0.25]{obrazky-figures/segment_overlap.jpg}
     \caption{\label{fig:segment_overlap}Segmentace nahrávek s nenulovým překrytím}
+\end{figure}
+
+%------------------
+\section{Výpočet hodnoty loss za pomoci si--snr}
+\todo{popsat implementaci sisnr a vypocet loss za pomoci cross vypoctu, obrazek}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{obrazky-figures/sisnr_cross_calculation.jpg}
+    \caption{\label{fig:implementace_loss_sisnr} Implementace a zjištění správné pozice korespondujících nahrávek pro výpočet hodnoty loss}
 \end{figure}
 
 %------------------
