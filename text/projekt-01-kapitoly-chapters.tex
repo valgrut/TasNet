@@ -1,12 +1,11 @@
 \chapter{Úvod}
-Zpracování řeči hraje v~dnešní době důležitou roli v~mnoha rozličných oborech. Mezi jeden z~hlavních úkolů bezesporu patří separace zdrojů v~nějakém zaznamenaném signálu, který může být složen ze signálů N mluvčích, ale i nechtěného hluku okolí. Vyřešení problému je předpoklad k~dalším úkonům jako identifikace konkrétního mluvčího nebo třeba přepis nějaké konverzace na text. Se stále se zrychlujícím vývojem počítačů a s~jejich zvyšujícím se výkonem se do popředí dostávají metody zpracování řeči založené na neuronových sítích, které v~mnoha ohledech předčily ostatní algoritmy strojového učení.
+Zpracování řeči hraje v~dnešní době důležitou roli v~mnoha rozličných oborech. Mezi jeden z~hlavních úkolů bezesporu patří separace zdrojů v~zaznamenaném signálu, který může být složen ze signálů N mluvčích, ale i nechtěného hluku okolí. Vyřešení problému je předpoklad k~dalším úkonům jako identifikace konkrétního mluvčího nebo třeba přepis konverzace na text. Se stále se zrychlujícím vývojem počítačů a s~jejich zvyšujícím se výkonem se do popředí dostávají metody zpracování řeči založené na neuronových sítích, které v~mnoha ohledech předčily ostatní algoritmy strojového učení.
 
-Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short--Time Fourier Transformation). Taková reprezentace signálu není optimální pro udržení časových závislostí, které jsou při zpracování řeči podstatné. V~architektuře, která je navržena v~referenční studii, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zárověň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
+Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short--Time Fourier Transformation). Taková reprezentace signálu není optimalizovaná pro separaci řeči a nemusí pro tento úkol být optimální. V~architektuře, která je navržena v~referenční studii s názvem \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}\cite{luo2018convtasnet}, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zárověň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
 
 Téma v~oblasti strojového učení a neuronových sítí mě zaujalo, protože tento obor zažívá obrovský rozmach a pomalu se stává součástí téměř všech odvětví, a je tudíž velmi perspektivní pro další výzkum. Právě bakalářskou práci jsem vyhodnotil jako dobrou příležitost k~tomu, se seznámit se s~neuronovými sítěmi a možnost vyzkoušet si, jak se s~nimi pracuje, jak se implementují modely za pomoci frameworku a jak náročná je aplikace na nějaký reálný problém.
 
-\todo{spravit referenci na studii}
-Mým úkolem v~rámci práce je nastudovat si problematiku neuronových sítí a jejich základní principy, seznámit se problémem separace mluvčích pomocí neuronových sítí a následně implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně, která byla navržena a popsána ve studii \ref{referencni_studie}. Potom tuto neuronovou síť natrénovat s~různými kombinacemi hodnot hyperparametrů, které ovlivňují velikost sítě  její vlastnosti, a nakonec porovnat přesnost a kvalitu separace mezi jednotlivými, různě velkými sitěmi a mezi výsledky studie. Přesnost separace je vypočítána pomocí míry si--snr, udávající poměr mezi chtěným signálem a hlukem na pozadí. Sítě budou testovány a vyhodnocovány na testovací množině jednokanálových směsí dvou mluvčích.
+Úkolem této práce je nastudovat si problematiku neuronových sítí a jejich základní principy, seznámit se problémem separace mluvčích pomocí neuronových sítí a následně implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně, která byla navržena a popsána ve studii\cite{luo2018convtasnet}. Poté tuto neuronovou síť natrénovat s~různými kombinacemi hodnot hyperparametrů, které ovlivňují velikost sítě  její vlastnosti, a nakonec porovnat přesnost a kvalitu separace mezi jednotlivými, různě velkými sitěmi a mezi výsledky studie. Přesnost a kvalita separace bude vypočítána pomocí metrik určených k hodnocení kvality řečového signálu. Sítě budou testovány a vyhodnocovány na testovací množině jednokanálových směsí dvou mluvčích.
 
 V~první části práce, kterou pokrývá kapitola \ref{neuronovky}, jsou popsány základní prvky neuronových sítí, struktura umělého neuronu, jeho vstupy a výstupy, váhy a role aktivační funkce. V~návaznosti na to jsou popsány neuronové sítě feedforward, které se skládají z~vrstev neuronů. Dále je vysvětlen proces učení, který se skládá z~několika kroků -- výpočet výstupu sítě, výpočet chyby a úprava vah, kde hraje podstatnou roli metoda backpropagation. Nakonec je zmíněn typ sítí feedforward -- konvoluční neuronové sítě, které fungují na základě konvoluční operace. Konvoluční sítě se používají nejčastěji pro zpracování obrazu kvůli vlastnostem, které umožňují extrahovat příznaky s~různou úrovní složitosti od základních útvarů jako úsečka, barva a podobně až po komplexnější příznaky - třeba celý obličej. Tohoto lze využít i při zpracování zvuku, kde jsou tyto extrahované příznaky jednorozměrné.
 
@@ -127,9 +126,9 @@ Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model,
 
 \textbf{Učení s~učitelem}, pod které spadá tato práce, spočívá v~\todo{bla bla (dve tri vety)}.
 
-Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči.
+Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. Některé z problémů lze řešit sítí, která se skládá z jednotek neuronů, zatímco složitější problémy vyžadují mnohem větší kapacitu sítě a ta pak může obsahovat i tisíce neuronů.
 
-
+Upravovat samotnou strukturu a chování neuronové sítě lze pomocí jejích hyperparametrů, což jsou parametry určující nastavení neuronové sítě a trénovacího algoritmu. Tyto parametry musí být určeny před začátkem trénování a většinu nelze později měnit. Mohou určovat kapacitu modelu, velikost záběrného pole, velikost filtrů, ale i regulovat samotný proces učení nastavením počtu epoch, po které se model má učit, nebo také počet dat předaný v jedné dávce (tzv. \textit{minibatches}) během učení sítě.
 
 
 \section{Organizace feedforward sítí}
@@ -293,9 +292,7 @@ Neuron se nedokáže ale naučit klasifikovat třeba funkci XOR, protože ta nen
 
 
 
-
-
-\section{Konvoluce a konvoluční neuronové sítě}
+\section{Konvoluční neuronové sítě}
 \todo{Nebo to pojmenovat jako Konvolucni vrstva?}.
 Konvoluční neuronové sítě jsou typ feedforward sítí, které neobsahují pouze plně propojené vrstvy, ale také vrstvy konvoluční.
 \begin{figure}[H]
@@ -304,7 +301,7 @@ Konvoluční neuronové sítě jsou typ feedforward sítí, které neobsahují p
     \caption{\label{fig:conv_nn}Konvoluční neuronové sítě}
 \end{figure}
 
-\subsection{Konvoluce}
+\subsection{Konvoluční vrstva}
 Diskrétní konvoluce je definována jako
 
 %\begin{equation}
@@ -312,13 +309,6 @@ Diskrétní konvoluce je definována jako
 %\end{equation}
 
 kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je konvoluční jádro a $f_i$ a $g_i$ jsou hodnoty funkce na indexu $i$.
-
-
-
-
-\section{Hyperparametry}
-Hyperparametry jsou parametry určující nastavení neuronové sítě a trénovacího algoritmu. Tyto parametry musí být určeny před začátkem trénování a většinu nelze později měnit. Mohou určovat kapacitu modelu, velikost záběrného pole, velikost filtrů a podobně.
-
 
 
 
@@ -369,6 +359,9 @@ Gradient descent je iterativní optimalizační algoritmus pro hledání lokáln
 \end{figure}
 
 
+\todo{popsat vice vliv LR na loss}
+
+
 \subsection{Underfitting a generalizace}
 Generalizace, neboli \textit{test error}, je vlastnost modelu, která udává, jak dobře model pracuje s dříve neviděnými daty, tedy s daty, které nebyly použity pro jeho učení. Během učení vzniká učící chyba, která je trénováním postupně minimalizována, ale kvalita modelu je pak měřena na testovacích datech. 
 Testovací chyba by měla být stejná, jako \textit{learning error} \todo{mam psat learning error nebo ucici chyba???}. Z rozdílu mezi těmito chybovými hodnotami se dají diagnostikovat problémy s naučením sítě -- podučení (\textit{underfitting}) a přeučení(\textit{overfitting}). 
@@ -389,15 +382,28 @@ Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. 
 Regularizace je souhrn postupů, které říkají, jak modifikovat učící algoritmus tak, aby se zredukovala chyba generalizace, zatímco testovací chyba zůstane stejná\cite[p117]{mitdeeplearning}.
 
 
-\section{Residuální spojení}
+\subsection{Residuální spojení}
 \todo{Toto chce obrazek residualniho spojeni. Popsat. Citovat odnekud, proc jsou residualni spojeni dobra pro trenovani DeepNN a v jednom odstavci to nejak shrnout}.
+
+
+\subsection{Význam validační množiny v~trénování}
+\todo{Mozna ne jako subsekci ale jen jako jeden odstavec}
+Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v~průběhu nemění, protože hodnoty by bylo obtížné optimalizovat. 
+Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k~přetrénováníoverfitting) v~důsledku \todo{CEHO??}. Pro tento případ potřebujeme validační sadu, která je odlišná od trénovací sady.
+Po každém zpracování trénovací sady následuje validační sada, po jejímž skončení jsou optimalizovány hyperparametry[][].
+\todo{[kniha 117-118] kap 5.3 = Hyperparameters and validation set} 
+\todo{najit jeste nejakej zdroj s~popisem a pripadne nejaky zajimavejsi info.}
+
 
 
 \todo{today mini zaver teto cele kapitoly}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{TasNet - Time--Domain Audio Separation Network}
 \label{tasnet}
+
+\todo{uvod do kapitoly}
 
 \todo{Architektura full -- obrázek, bloky... Na zacatku zminit ze kapitola vychazi ze studie ref studie. Kapitola NEBUDE moc dlouha, cca 5-6 stran max.}
 
@@ -440,6 +446,8 @@ Regularizace je souhrn postupů, které říkají, jak modifikovat učící algo
     \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok}
 \end{figure}
 
+
+\todo{zaver kapitoly}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -597,6 +605,7 @@ Kód segmentace také umožňuje určit délku, o kterou se segmenty budou přek
 %------------------
 %------------------
 
+
 \section{Pomocné skripty}
 Během implementace se vyskytla potřeba zjednodušit si některé repetetivní úkony a jelikož upřednostňuji práci z terminálu, tak jsem si pro ně naprogramoval několik skriptů za použití jazyků python3 a bash. 
 
@@ -606,6 +615,11 @@ Skript \textbf{\textit{gdownload.sh}} je určený pro snadné stahování dat z 
 Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot $[zpracováno_nahrávek, loss]$, které lze jednoduše vykreslit do grafu, a nakonec soubor s výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
 
 Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}.
+
+
+\section{Trénovací prostředí}
+Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
+
 
 \bigskip
 
@@ -669,12 +683,8 @@ Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku 
 %------------------------------------------------------------------------------
 
 
-\section{Trénování}
-\todo{miniÚvod - Pozn: colab + stroj, konkretni hyperparams, vykon a cas trenovani, seg--len}.
-
-Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
-
-\todo{bylo natrenovano nekolik modelu ... konkretni hyperparams, vykon a cas trenovani, seg--len}.
+\section{Průběh trénování}
+\todo{miniÚvod - konkretni hyperparams, vykon a cas trenovani, seg--len, bylo natrenovano nekolik modelu ... konkretni hyperparams, vykon a cas trenovani, seg--len}.
 Bylo natrénováno několik, různě velkých modelů, které se lišily velikostí jejich hyper--parametrů, konkrétně počtem konvolučních bloků, počtem jejich opakování a velikostí segmentů zpracovávaných nahrávek z datasetu. 
 
 \todo{https://www.tablesgenerator.com/}.
@@ -706,16 +716,6 @@ Bylo natrénováno několik, různě velkých modelů, které se lišily velikos
     \includegraphics[scale=0.55]{obrazky-figures/loss_triple.png}
     \caption{\label{fig:somelossTODO2}Hodnota loss při trénování modelů s~různou velikostí hyperparametrů}
 \end{figure}
-
-
-
-\subsection{Význam validační množiny v~trénování}
-\todo{Mozna ne jako subsekci ale jen jako jeden odstavec}
-Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v~průběhu nemění, protože hodnoty by bylo obtížné optimalizovat. 
-Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k~přetrénováníoverfitting) v~důsledku \todo{CEHO??}. Pro tento případ potřebujeme validační sadu, která je odlišná od trénovací sady.
-Po každém zpracování trénovací sady následuje validační sada, po jejímž skončení jsou optimalizovány hyperparametry[][].
-\todo{[kniha 117-118] kap 5.3 = Hyperparameters and validation set} 
-\todo{najit jeste nejakej zdroj s~popisem a pripadne nejaky zajimavejsi info.}
 
 
 %------------------------------------------------------------------------------
