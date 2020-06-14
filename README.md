@@ -169,11 +169,19 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         - pri parafrazi nejakeho bloku ocitovat i citace z toho bloku a procist si letmo co cituji
     - uprava algoritmuuu
         - najit si konvence a upravit podle toho
-        - udelat komentare treba kurzivou, zbytek jinak   
+        - udelat komentare treba kurzivou, zbytek jinak
     - obrazek se segmentaci a minibatchema - mozna do nej zakomponovat alespon 2 nebo 3 nahravky zasebou, ale aby to nebylo zmatene
     - dopsat sisnr a loss podkapitolu v implementaci, a pokud by se pak ukazalo, ze bude lepsi to hodit do TasNet kapitoly, tak to presunout.
     - **moznost osobni konzultace**
 
 ### 16. 6. 2020 - Online konzultace
-    - ...
+    - Done:
+        - upraven Uvod a ref na studii
+        - upraven text podle komentaru
+        - ozdrojovane nejake obrazky kterymi jsem se inspiroval
+        - Obj funkce, mseloss, cross entrophy
+
+    - TODO (a prokonzultovat)
+        - motivace v uvodu (TAO diplomky)
+        - f
 

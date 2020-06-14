@@ -3,20 +3,9 @@ Zpracování řeči hraje v~dnešní době důležitou roli v~mnoha rozličných
 
 Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short--Time Fourier Transformation). Taková reprezentace signálu není optimalizovaná pro separaci řeči a nemusí pro tento úkol být optimální. V~architektuře, která je navržena v~referenční studii s názvem \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}\cite{luo2018convtasnet}, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zárověň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
 
-Téma v~oblasti strojového učení a neuronových sítí mě zaujalo, protože tento obor zažívá obrovský rozmach a pomalu se stává součástí téměř všech odvětví, a je tudíž velmi perspektivní pro další výzkum. Právě bakalářskou práci jsem vyhodnotil jako dobrou příležitost k~tomu, se seznámit se s~neuronovými sítěmi a možnost vyzkoušet si, jak se s~nimi pracuje, jak se implementují modely za pomoci frameworku a jak náročná je aplikace na nějaký reálný problém.
-
 Úkolem této práce je nastudovat si problematiku neuronových sítí a jejich základní principy, seznámit se problémem separace mluvčích pomocí neuronových sítí a následně implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně, která byla navržena a popsána ve studii\cite{luo2018convtasnet}. Poté tuto neuronovou síť natrénovat s~různými kombinacemi hodnot hyperparametrů, které ovlivňují velikost sítě  její vlastnosti, a nakonec porovnat přesnost a kvalitu separace mezi jednotlivými, různě velkými sitěmi a mezi výsledky studie. Přesnost a kvalita separace bude vypočítána pomocí metrik určených k hodnocení kvality řečového signálu. Sítě budou testovány a vyhodnocovány na testovací množině jednokanálových směsí dvou mluvčích.
 
-V~první části práce, kterou pokrývá kapitola \ref{neuronovky}, jsou popsány základní prvky neuronových sítí, struktura umělého neuronu, jeho vstupy a výstupy, váhy a role aktivační funkce. V~návaznosti na to jsou popsány neuronové sítě feedforward, které se skládají z~vrstev neuronů. Dále je vysvětlen proces učení, který se skládá z~několika kroků -- výpočet výstupu sítě, výpočet chyby a úprava vah, kde hraje podstatnou roli metoda backpropagation. Nakonec je zmíněn typ sítí feedforward -- konvoluční neuronové sítě, které fungují na základě konvoluční operace. Konvoluční sítě se používají nejčastěji pro zpracování obrazu kvůli vlastnostem, které umožňují extrahovat příznaky s~různou úrovní složitosti od základních útvarů jako úsečka, barva a podobně až po komplexnější příznaky - třeba celý obličej. Tohoto lze využít i při zpracování zvuku, kde jsou tyto extrahované příznaky jednorozměrné.
-
-Druhá část, kapitola \ref{tasnet}, je věnována architektuře TasNet. Prvně je zmíněn konvoluční auto--enkodér a jeho princip. Dál je popsána podoba separačního modulu, jeho princip a konvoluční bloky, ze kterých je poskládán. Tento blok obsahuje konvoluční vrstvy, normalizace a aktivační funkce. Bloky jsou skládány za sebe se zvyšující se časovou dilatací, čemuž se říká TCN (Temporal Convolutional Network). 
-
-Kapitola \ref{implementace} se zabývá implementací neuronové sítě a jejím trénováním. Je popsána a zdůvodněna volba frameworku, implementace sítě a struktura zdrojového kódu. Pro usnadnění často se upakujících úkonů jsem vytvořil pár pomocných scriptů, které jsou zde také popsány. 
-Model prošel během implementace několika úpravami. Pro účely trénování a validace byly vstupní nahrávky rozdělovány na čtyřsekundové segmenty. Pro testování byly používány nahrávky celé. V~této kapitole je popsán průběh trénování sítí, výsledky a použité nástroje.
-
-V~poslední části, která je pokryta v~kapitole \ref{experimenty} jsou shrnuty experimenty s~modelem a vyhodnocení výsledků, v~rámci něhož je zkoumán vliv hyper-parametrů na učení sítě, na výsledky a přesnost separace v~závislosti na zvolených parametrech nebo počtu konvolučních bloků. Výstup sítě v~podobě separovaných mluvčích je porovnán také s~výsledky referenční studie. Kvalita separace, neboli přesnost, je vypočítána pomocí si--snr metriky která udává poměr zastoupení chtěného signálu a hluku na pozadí. Je zde vyhodnoceno, jaký vliv má velikost sítě na přesnost separace a jsou zde shrnuty jednotlivé výsledky.
-
-
+Text je rozdělen na několik kapitol, které postupně pokrývají různé logické celky. V kapitole \ref{separace} je popsán problém separace mluvčích a dosavadní přistupy k jeho řešení. Kapitola \ref{neuronovky} se zabývá základními vlastnostmi a principi neuronových sítí. V kapitole \ref{tasnet} je věnována architektuře TasNet, kterou se moje práce zabývá. Dále kapitola \ref{implementace} popisuje implementaci sítě a pomocných nástrojů a nakonec v kapitole \ref{experimenty} jsou experimenty a vyhodnocování přesnosti sítě.
 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,7 +113,7 @@ Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model,
 
 Účelem neuronové sítě je naučit se plnit zadanou úlohu. Rozdíl oproti běžným algoritmům je ale ten, že způsob, jakým síť má problém řešit, není explicitně naprogramován, ale je postupně naučen. Základní způsoby učení jsou s~učitelem (\textit{supervised}) a bez učitele (\textit{unsupervised}). 
 
-\textbf{Učení s~učitelem}, pod které spadá tato práce, spočívá v~\todo{bla bla (dve tri vety)}.
+\textbf{Učení s~učitelem}, pod které spadá i tato práce, spočívá v~mapování vstupních dat na data výstupní na základě vzorových příkladů dvojic vstup--výstup. Množině takových dvojic se říká trénovací dataset. Další vlastností trénovacích dat určených pro učení s učitelem, je jejich označení (\textit{label}).
 
 Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. Některé z problémů lze řešit sítí, která se skládá z jednotek neuronů, zatímco složitější problémy vyžadují mnohem větší kapacitu sítě a ta pak může obsahovat i tisíce neuronů.
 
@@ -137,10 +126,10 @@ Feed forward neuronové sítě (\textit{Multi Layer Perceptron -- MLP}) jsou typ
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/feedforward_vs_recurrent.png}
-    \caption{\label{fig:netcomparison}Příklad grafu feed forward sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~feed forward sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu.}
+    \caption{\label{fig:netcomparison}Příklad grafu feed forward sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~feed forward sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu\cite{FFandRecNN}.}
 \end{figure}
 
-Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázek \ref{fig:mlp}). Každá vrstva může obsahovat až $n, n \in \mathbb{N}\setminus\{0\}$ neuronů. Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
+Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázky \ref{fig:netcomparison} a \ref{fig:mlp}). Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup v případě klasifikátorů, nebo predikce hodnot na základě vstupních dat v případě regrese. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
 
 \begin{figure}[H]
     \centering
@@ -173,13 +162,13 @@ Hodnota bias $b$, která je přičtena k~sumě násobků vah a vstupních hodnot
 
 Výstup neuronu se vypočítá jako
 \begin{equation}
-	y = f\big((\sum_{k=1}^n w_kx_k) + b\big)
+	y = f\Big((\sum_{k=1}^n w_kx_k) + b\Big)
 \end{equation}
-kde $f$ je nějaká aktivační funkce, $x_k \in \mathbb{R}$ je vstupní hodnota, $w_k \in \mathbb{R}$ je váha, kterou se vstupní hodnota vynásobí a $b \in \mathbb{R}$ je hodnota bias, která je přičtena k~celkové sumě předtím, než je výsledek předán aktivační funkci. 
+kde $f$ je aktivační funkce, $x_k \in \mathbb{R}$ je vstupní hodnota, $w_k \in \mathbb{R}$ je váha, kterou se vstupní hodnota vynásobí a $b \in \mathbb{R}$ je hodnota bias.
 
 
 \section{Aktivační funkce}
-Aktivační, neboli prahová funkce určuje výstupní hodnotu neuronu. Funkce se vybírá na základě problému, který se má neuronová síť naučit řešit. Správná volba prahové funkce vede k~lepší konvergenci učení sítě. Naopak špatná volba může vést ke stále větší odchylce od správného řešení -- může divergovat. Povaha problému může vyžadovat specifické vlastnosti aktivační funkce - lineární nebo nelineární. Pro nestandardní problémy je obvykle potřeba experimentálně zjistit, která funkce bude nejlépe vyhovovat danému problému. 
+Aktivační, neboli prahová funkce, určuje výstupní hodnotu neuronu. Funkce se vybírá na základě problému, který se má neuronová síť naučit řešit. Správná volba aktivační funkce vede k~lepší konvergenci učení sítě. Naopak špatná volba může vést ke stále větší odchylce od správného řešení -- může divergovat. Povaha problému může vyžadovat specifické vlastnosti aktivační funkce - lineární nebo nelineární. Pro nestandardní problémy je obvykle potřeba experimentálně zjistit, která funkce bude nejlépe vyhovovat danému problému. 
 
 Pokud by veškeré aktivační funkce v~modelu byly lineární, tak celkové mapování sítě by bylo omezeno pouze na lineární mapování vstupu na výstup. Reálné problémy ale lineární obvykle nejsou a v~případě pokusu modelovat takovým modelem nelineární vztahy by vedlo k~velice nepřesným výsledkům, který by byl zapříčiněn podučením (\textit{underfitting}), což znamená, že model, který se učí zakódovat nějaký vzor v~datasetu, je příliš jednoduchý. Proto je potřeba zavést do modelu i nelineární aktivační funkce, které tento problém řeší\cite[p.~77--78]{mitdeeplearning_small}.
 
@@ -316,13 +305,29 @@ Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je pře
 
 
 \subsection{Objektivní funkce}
-\todo{cost funkce a popis, co to je, k~cemu to je, proc to je}
+Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce, protože její výstupní hodnota nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z datasetu.  
+
+V rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V takovém případě bude dobře sloužit pro účely trénování. V případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě \cite{mitdeeplearning}. 
+
+Použije--li se hodnota objektivní funkce s opačným znaménkem, tak lze funkci použít jako hodnotící metriku. 
 
 
-\subsection*{MSELoss}
-- vzorecek
+\subsection*{MSELoss (Mean Squared Error Loss)}
+\todo{vzorecek a graf}
+MSELoss je nejčastěji používaná objektivní funkce při řešení regresních problémů. Vypočítá se jako
+\begin{equation}
+  MSE = \frac{1}{N}\sum_{i=1}^N(y_i - \hat{y_i})^2
+\end{equation}
+kde $N$ je počet trénovacích dat v datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{obrazky-figures/mseloss.png}
+    \caption{\label{fig:mseloss}Graf objektivní funkce MSE Loss}
+\end{figure}
+
 \subsection*{Cross Entrophy}
-- vzorecek
+\todo{vzorecek}
 
 
 
@@ -451,14 +456,14 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 
 \chapter{Implementace sítě}
 \label{implementace}
-Pro implementaci neuronových sítí vzniklo mnoho frameworků jako pytorch, tensorflow, keras a další, které umožňují síť poskládat z již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s datasety, funkce pro vykreslování grafů a pro matematické operace. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku pytorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána samotné síti ke zpracování.
+Pro implementaci neuronových sítí vzniklo mnoho frameworků jako pytorch, tensorflow, keras a další, které umožňují síť poskládat z již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s datasety, funkce pro vykreslování grafů a pro matematické operace.
 
-Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet pro separaci mluvčích v časové doméně. V rámci zadání jsem si zvolil použít framework s názvem pytorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. Pytorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2) a mimo jiné podporuje práci s datasety, včetně implementace vlastního nahrávání a manipulace s daty. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
+Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet pro separaci mluvčích v časové doméně. V rámci zadání jsem si zvolil použít framework s názvem pytorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. Pytorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2) a mimo jiné podporuje práci s datasety, včetně implementace vlastního nahrávání a manipulace s daty. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku pytorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána síti ke zpracování. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
 
-Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
+Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
 
 \bigskip
-
+\todo{zamyslet se co tu chci ukazat v tom algu, pripadne vypustit parsovani, instanciaci atd}
 \begin{algorithm}[H]
  \LinesNumbered
  parsování argumentů programu\;
@@ -494,11 +499,11 @@ Trénování sítě probíhalo z počátku na CPU \textit{intel i5} mého osobn�
 %------------------
 
 \section{Implementace modelu}
+\todo{today DNES - miniuvod k implementaci modelu - nic podrobneho, je to uz zmineno predtim ze to je v pytorchi atd}
 \todo{Pozn: pytorch, scripty, tridy, moduly, parametry a volby spusteni}
-\todo{(nacitani dat a jejich transformace, cyklus, main.py, parametry, .py soubory)}
-Model se skládá ze separační části, která se skládá z konvolučních bloků, dále z...
 
-\todo{miniuvod k implementaci modelu}
+
+Model se skládá ze separační části, která se skládá z konvolučních bloků, dále z...
 
 
 
