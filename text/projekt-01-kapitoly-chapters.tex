@@ -420,7 +420,7 @@ Tato kapitola vychází z referenční studie \textbf{TasNet: Surpassing Ideal T
 
 Přestože metody pro zpracování řeči v akustickém přostředí, ve kterém se může současně prolínat mnoho řečových signálů, v poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v aplikacích, které by mohly zpracovávat řeč v reálném čase.
 
-Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí STFT (Short--Time Fourier Transformation\cite{speechseparationoverview}). Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimalizovaná pro separaci mluvčích.
+Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)\cite{speechseparationoverview}. Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
 
 Pro překonání nedostatků předešlých metod byla navržena architektura Time--domain Audio Separation Network (TasNet), založena na hlubokém učení a neuronových sítích, která používá konvoluční enkodér k převodu směsi na reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na reprezentaci. Masky jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dylatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni konvolučním dekodérem.
 
