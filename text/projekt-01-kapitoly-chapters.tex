@@ -305,20 +305,19 @@ Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je pře
 
 
 \subsection{Objektivní funkce}
-Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce, protože její výstupní hodnota nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z datasetu.  
+Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce, protože její výstupní hodnota nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
 
 V rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V takovém případě bude dobře sloužit pro účely trénování. V případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě \cite{mitdeeplearning}. 
 
-Použije--li se hodnota objektivní funkce s opačným znaménkem, tak lze funkci použít jako hodnotící metriku. 
+Nejčastěji se pro regresní problémy používají objektivní funkce \textit{Mean Squared Error Loss} a \textit{Mean Absolute Error Loss}.
 
 
 \subsection*{MSELoss (Mean Squared Error Loss)}
-\todo{vzorecek a graf}
 MSELoss je nejčastěji používaná objektivní funkce při řešení regresních problémů. Vypočítá se jako
 \begin{equation}
   MSE = \frac{1}{N}\sum_{i=1}^N(y_i - \hat{y_i})^2
 \end{equation}
-kde $N$ je počet trénovacích dat v datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví.
+kde $N$ je počet trénovacích dat v datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$, jak lze vidět na obrázku \ref{fig:mseloss}. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví. Funkce dosahuje L2 regularizace.
 
 \begin{figure}[H]
     \centering
@@ -326,9 +325,24 @@ kde $N$ je počet trénovacích dat v datasetu, $y_i$ je předpovězená hodnota
     \caption{\label{fig:mseloss}Graf objektivní funkce MSE Loss}
 \end{figure}
 
-\subsection*{Cross Entrophy}
-\todo{vzorecek}
 
+\subsection*{MAELoss (Mean Absolute Error Loss)}
+\todo{graf a popsat a rozdily a vyhody}
+MAE je velmi podobná objektivní funkce jako MSE, ale s téměř opačnými vlastnosti. Stejně jako MSE, ani tato funkce nenabývá negativní hodnoty, ale narozdíl od MSE, která má tuto vlastnost díky druhé mocnině rozdílu, MAE toho dosahuje tak, že rozdíl předpovídané hodnoty $y_j$ a odhadnuté hodnoty $\hat{y_j}$ je uzavřen v absolutní hodnotě. Vypočítá se jako
+
+\begin{equation}
+  MAE = \frac{1}{N}\sum_{j=1}^N|y_j - \hat{y_j}|
+\end{equation}
+
+Výhodnou MAE je její lineární průběh, takže se větší chyby projeví úměrně více než chyby menší, oproti MSE, kde je závislost kvadratická. Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v hodnotě $x=0$, což může mít negativní následky pro výpočet gradientu.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{obrazky-figures/maeloss.png}
+    \caption{\label{fig:maeloss}Graf objektivní funkce MAE Loss (červeně)}
+\end{figure}
+
+\todo{Hinge loss?}
 
 
 \subsection{Backpropagation}
@@ -376,7 +390,7 @@ Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.3]{obrazky-figures/capacity_vs_error.jpg}
-    \caption{\label{fig:gradientdescent}Vliv kapacity modelu trénovací a testovací chybu}
+    \caption{\label{fig:gradientdescent}Vliv kapacity modelu trénovací a testovací chybu. Obrázek inspirován podle \cite{trainingvstesterror}}
 \end{figure}
 
 
@@ -397,17 +411,23 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 \todo{najit jeste nejakej zdroj s~popisem a pripadne nejaky zajimavejsi info.}
 
 
-
-\todo{today mini zaver teto cele kapitoly}
+V této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back--propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{TasNet - Time--Domain Audio Separation Network}
 \label{tasnet}
 
-\todo{uvod do kapitoly}
+Tato kapitola vychází z referenční studie \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}\cite{luo2018convtasnet} a popisuje její navrhnuté řešení pro separaci mluvčích v časové doméně.
 
-\todo{Architektura full -- obrázek, bloky... Na zacatku zminit ze kapitola vychazi ze studie ref studie. Kapitola NEBUDE moc dlouha, cca 5-6 stran max.}
+Přestože metody pro zpracování řeči v akustickém přostředí, ve kterém se může současně prolínat mnoho řečových signálů, v poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v aplikacích, které by mohly zpracovávat řeč v reálném čase.
+
+Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí STFT (Short--Time Fourier Transformation)\cite{10.1109/TASLP.2018.2842159}. Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimalizovaná pro separaci mluvčích.
+
+Pro překonání nedostatků předešlých metod byla navržena architektura Time--domain Audio Separation Network (TasNet), založena na hlubokém učení a neuronových sítích, která používá konvoluční enkodér k převodu směsi na reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na reprezentaci. Masky jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dylatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni konvolučním dekodérem.
+
+\todo{uvod do kapitoly - co je tasnet, nastin jak funguje - kroky, masky, encoder, TCN, }
+
 
 \begin{figure}[H]
     \centering
@@ -427,6 +447,11 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
     \caption{\label{fig:tasnet-autoencoder}Schéma konvolučního autoenkodéru}
 \end{figure}
 
+\subsection{Enkódování směsi}
+
+
+\subsection{Dekódování}
+
 
 \section{Separační modul}
 - odhad masek pro jednotlive mluvci
@@ -438,10 +463,14 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 \end{figure}
 
 
+\subsection{Temporal Convolutional Network}
+\todo{TCN, dilatace, stacked blocks, X, R}
+
+
 \subsection{Konvoluční bloky}
 - Z~čeho se skládá -- konvoluční vrstvy, normalizace
 - diagram konv bloku.
-- Mozna: Dilatace a time perception
+- Mozna: Dilatace a increasing time perception
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/conv-res-block.png}
