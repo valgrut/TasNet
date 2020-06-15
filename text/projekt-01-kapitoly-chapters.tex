@@ -327,9 +327,7 @@ kde $N$ je počet trénovacích dat v datasetu, $y_i$ je předpovězená hodnota
 
 
 \subsection*{MAELoss (Mean Absolute Error Loss)}
-\todo{graf a popsat a rozdily a vyhody}
 MAE je velmi podobná objektivní funkce jako MSE, ale s téměř opačnými vlastnosti. Stejně jako MSE, ani tato funkce nenabývá negativní hodnoty, ale narozdíl od MSE, která má tuto vlastnost díky druhé mocnině rozdílu, MAE toho dosahuje tak, že rozdíl předpovídané hodnoty $y_j$ a odhadnuté hodnoty $\hat{y_j}$ je uzavřen v absolutní hodnotě. Vypočítá se jako
-
 \begin{equation}
   MAE = \frac{1}{N}\sum_{j=1}^N|y_j - \hat{y_j}|
 \end{equation}
@@ -342,7 +340,7 @@ Výhodnou MAE je její lineární průběh, takže se větší chyby projeví ú
     \caption{\label{fig:maeloss}Graf objektivní funkce MAE Loss (červeně)}
 \end{figure}
 
-\todo{Hinge loss?}
+\todo{Hinge loss mozna}
 
 
 \subsection{Backpropagation}
@@ -422,11 +420,11 @@ Tato kapitola vychází z referenční studie \textbf{TasNet: Surpassing Ideal T
 
 Přestože metody pro zpracování řeči v akustickém přostředí, ve kterém se může současně prolínat mnoho řečových signálů, v poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v aplikacích, které by mohly zpracovávat řeč v reálném čase.
 
-Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí STFT (Short--Time Fourier Transformation)\cite{10.1109/TASLP.2018.2842159}. Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimalizovaná pro separaci mluvčích.
+Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí STFT (Short--Time Fourier Transformation\cite{speechseparationoverview}). Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimalizovaná pro separaci mluvčích.
 
 Pro překonání nedostatků předešlých metod byla navržena architektura Time--domain Audio Separation Network (TasNet), založena na hlubokém učení a neuronových sítích, která používá konvoluční enkodér k převodu směsi na reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na reprezentaci. Masky jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dylatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni konvolučním dekodérem.
 
-\todo{uvod do kapitoly - co je tasnet, nastin jak funguje - kroky, masky, encoder, TCN, }
+\todo{uvod do kapitoly - co je tasnet, nastin jak funguje - kroky, masky, encoder, TCN}
 
 
 \begin{figure}[H]
@@ -447,10 +445,11 @@ Pro překonání nedostatků předešlých metod byla navržena architektura Tim
     \caption{\label{fig:tasnet-autoencoder}Schéma konvolučního autoenkodéru}
 \end{figure}
 
+
 \subsection{Enkódování směsi}
 
 
-\subsection{Dekódování}
+\subsection{Dekódování extrahovaných mluvčích}
 
 
 \section{Separační modul}
