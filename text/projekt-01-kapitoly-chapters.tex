@@ -418,14 +418,11 @@ V této kapitole byly popsány základní principy neuronových sítí, jejich z
 
 Tato kapitola vychází z referenční studie \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}\cite{luo2018convtasnet} a popisuje její navrhnuté řešení pro separaci mluvčích v časové doméně.
 
-Přestože metody pro zpracování řeči v akustickém přostředí, ve kterém se může současně prolínat mnoho řečových signálů, v poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v aplikacích, které by mohly zpracovávat řeč v reálném čase.
+Přestože metody pro zpracování řeči v takovém akustickém prostředí, ve kterém se současně prolíná mnoho řečových signálů, v poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v aplikacích, které by mohly zpracovávat řeč v reálném čase.
 
 Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)\cite{speechseparationoverview}. Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
 
-Pro překonání nedostatků předešlých metod byla navržena architektura Time--domain Audio Separation Network (TasNet), založena na hlubokém učení a neuronových sítích, která používá konvoluční enkodér k převodu směsi na reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na reprezentaci. Masky jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dylatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni konvolučním dekodérem.
-
-\todo{uvod do kapitoly - co je tasnet, nastin jak funguje - kroky, masky, encoder, TCN}
-
+Pro překonání nedostatků předešlých metod byla navržena architektura Time--domain Audio Separation Network (TasNet), založena na hlubokém učení a neuronových sítích, která používá konvoluční enkodér k převodu směsi na reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na reprezentaci. Masky jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dylatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni konvolučním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v kapitole budou jednotlivé části popsány detailněji.
 
 \begin{figure}[H]
     \centering
@@ -434,16 +431,18 @@ Pro překonání nedostatků předešlých metod byla navržena architektura Tim
 \end{figure}
 
 
+\todo{v kazde nasledujici podkapitole mit miniuvod kterej to vysvetli polopate trochu - jeden odstavecek, a pak tu matematiku.}
+
+
 \section{Konvoluční auto--enkodér}
 \todo{Konvoluční autoenkodér, vstup, výstup...}
 
-- schema bez separacniho modulu
-- non negative representation of audio
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/tasnet-autoencoder.png}
-    \caption{\label{fig:tasnet-autoencoder}Schéma konvolučního autoenkodéru}
+    \includegraphics[scale=0.5]{obrazky-figures/autoenkoder.png}
+    \caption{\label{fig:tasnet-autoenkoder}Schéma konvolučního autoenkodéru}
 \end{figure}
+
 
 
 \subsection{Enkódování směsi}
@@ -452,24 +451,35 @@ Pro překonání nedostatků předešlých metod byla navržena architektura Tim
 \subsection{Dekódování extrahovaných mluvčích}
 
 
+
 \section{Separační modul}
-- odhad masek pro jednotlive mluvci
-- schema se separacnim modulem
+\todo{Pozn: odhad masek pro jednotlive mluvci}
+
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{obrazky-figures/tasnet-architecture.png}
-    \caption{\label{fig:tasnet-modul}Schéma architektury TasNet}
+    \includegraphics[scale=0.35]{obrazky-figures/separation_module_scheme.png}
+    \caption{\label{fig:tasnet-autoenkoder}TODO}
 \end{figure}
 
 
 \subsection{Temporal Convolutional Network}
 \todo{TCN, dilatace, stacked blocks, X, R}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.35]{obrazky-figures/stacked_resblocks.jpg}
+    \caption{\label{fig:tasnet-stacked-resblocks}TODO}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.35]{obrazky-figures/causal_dilation.png}
+    \caption{\label{fig:tasnet-causal-dilation}TODO}
+\end{figure}
 
 
 \subsection{Konvoluční bloky}
-- Z~čeho se skládá -- konvoluční vrstvy, normalizace
-- diagram konv bloku.
-- Mozna: Dilatace a increasing time perception
+\todo{Pozn: vrstvy, normalizace}
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/conv-res-block.png}
@@ -477,7 +487,19 @@ Pro překonání nedostatků předešlých metod byla navržena architektura Tim
 \end{figure}
 
 
+
+\subsection{Normalizace}
+
+
+\todo{shrnuti kompletni architektury viz schema}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{obrazky-figures/tasnet-architecture.png}
+    \caption{\label{fig:tasnet-modul}Schéma architektury TasNet}
+\end{figure}
+
 \todo{zaver kapitoly}
+V této kapitole byla popsána architektura TasNet a její výhody oproti dosavadním metodám, které v mnoha směrech značně předčila a díky níž se algoritmy pohnuly opět o krok blíž ke stavu, kdy je bude možné využít na běžně dostupných zařízeních.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
