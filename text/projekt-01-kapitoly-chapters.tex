@@ -208,6 +208,7 @@ Z~pohledu učení je také důležité, aby aktivační funkce byla diferencovat
 
 
 \subsection*{ReLU}
+\label{relu}
 Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje-li neuronová síť nějakou nelinearitu, je ReLU pro většinu případů ideální. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$, jak udává rovnice 
 \begin{equation}
    f(x)=max(0,x)
@@ -422,7 +423,7 @@ Přestože metody pro zpracování řeči v takovém akustickém prostředí, ve
 
 Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)\cite{speechseparationoverview}. Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
 
-Pro překonání nedostatků předešlých metod byla navržena architektura Time--domain Audio Separation Network (TasNet), založena na hlubokém učení a neuronových sítích, která používá konvoluční enkodér k převodu směsi na reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na reprezentaci. Masky jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dylatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni konvolučním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v kapitole budou jednotlivé části popsány detailněji.
+Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v každém časovém kroku jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v kapitole budou jednotlivé části popsány detailněji.
 
 \begin{figure}[H]
     \centering
@@ -430,13 +431,15 @@ Pro překonání nedostatků předešlých metod byla navržena architektura Tim
     \caption{\label{fig:tasnet-pipe}Zjednodušený model architektury}
 \end{figure}
 
-
-\todo{v kazde nasledujici podkapitole mit miniuvod kterej to vysvetli polopate trochu - jeden odstavecek, a pak tu matematiku.}
+Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odhad $C$ zdrojů mluvčích $s_1(t), \dots, s_c(t) \in \mathbb{R}^{1 \times T}$ na diskrétním signálu směsi $x(t)\in \mathbb{R}^{1 \times T}$, kde $T$ je délka nahrávky a kde
+\begin{equation}
+  x(t) = \sum_{i=1}^C s_i(t)
+\end{equation}
+Cílem je odhadnout $s_i(t), i = 1, \dots, C$ ze signálu směsi $x(t)$.
 
 
 \section{Konvoluční auto--enkodér}
-\todo{Konvoluční autoenkodér, vstup, výstup...}
-
+Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z reprezentace na původní nahrávku, jak ukazuje obrázek \ref{fig:tasnet-autoenkoder}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/autoenkoder.png}
@@ -444,22 +447,47 @@ Pro překonání nedostatků předešlých metod byla navržena architektura Tim
 \end{figure}
 
 
-
 \subsection{Enkódování směsi}
+\todo{spravit znak pro konvolucni operator v math env}
+Každý segment směsi o délce $L$, $x_k \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $w \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
+%w = ReLU(x \textcircled{\star} U)
+\begin{equation}
+  	w = ReLU(x \star U)
+\end{equation}
+kde $U \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace \textcircled{$\star$} značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v podkapitole \ref{relu}.
 
 
 \subsection{Dekódování extrahovaných mluvčích}
-
+Pro převod z reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $x$ jako $x \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
+\begin{equation}
+  \hat{x} = wV
+\end{equation}
+kde každý řádek v matici $V \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s délkou $L$.
 
 
 \section{Separační modul}
-\todo{Pozn: odhad masek pro jednotlive mluvci}
+Cílem separačního modulu je najít váhovanou funkci, neboli masku, pro každého zdrojového mluvčího pro každý výstup enkodéru v každém časovém kroku. Formálně lze zapsat, že cílem je odhadnout $C$ masek $m_i \in \mathbb{R}^{1 \times N}, i = 1, \dots, C$, kde $C$ představuje počet mluvčích ve směsi. Vektory masek $m_i$ mají takové omezení, že $\sum_{i=0}^{C}m_i=1$, kde $1$ je jednotkový vektor v $\mathbb{R}^{1 \times N}$. Toto omezení garantuje, že rekonstruované zdroje po sečtení zformují původní směs $\hat{x} = \sum_{i=1}^{C}\hat{s}_i$.
+
+Separace je pro každý zdroj provedena vynásobením odpovídající masky $m_i$ s nezápornou reprezentací (výstupem enkodéru) $w$, jako
+\begin{equation}
+	d_i = w \odot m_i
+\end{equation}
+kde $d_i \in \mathbb{R}^{1 \times N}$ je reprezentace každého ze zdrojů a operace $\odot$ je \todo{not sure} vektorový součin. 
+
+Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahrávky zdrojů $\hat{s}_i, i = 1, \dots, C$ pomocí dekodéru jako
+\begin{equation}
+  \hat{s}_i = d_iV
+\end{equation}
+
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/separation_module_scheme.png}
     \caption{\label{fig:tasnet-autoenkoder}TODO}
 \end{figure}
+
+
+
 
 
 \subsection{Temporal Convolutional Network}
@@ -487,8 +515,8 @@ Pro překonání nedostatků předešlých metod byla navržena architektura Tim
 \end{figure}
 
 
-
-\subsection{Normalizace}
+\section{Normalizace}
+\todo{vzorecek pouzite normalizacni metody MOZNA}
 
 
 \todo{shrnuti kompletni architektury viz schema}
@@ -773,6 +801,11 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 
 \todo{miniÚvod}
 Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ \todo{mozna ref}.  
+
+
+\subsection{Výsledky referenčního modelu TasNet}
+\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v tech vecech ktere tu merim a vyhodnocuji ja} 
+
 
 \subsection{Vliv hyper--parametru X}
 \todo{zmensovani a zvetsovani X, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy}
