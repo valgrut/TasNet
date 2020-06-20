@@ -154,6 +154,11 @@
 }, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
   abstract.en={
 \todo{Prelozit do anglictiny CZ abstrakt}
+Thesis is about usage of convolutional neural networks for automational speech separation in acoustic environment. The goal is to implement neural network by following TasNet architecture in pytorch framework, train this network with various values of hyper parameters and to compare the quality of separation based on the size of the network.
+
+In contrast to older architectures, that transformed input mixture into time--frequency representation, this architecture use convolutional autoencoder, which transforms input mixture into non--negative representation optimized for speaker extraction. Separation is achieved by applying the masks, which are estimated in the separation module. This module consists of stacked convolutional blocks with increasing dilation, which helps with modelling of long--term time dependencies in the processed speech.
+
+For evaluation of preci. Ye.
 }, % abstrakt v anglickém jazyce / abstract in english
   %abstract.en={An abstract of the work in English will be written in this paragraph.},
   % Prohlášení (u anglicky psané práce anglicky, u slovensky psané práce slovensky) / Declaration (for thesis in english should be in english)
