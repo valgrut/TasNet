@@ -437,6 +437,7 @@ Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odh
 \end{equation}
 Cílem je odhadnout $s_i(t), i = 1, \dots, C$ ze signálu směsi $x(t)$.
 
+\todo{sem mozna tabulka hyperparametrů a jejich pojmenovani X, R, N, L, P, ...}
 
 \section{Konvoluční auto--enkodér}
 Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z reprezentace na původní nahrávku, jak ukazuje obrázek \ref{fig:tasnet-autoenkoder}.
@@ -464,6 +465,7 @@ Pro převod z reprezentace zpět do podoby audio nahrávky slouží lineární d
 \end{equation}
 kde každý řádek v matici $V \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s délkou $L$.
 
+%-------------------------------
 
 \section{Separační modul}
 Cílem separačního modulu je najít váhovanou funkci, neboli masku, pro každého zdrojového mluvčího pro každý výstup enkodéru v každém časovém kroku. Formálně lze zapsat, že cílem je odhadnout $C$ masek $m_i \in \mathbb{R}^{1 \times N}, i = 1, \dots, C$, kde $C$ představuje počet mluvčích ve směsi. Vektory masek $m_i$ mají takové omezení, že $\sum_{i=0}^{C}m_i=1$, kde $1$ je jednotkový vektor v $\mathbb{R}^{1 \times N}$. Toto omezení garantuje, že rekonstruované zdroje po sečtení zformují původní směs $\hat{x} = \sum_{i=1}^{C}\hat{s}_i$.
@@ -488,10 +490,16 @@ Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahr�
 
 \todo{popsat obrazky, mozna nektere zcuknout k sobe nebo vedle sebe}
 
-
+\todo{sem mozna jeste zminit tu cast pred TCN a softmax a pod. po TCN}
 
 \subsection{Temporal Convolutional Network}
 \todo{TCN, dilatace, stacked blocks, X, R}
+
+Jádrem separační části je \textit{temporal convolutional network} skládající se z naskládaných  1--D konvolučních bloků s časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v TCN obsahuje bloky se zvyšující se časovou dilatací, která se zvyšuje exponenciálně v závislosti na parametru $X$, který udává počet konvolučních bloků \todo{v jedné vrstvě} a nabývá hodnot $1, 2, 4, \dots, 2^(X-1)$. Taková sekvence bloků je opakována $R$ krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
+
+Výstup posledního bloku posledního opakování v TCN je předán $1 \times 1$ konvoluční vrstvě, která má $N \times C$ filtrů a nakonec aktivační funkci softmax k odhadu $C$ vektorů masek pro každého z $C$ cílových mluvčích.
+
+\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/stacked_resblocks.jpg}
@@ -505,8 +513,17 @@ Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahr�
 \end{figure}
 
 
+
 \subsection{Konvoluční bloky - mozna pryc}
 \todo{Pozn: vrstvy bloku a residualni spojeni}
+
+\begin{equation}
+	D--conv(Y, K) = concat(y_j conv k_j), j = 1, \dots, N
+\end{equation}
+\begin{equation}
+	S--conv(Y, K, L) = D--conv(Y, K) conv L
+\end{equation}
+
 
 \begin{figure}[H]
     \centering
@@ -516,7 +533,31 @@ Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahr�
 
 
 \section{Normalizace}
-\todo{vzorecek pouzite normalizacni metody MOZNA}
+\todo{vzorecek pouzite normalizacni metody MOZNA, popsat i to s cim jsem ja osobne neexperimentoval?}
+Vzhledem ke změnám distribuce vstupních dat mezi jednotlivými vrstvami, se trénování sítí stává složitější a je nutné
+
+Při trénování neuronových sítí může docházet k fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat\cite{ioffe2015batch}\cite{ba2016layer}.
+
+Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s channel--wise layer normalization (cLN)\todo{cite}, global layer normalization (gLN) a batch normalization (BN)\cite{ioffe2015batch}.
+
+Metoda cLN je aplikována na vstup separačního modulu pro zajištění invariance při změně měřítka vstupních dat. Tato metoda je vhodná pro použití v kauzální i nekauzální konfiguraci, je--li použita v konvolučních blocích. Normalizace cLN je aplikována na každý segment $y_k$. 
+
+Metoda gLN je aplikována globálně na každý příznak na rozměry kanálu i času. Tuto normalizaci lze použít pouze při nekauzální konfiguraci, protože výpočet probíhá na základě celého vstupu.
+Při kauzální konfiguraci může být použita také metoda BN.
+
+Normalizace BN je počítána následovně:
+\begin{equation}
+	y = \frac{x - E[x]}{Var[x] + \varepsilon} * \gamma + \beta
+\end{equation}
+
+\begin{equation}
+	E[x] = \frac{1}{NT} \sum_{NT}Y
+\end{equation}
+
+\begin{equation}
+	Var(Y) = \frac{1}{NT} \sum_{NT}(Y - E[Y])^2
+\end{equation}
+
 
 
 \todo{shrnuti kompletni architektury viz schema}
