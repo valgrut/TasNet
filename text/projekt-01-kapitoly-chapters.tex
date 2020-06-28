@@ -240,45 +240,6 @@ Parametrizovaná ReLU (PReLU)\cite{he2015delving} je nelineární aktivační fu
 \end{figure}
 
 
-\section{Lineárně separovatelná data}
-Síť složená z~jediného neuronu by byla omezena pouze na klasifikaci lineárně separovatelných dat. To jsou taková data, která lze rozdělit, existuje-li alespoň jedna přímka v~rovině taková, že na jedné straně přímky jsou všechna data klasifikována do první třídy, a na druhé straně data klasifikována do třídy druhé, jak lze vidět na obrázku \ref{fig:linear_separable}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.38]{obrazky-figures/linear_separable.png}
-    \caption{\label{fig:linear_separable}Lineárně separovatelná (vlevo) a neseparovatelná (vpravo) data} 
-\end{figure}
-
-Mějme množinu dat, kterou tvoří dvě rozdílné třídy objektů $\Omega_1, \Omega_2 \subset \mathbb{R}^m$. Třídy jsou lineárně separovatelné, jestliže existuje $w \in 
-\mathbb{R}^m$ a $\theta \in \mathbb{R}$ takové, že 
-\begin{equation}
-   \forall x \in \Omega_1 : x^Tw > \theta
-\end{equation}
-\begin{equation}
-   \forall x \in \Omega_2 : x^Tw < \theta
-\end{equation}
-
-Problém lze zobecnit tak, že řešením bude separace tříd pomocí hyper roviny v~prostoru $\mathbb{R}^m$, jak zachycuje obrázek \ref{fig:hyperplane_separable}
-\cite{linearseparability}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.8]{obrazky-figures/hyperplane_separable.jpeg}
-    \caption{\label{fig:hyperplane_separable}Separace pomocí hyper roviny} 
-\end{figure}
-
-Neuron se nedokáže ale naučit klasifikovat třeba funkci XOR, protože ta není lineárně separovatelná. Byly by zapotřebí minimálně dvě přímky pro rozdělení dat, jak zobrazuje obrázek \ref{fig:xor}\todo{citovat xor}. K~překonání tohoto problému se neurony spojují do podoby neuronové sítě, která dokáže řešit libovolně komplexní problémy.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.3]{obrazky-figures/xor.png}
-    \caption{\label{fig:xor}Graf funkce XOR, jejíž výstup není lineárně separovatelný} 
-\end{figure}
-
-
-
-
-
 \section{Konvoluční neuronové sítě}
 \todo{Nebo to pojmenovat jako Konvolucni vrstva?}.
 Konvoluční neuronové sítě jsou typ feedforward sítí, které neobsahují pouze plně propojené vrstvy, ale také vrstvy konvoluční.
@@ -397,10 +358,16 @@ Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. 
 Regularizace je souhrn postupů, které říkají, jak modifikovat učící algoritmus tak, aby se zredukovala chyba generalizace, zatímco testovací chyba zůstane stejná\cite[p117]{mitdeeplearning}.
 
 
-\subsection{Residuální spojení}
-\todo{Toto chce obrazek residualniho spojeni. Popsat. Citovat odnekud, proc jsou residualni spojeni dobra pro trenovani DeepNN a v jednom odstavci to nejak shrnout}.
-Reziduální spojení\cite{he2015deep}.
+\subsection{Reziduální spojení}
+Velmi hluboké neuronové sítě přinesly v mnoha aplikacích velmi dobré výsledky. S přibývající hloubkou se ale stává její trénování složitější. Jeden z problémů, který se při učení projevoval, byl explodující a mizející gradient\cite{279181}. Tento problém byl adresován zavedením normalizačních vrstev\cite{ioffe2015batch} a počáteční optimalizované inicializace, což dovolilo sítím konvergovat s využitím \textit{stochastic gradient descent} se zpětnou propagací (\textit{back--propagation})\cite{6795724}. Poté se objevil problém degradace, který nebyl zapříčiněn přetrénováním, a způsobil, že s přibývající hloubkou sítě její přesnost náhle prudce klesla, což indikovalo, že systémy nelze optimalizovat stejným způsobem a přidání dalších vrstev pouze zvýšilo trénovací chybu. Problém degradace lze řešit zakomponováním reziduálních spojení, které je zobrazeno na obrázku \ref{fig:residualconnection}\cite{he2015deep}.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{obrazky-figures/residual_connection.png}
+    \caption{\label{fig:residualconnection}Reziduální spojení mezi vstupem a výstupem stavebního bloku sítě\cite{he2015deep}}
+\end{figure}
+
+Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost\cite{he2015deep}.
 
 
 \subsection{Význam validační množiny v~trénování}
@@ -413,6 +380,8 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 
 
 V této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back--propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
+
+
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
