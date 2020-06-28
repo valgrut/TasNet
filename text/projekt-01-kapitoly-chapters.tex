@@ -224,7 +224,7 @@ Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje
 
 
 \subsection*{PReLU}
-Parametrizovaná ReLU je nelineární aktivační funkce, která se používá v~případě, že chceme produkovat na výstup malý nenulový gradient i v~případě záporné vstupní hodnoty $x$. V~tom případě je vstupní hodnota vynásobena parametrem $\alpha$ a to představuje výsledek. Parametr $\alpha$ se společně s~ostatními váhami učí během učícího procesu.
+Parametrizovaná ReLU (PReLU)\cite{he2015delving} je nelineární aktivační funkce, která se používá v~případě, že chceme produkovat na výstup malý nenulový gradient i v~případě záporné vstupní hodnoty $x$. V~tom případě je vstupní hodnota vynásobena parametrem $\alpha$ a to představuje výsledek. Parametr $\alpha$ se společně s~ostatními váhami učí během učícího procesu.
 \begin{equation}
   f(x) =
   \begin{cases}
@@ -490,20 +490,18 @@ Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahr�
 
 \todo{popsat obrazky, mozna nektere zcuknout k sobe nebo vedle sebe}
 
-\todo{sem mozna jeste zminit tu cast pred TCN a softmax a pod. po TCN}
+Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následujících konvolučních bloků.
 
 \subsection{Temporal Convolutional Network}
-\todo{TCN, dilatace, stacked blocks, X, R}
-
-Jádrem separační části je \textit{temporal convolutional network} skládající se z naskládaných  1--D konvolučních bloků s časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v TCN obsahuje bloky se zvyšující se časovou dilatací, která se zvyšuje exponenciálně v závislosti na parametru $X$, který udává počet konvolučních bloků \todo{v jedné vrstvě} a nabývá hodnot $1, 2, 4, \dots, 2^(X-1)$. Taková sekvence bloků je opakována $R$ krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
+Jádrem separační části je \textit{temporal convolutional network} skládající se z naskládaných  1--D konvolučních bloků s časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v TCN obsahuje bloky se zvyšující se časovou dilatací, která se zvyšuje exponenciálně v závislosti na parametru $X$, který udává počet konvolučních bloků \todo{v jedné vrstvě} a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
 
 Výstup posledního bloku posledního opakování v TCN je předán $1 \times 1$ konvoluční vrstvě, která má $N \times C$ filtrů a nakonec aktivační funkci softmax k odhadu $C$ vektorů masek pro každého z $C$ cílových mluvčích.
 
-\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/stacked_resblocks.jpg}
-    \caption{\label{fig:tasnet-stacked-resblocks}TODO}
+    \caption{\label{fig:tasnet-stacked-resblocks}TODO\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}TODO}
 \end{figure}
 
 \begin{figure}[H]
@@ -514,28 +512,35 @@ Výstup posledního bloku posledního opakování v TCN je předán $1 \times 1$
 
 
 
-\subsection{Konvoluční bloky - mozna pryc}
+\subsection{Konvoluční bloky - mozna ne jako podkapitolu}
 \todo{Pozn: vrstvy bloku a residualni spojeni}
+Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 1$ konvolučních bloků za \textit{depthwise separable convolution} (S--conv), která pomáhá snížit počet parametrů a ukázala se jako efektivní ve zpracováni obrazu\todo{citace 26 27}.
+
+\textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s velikostí konvolučního jádra 1:
 
 \begin{equation}
-	D--conv(Y, K) = concat(y_j conv k_j), j = 1, \dots, N
+	D-conv(Y, K) = concat(y_j conv k_j), j = 1, \dots, N
 \end{equation}
+
 \begin{equation}
-	S--conv(Y, K, L) = D--conv(Y, K) conv L
+	S-conv(Y, K, L) = D-conv(Y, K) conv L
 \end{equation}
+
+kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \times P}$ je konvoluční jádro o velikosti $P$, dále $y_j \in \mathbb{R}^{1 \times M}$ a $k_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $Y$ a $K$. $L \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/conv-res-block.png}
-    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok}
+    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok\todo{graficky zde ukazat a zakrouzkovat co je sconv a co je dconv}}
 \end{figure}
 
+V každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU\cite{he2015delving}, která byla popsána v kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
 
+\todo{zvýraznit na obrázku konvolučního bloku residuální spojení a hodit tam sipku nebo neco ze to je to spojeni}
+
+\todo{Kam uvozovky, kam bold, kam italic ZEPTAT SE}
 \section{Normalizace}
-\todo{vzorecek pouzite normalizacni metody MOZNA, popsat i to s cim jsem ja osobne neexperimentoval?}
-Vzhledem ke změnám distribuce vstupních dat mezi jednotlivými vrstvami, se trénování sítí stává složitější a je nutné
-
 Při trénování neuronových sítí může docházet k fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat\cite{ioffe2015batch}\cite{ba2016layer}.
 
 Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s channel--wise layer normalization (cLN)\todo{cite}, global layer normalization (gLN) a batch normalization (BN)\cite{ioffe2015batch}.
@@ -559,6 +564,7 @@ Normalizace BN je počítána následovně:
 \end{equation}
 
 
+\bigskip
 
 \todo{shrnuti kompletni architektury viz schema}
 \begin{figure}[H]
