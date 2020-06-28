@@ -399,6 +399,8 @@ Regularizace je souhrn postupů, které říkají, jak modifikovat učící algo
 
 \subsection{Residuální spojení}
 \todo{Toto chce obrazek residualniho spojeni. Popsat. Citovat odnekud, proc jsou residualni spojeni dobra pro trenovani DeepNN a v jednom odstavci to nejak shrnout}.
+Reziduální spojení\cite{he2015deep}.
+
 
 
 \subsection{Význam validační množiny v~trénování}
@@ -428,7 +430,7 @@ Pro překonání nedostatků předešlých metod byla navržena architektura ful
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/tasnet-pipe.png}
-    \caption{\label{fig:tasnet-pipe}Zjednodušený model architektury}
+    \caption{\label{fig:tasnet-pipe}Zjednodušený model architektury TasNet}
 \end{figure}
 
 Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odhad $C$ zdrojů mluvčích $s_1(t), \dots, s_c(t) \in \mathbb{R}^{1 \times T}$ na diskrétním signálu směsi $x(t)\in \mathbb{R}^{1 \times T}$, kde $T$ je délka nahrávky a kde
@@ -485,12 +487,12 @@ Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahr�
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/separation_module_scheme.png}
-    \caption{\label{fig:tasnet-autoenkoder}TODO}
+    \caption{\label{fig:tasnet-autoenkoder}Schéma kompletního separačního modulu, jehož vstupem je nezáporná reprezentace směsi mluvčích}
 \end{figure}
 
-\todo{popsat obrazky, mozna nektere zcuknout k sobe nebo vedle sebe}
+\todo{obrazky mozna nektere zcuknout k sobe nebo vedle sebe}
 
-Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následujících konvolučních bloků.
+Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. 
 
 \subsection{Temporal Convolutional Network}
 Jádrem separační části je \textit{temporal convolutional network} skládající se z naskládaných  1--D konvolučních bloků s časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v TCN obsahuje bloky se zvyšující se časovou dilatací, která se zvyšuje exponenciálně v závislosti na parametru $X$, který udává počet konvolučních bloků \todo{v jedné vrstvě} a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
@@ -501,13 +503,13 @@ Výstup posledního bloku posledního opakování v TCN je předán $1 \times 1$
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/stacked_resblocks.jpg}
-    \caption{\label{fig:tasnet-stacked-resblocks}TODO\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}TODO}
+    \caption{\label{fig:tasnet-stacked-resblocks}Jádro separačního modulu -- naskládané konvoluční bloky s časovou dilatací odhadující masky na základě nezáporné reprezentace\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/causal_dilation.png}
-    \caption{\label{fig:tasnet-causal-dilation}TODO}
+    \caption{\label{fig:tasnet-causal-dilation}Vizualizace časové dilatace}
 \end{figure}
 
 
@@ -532,7 +534,7 @@ kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \t
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/conv-res-block.png}
-    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok\todo{graficky zde ukazat a zakrouzkovat co je sconv a co je dconv}}
+    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok obsahující reziduální spojení mezi vstupem a výstupem\todo{graficky zde ukazat a zakrouzkovat co je sconv a co je dconv}}
 \end{figure}
 
 V každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU\cite{he2015delving}, která byla popsána v kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
@@ -573,10 +575,10 @@ Normalizace BN je počítána následovně:
     \caption{\label{fig:tasnet-modul}Schéma architektury TasNet}
 \end{figure}
 
-\todo{zaver kapitoly}
-V této kapitole byla popsána architektura TasNet a její výhody oproti dosavadním metodám, které v mnoha směrech značně předčila a díky níž se algoritmy pohnuly opět o krok blíž ke stavu, kdy je bude možné využít na běžně dostupných zařízeních.
 
+V této kapitole byla popsána navržená architektura Conv--TasNet pro separaci navzájem se překrývajících mluvčích v časové doméně, skládající se z konvolučního auto--enkodéru, který převádí vstupní směs mluvčích na nezápornou reprezentaci, ze které je následně v separačním modulu složeném z konvolučních bloků se zvyšující se časovou dilatací odhadnuty multiplikativní funkce (tzv. masky) pro každý ze zdrojů. Ty jsou nakonec aplikovány na reprezentaci a výsledek lineárním dekodérem převeden zpět na hlasovou, nyní již separovanou nahrávku.
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 \chapter{Implementace sítě}
