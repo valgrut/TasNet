@@ -240,23 +240,29 @@ Parametrizovaná ReLU (PReLU)\cite{he2015delving} je nelineární aktivační fu
 \end{figure}
 
 
-\section{Konvoluční neuronové sítě}
-\todo{Nebo to pojmenovat jako Konvolucni vrstva?}.
-Konvoluční neuronové sítě jsou typ feedforward sítí, které neobsahují pouze plně propojené vrstvy, ale také vrstvy konvoluční.
+\section{Konvoluční vrstvy}
+\todo{tento obrazek nahradit necim jinym, tento je hroznej}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/conv_nn_audio.jpg}
     \caption{\label{fig:conv_nn}Konvoluční neuronové sítě}
 \end{figure}
+Konvoluční neuronová síť \todo{citovat LeCun 1989} je typ neuronových sítí pro zpracování dat v mřížkovitém uspořádání, což může být například ve 2--D obrázek ve formě pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v čase pro 1--D. Konvoluční síť je typ feed forward sítě, která obsahuje jednu nebo více konvolučních vrstev. Ty používají místo běžného násobení matic speciální typ lineární operace -- konvoluci. 
 
-\subsection{Konvoluční vrstva}
 Diskrétní konvoluce je definována jako
+\begin{equation}
+   (f \star g)_k = \sum_{i=-\infty}^{\infty} f_i g_{k-i} = \sum_{i=-\infty}^{\infty} f_{k-i} g_{i}
+\end{equation}
 
-%\begin{equation}
-%   (f * g)_k = \sum_{i=-\inf}^{\inf} f_i g_{k-i} = \sum_{i=-\inf}^{\inf} f_{k-i} g_{i}
-%\end{equation}
+a konvoluční operace jako
+\begin{equation}
+   s[n] = (x \star w)[n]
+\end{equation}
+kde $x$ jsou vstupní data a funkce $w$ je konvoluční jádro. Výstupem operace je mapa příznaků.
 
 kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je konvoluční jádro a $f_i$ a $g_i$ jsou hodnoty funkce na indexu $i$.
+
+
 
 
 
@@ -367,7 +373,9 @@ Velmi hluboké neuronové sítě přinesly v mnoha aplikacích velmi dobré výs
     \caption{\label{fig:residualconnection}Reziduální spojení mezi vstupem a výstupem stavebního bloku sítě\cite{he2015deep}}
 \end{figure}
 
-Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost\cite{he2015deep}.
+\todo{prepsat F na to specialni}
+Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost\cite{he2015deep}\cite{zaeemzadeh2018normpreservation}.
+
 
 
 \subsection{Význam validační množiny v~trénování}
@@ -379,6 +387,9 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 \todo{najit jeste nejakej zdroj s~popisem a pripadne nejaky zajimavejsi info.}
 
 
+
+
+\bigskip
 V této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back--propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
 
 

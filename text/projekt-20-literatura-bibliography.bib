@@ -33,6 +33,10 @@ journal = {Computer-Aided Design \& Applications},
 doi = {10.1080/16864360.2006.10738441}
 }
 
+%
+%
+
+
 % [1] ze studie
 @article{speechseparationoverview,
 author = {Wang, DeLiang and Chen, Jitong},
@@ -52,6 +56,9 @@ numpages = {25}
 }
 
 %Batch normalization citace ze studie [47]
+% https://pytorch.org/docs/master/generated/torch.nn.BatchNorm1d.html
+%	https://arxiv.org/abs/1502.03167
+% 		https://arxiv.org/pdf/1502.03167.pdf
 @misc{ioffe2015batch,
     title={Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift},
     author={Sergey Ioffe and Christian Szegedy},
@@ -62,6 +69,8 @@ numpages = {25}
 }
 
 %Layer normalization z pytorch, ale taky pouzita na Batch Norm
+% https://pytorch.org/docs/master/generated/torch.nn.LayerNorm.html
+% 	https://arxiv.org/abs/1607.06450
 @misc{ba2016layer,
     title={Layer Normalization},
     author={Jimmy Lei Ba and Jamie Ryan Kiros and Geoffrey E. Hinton},
@@ -70,6 +79,10 @@ numpages = {25}
     archivePrefix={arXiv},
     primaryClass={stat.ML}
 }
+
+% Eventuelne Web o normalizaci
+%	https://mlexplained.com/2018/11/30/an-overview-of-normalization-methods-in-deep-learning/
+% ------
 
 %PReLU paper
 % https://arxiv.org/abs/1502.01852
@@ -89,6 +102,17 @@ numpages = {25}
     author={Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
     year={2015},
     eprint={1512.03385},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV}
+}
+
+%Why Residual Networks Can Become Extremely Deep
+% https://arxiv.org/abs/1805.07477
+@misc{zaeemzadeh2018normpreservation,
+    title={Norm-Preservation: Why Residual Networks Can Become Extremely Deep?},
+    author={Alireza Zaeemzadeh and Nazanin Rahnavard and Mubarak Shah},
+    year={2018},
+    eprint={1805.07477},
     archivePrefix={arXiv},
     primaryClass={cs.CV}
 }
