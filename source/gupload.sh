@@ -7,5 +7,6 @@ declare -a filelist=("inference.py" "snr.py" "test.py" "tools.py" "train.py" "ut
 
 # Kopirovani souboru na listu
 for script in "${filelist[@]}"; do
+    echo "Kopirovani souboru $script na google drive"
     rclone copy --max-age 24h --progress --no-traverse "./$script" gdrive:TasNet/
 done
