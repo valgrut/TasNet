@@ -10,6 +10,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from pystoi import stoi
+from pesq import pesq
 
 from AudioDataset import AudioDataset
 from TasNet import Net
@@ -153,6 +154,7 @@ if __name__== "__main__":
     sir_sum = 0
     sarn_sum = 0
     stoi_sum = 0
+    pesq_sum = 0
     perm_sum = 0
 
     global_audio_cnt = 0
@@ -225,6 +227,8 @@ if __name__== "__main__":
             (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources, estimated_sources, compute_permutation=True)
             # print(sdr, sir, sarn, perm)
 
+
+            ###################################################################
             # stoi function taken from https://github.com/mpariente/pystoi
             stoi1 = stoi(ref_sources[0], estimated_sources[0], 8000, extended=False)
             stoi2 = stoi(ref_sources[0], estimated_sources[1], 8000, extended=False)
@@ -237,6 +241,22 @@ if __name__== "__main__":
 
             # Short Term Objective Intelligibility (STOI)
             stoi_sum += max(stoi_max1, stoi_max2)
+
+
+            ###################################################################
+            # PESQ function taken from https://github.com/ludlows/python-pesq
+            pesq1 = pesq(8000, ref_sources[0], estimated_sources[0], 'nb') # 'wb' ?????
+            pesq2 = pesq(8000, ref_sources[0], estimated_sources[1], 'nb')
+            pesq3 = pesq(8000, ref_sources[1], estimated_sources[0], 'nb')
+            pesq4 = pesq(8000, ref_sources[1], estimated_sources[1], 'nb')
+            # print(pesq1, pesq2, pesq3, pesq4)
+            pesq_max1 = max(pesq1, pesq2)
+            pesq_max2 = max(pesq3, pesq4)
+            # print(pesq_max1, pesq_max2)
+
+            # Short Term Objective Intelligibility (STOI)
+            pesq_sum += max(pesq_max1, pesq_max2)
+
 
             # TODO MOZNA zde asi taky bude potreba udelat to samo jako pro pocitani loss
             # protoze taky nemuzu vedet, ze mix[0] odpovida s1, nebo jestli odpovida s2
@@ -258,6 +278,7 @@ if __name__== "__main__":
     print("Final SIR:  " + str(sir_sum/global_audio_cnt))
     print("Final SAR:  " + str(sarn_sum/global_audio_cnt))
     print("Final STOI: " + str(stoi_sum/global_audio_cnt))
+    print("Final PESQ: " + str(pesq_sum/global_audio_cnt))
 
     # Save results into the
     with open(training_dir + "testing.log", "a") as testlog:
@@ -265,5 +286,6 @@ if __name__== "__main__":
         testlog.write("Final SIR:  " + str(sir_sum/global_audio_cnt) + "\n")
         testlog.write("Final SAR:  " + str(sarn_sum/global_audio_cnt) + "\n")
         testlog.write("Final STOI: " + str(stoi_sum/global_audio_cnt) + "\n")
+        testlog.write("Final PESQ: " + str(pesq_sum/global_audio_cnt) + "\n")
 
     print('Finished Testing')

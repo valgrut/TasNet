@@ -1,6 +1,9 @@
 https://github.com/mpariente/pystoi
 pip install pystoi or pip3 install pystoi
 
+https://github.com/ludlows/python-pesq
+pip3 install https://github.com/ludlows/python-pesq/archive/master.zip
+
 
 pytorch
 

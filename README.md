@@ -181,7 +181,10 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         - ozdrojovane nejake obrazky kterymi jsem se inspiroval
         - Obj funkce, mseloss, cross entrophy
 
-    - TODO (a prokonzultovat)
-        - motivace v uvodu (TAO diplomky)
-        - f
+### 3. 7. 2020
+    - Prokonzultovat SDR, STOI, PESQ vysledky testovani
+        - PESQ 'wb' vs 'nb'
+    - natrenovane modely (Tecky na papire)  
+    - Text - je to jinak OK?
+
 
