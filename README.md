@@ -183,7 +183,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 
 ### 3. 7. 2020
     - Prokonzultovat SDR, STOI, PESQ vysledky testovani
-        - PESQ 'wb' vs 'nb'
+        - PESQ vypocet - min, nebo aktualni max?
     - natrenovane modely (Tecky na papire)  
     - Text - je to jinak OK?
 

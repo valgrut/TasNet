@@ -245,7 +245,7 @@ if __name__== "__main__":
 
             ###################################################################
             # PESQ function taken from https://github.com/ludlows/python-pesq
-            pesq1 = pesq(8000, ref_sources[0], estimated_sources[0], 'nb') # 'wb' ?????
+            pesq1 = pesq(8000, ref_sources[0], estimated_sources[0], 'nb')
             pesq2 = pesq(8000, ref_sources[0], estimated_sources[1], 'nb')
             pesq3 = pesq(8000, ref_sources[1], estimated_sources[0], 'nb')
             pesq4 = pesq(8000, ref_sources[1], estimated_sources[1], 'nb')
