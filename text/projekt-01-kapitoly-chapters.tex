@@ -1,33 +1,33 @@
 \chapter{Úvod}
 Zpracování řeči hraje v~dnešní době důležitou roli v~mnoha rozličných oborech. Mezi jeden z~hlavních úkolů bezesporu patří separace zdrojů v~zaznamenaném signálu, který může být složen ze signálů N mluvčích, ale i nechtěného hluku okolí. Vyřešení problému je předpoklad k~dalším úkonům jako identifikace konkrétního mluvčího nebo třeba přepis konverzace na text. Se stále se zrychlujícím vývojem počítačů a s~jejich zvyšujícím se výkonem se do popředí dostávají metody zpracování řeči založené na neuronových sítích, které v~mnoha ohledech předčily ostatní algoritmy strojového učení.
 
-Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short--Time Fourier Transform). Taková reprezentace signálu není optimalizovaná pro separaci řeči a nemusí pro tento úkol být optimální. V~architektuře, která je navržena v~referenční studii s názvem \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet}, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zárověň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
+Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short--Time Fourier Transform). Taková reprezentace signálu není optimalizovaná pro separaci řeči a nemusí pro tento úkol být optimální. V~architektuře, která je navržena v~referenční studii s~názvem \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet}, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zárověň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
 
-Úkolem této práce je nastudovat si problematiku neuronových sítí a jejich základní principy, seznámit se problémem separace mluvčích pomocí neuronových sítí a následně implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně, která byla navržena a popsána ve studii~\cite{luo2018convtasnet}. Poté tuto neuronovou síť natrénovat s~různými kombinacemi hodnot hyperparametrů, které ovlivňují velikost sítě a její vlastnosti, a nakonec porovnat přesnost a kvalitu separace mezi jednotlivými, různě velkými sitěmi a s výsledky, kterých bylo dosaženo ve studii. Přesnost a kvalita separace bude vypočítána pomocí metrik určených k hodnocení kvality řečového signálu. Sítě budou testovány a vyhodnocovány na testovací množině jednokanálových směsí dvou mluvčích.
+Úkolem této práce je nastudovat si problematiku neuronových sítí a jejich základní principy, seznámit se problémem separace mluvčích pomocí neuronových sítí a následně implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně, která byla navržena a popsána ve studii~\cite{luo2018convtasnet}. Poté tuto neuronovou síť natrénovat s~různými kombinacemi hodnot hyperparametrů, které ovlivňují velikost sítě a její vlastnosti, a nakonec porovnat přesnost a kvalitu separace mezi jednotlivými, různě velkými sitěmi a s~výsledky, kterých bylo dosaženo ve studii. Přesnost a kvalita separace bude vypočítána pomocí metrik určených k~hodnocení kvality řečového signálu. Sítě budou testovány a vyhodnocovány na testovací množině jednokanálových směsí dvou mluvčích.
 
-Text je rozdělen na několik kapitol, které postupně pokrývají různé logické celky. V kapitole \ref{separace} je popsán problém separace mluvčích a dosavadní přistupy k jeho řešení. Kapitola \ref{neuronovky} se zabývá základními vlastnostmi a principi neuronových sítí. Kapitola \ref{tasnet} je věnována architektuře TasNet, kterou se moje práce zabývá. Dále kapitola \ref{implementace} popisuje implementaci sítě a pomocných nástrojů a nakonec v kapitole \ref{experimenty} jsou experimenty a vyhodnocování přesnosti sítě.
+Text je rozdělen na několik kapitol, které postupně pokrývají různé logické celky. V~kapitole \ref{separace} je popsán problém separace mluvčích a dosavadní přistupy k~jeho řešení. Kapitola \ref{neuronovky} se zabývá základními vlastnostmi a principi neuronových sítí. Kapitola \ref{tasnet} je věnována architektuře TasNet, kterou se moje práce zabývá. Dále kapitola \ref{implementace} popisuje implementaci sítě a pomocných nástrojů a nakonec v~kapitole \ref{experimenty} jsou experimenty a vyhodnocování přesnosti sítě.
 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Separace mluvčích}
 \label{separace}
-Živočichové mají vrozenou schopnost zaměřit se na jeden konkrétní zvuk, zatímco všechny ostatní dokážou potlačit. Naučit ale této dovednosti počítač se ukázalo jako obtížný úkol, který je překážkou ASR (\textit{automatic speech recognition}) systémům v rozsáhlejším nasazení do běžného života. Tento problém se nazývá koktejl párty. Vyřešení tohoto problému, tedy separování zdrojů, umožňuje širokou aplikaci v oblasti zpracování řeči, jako  přepis konverzací na text, ovládání počítače hlasem, používání hlasových asistentů či identifikace konkrétního mluvčího v prostředí s mnoha současně mluvícími lidmi.
+Živočichové mají vrozenou schopnost zaměřit se na jeden konkrétní zvuk, zatímco všechny ostatní dokážou potlačit. Naučit ale této dovednosti počítač se ukázalo jako obtížný úkol, který je překážkou ASR (\textit{automatic speech recognition}) systémům v~rozsáhlejším nasazení do běžného života. Tento problém se nazývá koktejl párty. Vyřešení tohoto problému, tedy separování zdrojů, umožňuje širokou aplikaci v~oblasti zpracování řeči, jako  přepis konverzací na text, ovládání počítače hlasem, používání hlasových asistentů či identifikace konkrétního mluvčího v~prostředí s~mnoha současně mluvícími lidmi.
 
 \section{Koktejl párty efekt}
-Tento problém se nejlépe dá popsat jako schopnost soustředit se na jeden konkrétní zdroj zvuku z mnoha souběžných zdrojů jako hudba, konkrétní hudební nástroj, řeč dalších lidí či okolní zvuky, a přepínat mezi nimi dynamicky pozornost. 
+Tento problém se nejlépe dá popsat jako schopnost soustředit se na jeden konkrétní zdroj zvuku z~mnoha souběžných zdrojů jako hudba, konkrétní hudební nástroj, řeč dalších lidí či okolní zvuky, a přepínat mezi nimi dynamicky pozornost. 
 
 \todo{vzniklo pro jeho vyreseni hafo altofirmu, ktere dosahovaly nejakych vysledku. jeho vyresenim by se mohlo pouzivat asr na prepis reci an text a pod. Nejlepsich vysledku dosahly hluboke neuronove site.}
 
 
 \section{Metody pro separaci jednokanálových nahrávek}
-Pro separaci zdrojových signálů z nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z nichž asi nejznámější jsou computational auditory scene analysis (\textit{CASA})\todo{ref?} a non-negative matrix factorization (\textit{NMF}) \todo{ref?}, používané pro separaci jednokanálových nahrávek. V posledních letech se do popředí dostaly přistupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody \textit{beamforming} nebo state--of--the--art \textit{Multi-channel blind source separation}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v článku~\cite{speechseparation}.
+Pro separaci zdrojových signálů z~nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z~nichž asi nejznámější jsou computational auditory scene analysis (\textit{CASA})\todo{ref?} a non-negative matrix factorization (\textit{NMF}) \todo{ref?}, používané pro separaci jednokanálových nahrávek. V~posledních letech se do popředí dostaly přistupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody \textit{beamforming} nebo state--of--the--art \textit{Multi-channel blind source separation}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v~článku~\cite{speechseparation}.
 
 
 \subsection{CASA -- computational auditory scene analysis}
-Metoda CASA je založena na procesu v lidském mozku, který separuje zdroje ze směsi mluvčích a simuluje vysokoúrovňové chování lidského sluchu. Pro separaci jsou většinou manuálně navrhnuta segmentační pravidla pro operování nad nízkoúrovňovými příznaky k odhadu časově frekvenční (\textit{T--F}) masky, která izoluje komponenty signálu jednotlivých mluvčích a následně je použita pro rekonstrukci všech zdrojů.
-\todo{Hodit sem teda ty zdroje jako v 3.1 pro ASA, CASA a pod? jak jsou tam asi 3 po sobe?}
+Metoda CASA je založena na procesu v~lidském mozku, který separuje zdroje ze směsi mluvčích a simuluje vysokoúrovňové chování lidského sluchu. Pro separaci jsou většinou manuálně navrhnuta segmentační pravidla pro operování nad nízkoúrovňovými příznaky k~odhadu časově frekvenční (\textit{T--F}) masky, která izoluje komponenty signálu jednotlivých mluvčích a následně je použita pro rekonstrukci všech zdrojů.
+\todo{Hodit sem teda ty zdroje jako v~3.1 pro ASA, CASA a pod? jak jsou tam asi 3 po sobe?}
 
-Přestože tato metoda byla i nadále rozvíjena, tak má mnoho nevýhod jako špatnou generalizaci v důsledku manuálního vytváření pravidel, nemožnost automatického učení z dat nebo nemožnost použití na separaci jiných zdrojů než je lidská řeč, které značně omezují její použití v mnoha reálných případech.
+Přestože tato metoda byla i nadále rozvíjena, tak má mnoho nevýhod jako špatnou generalizaci v~důsledku manuálního vytváření pravidel, nemožnost automatického učení z~dat nebo nemožnost použití na separaci jiných zdrojů než je lidská řeč, které značně omezují její použití v~mnoha reálných případech.
 
 
 
@@ -43,8 +43,8 @@ Pro NMF platí
 kde každý zdroj $s$ je modelován aproximací nízkého řádu nezápornými maticemi $W_s$, která reprezentuje slovník a $H_s$, která reprezentuje aktivační funkci. Ty jsou sečteny a dohromady tvoří výslednou směs $Y$.
 
 Metoda prochází trénovací a testovací fází.
-V trénovací fázi je každý zdroj dekomponován a mapován na množinu bází a aktivací a tím je zformován slovník $W$ pro tento zdroj.
-V testovací fázi jsou naučené slovníky jednotlivých zdrojů $s$ spojeny do jednoho, který dále není upravován. Následuje optimalizace aktivační matice $H$ pro každý zdroj. Každý zdroj je následně ze směsi rekonstruován s použitím výsledných bází a aktivací.
+V~trénovací fázi je každý zdroj dekomponován a mapován na množinu bází a aktivací a tím je zformován slovník $W$ pro tento zdroj.
+V~testovací fázi jsou naučené slovníky jednotlivých zdrojů $s$ spojeny do jednoho, který dále není upravován. Následuje optimalizace aktivační matice $H$ pro každý zdroj. Každý zdroj je následně ze směsi rekonstruován s~použitím výsledných bází a aktivací.
 
 \begin{figure}[H]
     \centering
@@ -75,14 +75,14 @@ Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba 
 
 
 \subsection{Signal--to--noise ratio}
-Nejzákladnější metrika pro určení kvality separace je signal--to--noise ratio (SNR), která porovnává zastoupení chtěného signálu a šumu v pozadí a je definována jako poměr energie originálního (ideálního) signálu a energie rozdílu mezi originálním a rekonstruovaným signálem.
+Nejzákladnější metrika pro určení kvality separace je signal--to--noise ratio (SNR), která porovnává zastoupení chtěného signálu a šumu v~pozadí a je definována jako poměr energie originálního (ideálního) signálu a energie rozdílu mezi originálním a rekonstruovaným signálem.
 
 
 \begin{equation}
   SNR = \frac{E_s}{E_N}
 \end{equation}
 
-Výsledný poměr často bývá vyjádřen v decibelech jako
+Výsledný poměr často bývá vyjádřen v~decibelech jako
 
 \begin{equation}
   SNR(dB) = 10log_{10}\frac{E_s}{E_N}
@@ -93,21 +93,21 @@ kde kladná SNR hodnota udává, že zastoupení signálu je větší, než zast
 
 \subsection{SDR -- Source Distortion Ratio}
 \footnote{\url{https://github.com/sigsep/bsseval}}
-SDR je jedna z nejznámějších metrik pro měření kvality řečového signálu.
+SDR je jedna z~nejznámějších metrik pro měření kvality řečového signálu.
 \todo{rozepsat}
 
 
 \subsection{PESQ -- Perceptual evaluation of speech qualit}
 \footnote{\url{https://github.com/ludlows/python-pesq}}
 
-Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná metrika pro vyhodnocování kvality řeči. Jeho hodnota se pohybuje od -0.5 do 4.5 s tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{DBLP:journals/corr/abs-1901-09146}.
+Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná metrika pro vyhodnocování kvality řeči. Jeho hodnota se pohybuje od -0.5 do 4.5 s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{DBLP:journals/corr/abs-1901-09146}.
 
 \todo{rozepsat}
 
 
 \subsection{STOI}
 \footnote{\url{https://github.com/mpariente/pystoi}}
-Bylo navrženo mnoho konvenčních přístupů a metod pro řešení problému koktejl párty a s ním spojené separace mluvčích, ale většina z nich nedosahuje dostatečné přesnosti nebo výkonu k použití v reálných situacích. Přístupy založené na hlubokém učení a neuronových sítích předčily dosavadní techniky jak v přesnosti, tak ve výkonu, což umožňuje jejich nasazení v běžném životě.
+Bylo navrženo mnoho konvenčních přístupů a metod pro řešení problému koktejl párty a s~ním spojené separace mluvčích, ale většina z~nich nedosahuje dostatečné přesnosti nebo výkonu k~použití v~reálných situacích. Přístupy založené na hlubokém učení a neuronových sítích předčily dosavadní techniky jak v~přesnosti, tak ve výkonu, což umožňuje jejich nasazení v~běžném životě.
 
 \todo{rozepsat}
 
@@ -121,11 +121,11 @@ Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model,
 
 Účelem neuronové sítě je naučit se plnit zadanou úlohu. Rozdíl oproti běžným algoritmům je ale ten, že způsob, jakým síť má problém řešit, není explicitně naprogramován, ale je postupně naučen. Základní způsoby učení jsou s~učitelem (\textit{supervised}) a bez učitele (\textit{unsupervised}). 
 
-\textbf{Učení s~učitelem}, pod které spadá i tato práce, spočívá v~mapování vstupních dat na data výstupní na základě vzorových příkladů dvojic vstup--výstup. Množině takových dvojic se říká trénovací dataset. Další vlastností trénovacích dat určených pro učení s učitelem, je jejich označení (\textit{label}).
+\textbf{Učení s~učitelem}, pod které spadá i tato práce, spočívá v~mapování vstupních dat na data výstupní na základě vzorových příkladů dvojic vstup--výstup. Množině takových dvojic se říká trénovací dataset. Další vlastností trénovacích dat určených pro učení s~učitelem, je jejich označení (\textit{label}).
 
-Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. Některé z problémů lze řešit sítí, která se skládá z jednotek neuronů, zatímco složitější problémy vyžadují mnohem větší kapacitu sítě a ta pak může obsahovat i tisíce neuronů.
+Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. Některé z~problémů lze řešit sítí, která se skládá z~jednotek neuronů, zatímco složitější problémy vyžadují mnohem větší kapacitu sítě a ta pak může obsahovat i tisíce neuronů.
 
-Upravovat samotnou strukturu a chování neuronové sítě lze pomocí jejích hyperparametrů, což jsou parametry určující nastavení neuronové sítě a trénovacího algoritmu. Tyto parametry musí být určeny před začátkem trénování a většinu nelze později měnit. Mohou určovat kapacitu modelu, velikost záběrného pole, velikost filtrů, ale i regulovat samotný proces učení nastavením počtu epoch, po které se model má učit, nebo také počet dat předaný v jedné dávce (tzv. \textit{minibatches}) během učení sítě.
+Upravovat samotnou strukturu a chování neuronové sítě lze pomocí jejích hyperparametrů, což jsou parametry určující nastavení neuronové sítě a trénovacího algoritmu. Tyto parametry musí být určeny před začátkem trénování a většinu nelze později měnit. Mohou určovat kapacitu modelu, velikost záběrného pole, velikost filtrů, ale i regulovat samotný proces učení nastavením počtu epoch, po které se model má učit, nebo také počet dat předaný v~jedné dávce (tzv. \textit{minibatches}) během učení sítě.
 
 
 \section{Organizace feedforward sítí}
@@ -137,7 +137,7 @@ Feed forward neuronové sítě (\textit{Multi Layer Perceptron -- MLP}) jsou typ
     \caption{\label{fig:netcomparison}Příklad grafu feed forward sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~feed forward sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu~\cite{FFandRecNN}.}
 \end{figure}
 
-Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázky \ref{fig:netcomparison} a \ref{fig:mlp}). Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup v případě klasifikátorů, nebo predikce hodnot na základě vstupních dat v případě regrese. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
+Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázky \ref{fig:netcomparison} a \ref{fig:mlp}). Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup v~případě klasifikátorů, nebo predikce hodnot na základě vstupních dat v~případě regrese. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
 
 \begin{figure}[H]
     \centering
@@ -249,7 +249,7 @@ Parametrizovaná ReLU (PReLU)~\cite{he2015delving} je nelineární aktivační f
 
 
 \section{Konvoluční vrstvy}
-Konvoluční neuronová síť (CNN)~\cite{6795724} je typ feed forward neuronových sítí, která obsahuje jednu či více konvolučních vrstev. CNN jsou vhodné pro zpracování dat v mřížkovitém uspořádání. To může být ve 2--D obrázek ve formě pole pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v čase v 1--D. Konvoluční vrstvy používají místo běžného násobení matic speciální typ lineární operace -- konvoluci.
+Konvoluční neuronová síť (CNN)~\cite{6795724} je typ feed forward neuronových sítí, která obsahuje jednu či více konvolučních vrstev. CNN jsou vhodné pro zpracování dat v~mřížkovitém uspořádání. To může být ve 2--D obrázek ve formě pole pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v~čase v~1--D. Konvoluční vrstvy používají místo běžného násobení matic speciální typ lineární operace -- konvoluci.
 
 Diskrétní konvoluce je definována jako
 \begin{equation}
@@ -258,13 +258,13 @@ Diskrétní konvoluce je definována jako
 kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je konvoluční jádro a $f_i$ a $g_i$ jsou hodnoty funkce na indexu $i$.
 
 
-Účelem CNN je v prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. Pro 2--D vstup to mohou být úsečky v různých úhlech nebo části křivek a pro 1--D tóny o různé frekvenci. V pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrogram}) a lze s ním pracovat stejně, jako při zpracování obrazu. 
+Účelem CNN je v~prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. Pro 2--D vstup to mohou být úsečky v~různých úhlech nebo části křivek a pro 1--D tóny o~různé frekvenci. V~pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v~konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V~některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrogram}) a lze s~ním pracovat stejně, jako při zpracování obrazu. 
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/spektrum.png}
-    \caption{\label{fig:spektrogram}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa y) z nahrávky řeči v čase (osa x). Zvuk se na spektrogram převádí pomocí operace short time fourier transform (STFT)}
+    \caption{\label{fig:spektrogram}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa y) z~nahrávky řeči v~čase (osa x). Zvuk se na spektrogram převádí pomocí operace short time fourier transform (STFT)}
 \end{figure}
 
 \begin{figure}[H]
@@ -274,24 +274,24 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
 \end{figure}
 
 
-Konvoluování jádra přes nějaký vstup (například obrázek či zvuk) je ekvivalentní s detektorem, který detekuje nějaký lokální příznak. Při aplikaci takového detektoru přes nějaký vstup zaznamenává všechny pozice, kde se příznak nacházel~\cite{mitdeeplearning_small}.
+Konvoluování jádra přes nějaký vstup (například obrázek či zvuk) je ekvivalentní s~detektorem, který detekuje nějaký lokální příznak. Při aplikaci takového detektoru přes nějaký vstup zaznamenává všechny pozice, kde se příznak nacházel~\cite{mitdeeplearning_small}.
 
-Během trénování CNN jsou učeny váhy sítě (filtry) k detekci různých úrovní komplexnosti příznaků. Aby síť dokázala detekovat příznak nezávisle na jeho transformaci (pootočení, převrácení, posuvu), měla by být invariantní. Toho lze docílit tak, že nneurony budou sdílet některé váhy (filtry).
+Během trénování CNN jsou učeny váhy sítě (filtry) k~detekci různých úrovní komplexnosti příznaků. Aby síť dokázala detekovat příznak nezávisle na jeho transformaci (pootočení, převrácení, posuvu), měla by být invariantní. Toho lze docílit tak, že nneurony budou sdílet některé váhy (filtry).
 
 
 Konvoluční operace je definována jako
 \begin{equation}
    s[n] = (x \star w)[n]
 \end{equation}
-kde $x$ jsou vstupní data obvykle ve formě multidimenzionílního pole (tenzoru) a funkce $w$ je konvoluční jádro. Výstupem operace je mapa příznaků. Konvoluční operaci lze definovat i pro vyšší dimenze. Máme--li například 2--D vstupní obrázek, pak i konvoluční jádro bude dvourozměrné. Přestože v mnoha knihovnách lze nalézt implementovanou operaci konvoluce, často se jedná o cross--korelaci.
+kde $x$ jsou vstupní data obvykle ve formě multidimenzionílního pole (tenzoru) a funkce $w$ je konvoluční jádro. Výstupem operace je mapa příznaků. Konvoluční operaci lze definovat i pro vyšší dimenze. Máme--li například 2--D vstupní obrázek, pak i konvoluční jádro bude dvourozměrné. Přestože v~mnoha knihovnách lze nalézt implementovanou operaci konvoluce, často se jedná o~cross--korelaci.
 
 
 Průběh a chování konvoluce lze řídit hyperparametry \textit{stride}, \textit{padding} a \textit{dilation}. Hodnota stride modifikuje velikost kroku konvolučního jádra. Výchozí hodnota kroku je $1$. Chování při různých hodnotách lze vidět na obrázku~\ref{fig:conv_stride}. 
 
-Hodnota padding určuje, o kolik se mají rozšířit vstupní data. V případě malého rozměru konvolučního jádra může dojít k nechtěné změně rozměrů vstupních dat a proto se tato data po stranách rozšíří na takový rozměr, aby po konvoluci byl výsledný tvar v požadovaném rozměru. Vyplnění ukazuje obrázek~\ref{fig:conv_padding}.
+Hodnota padding určuje, o~kolik se mají rozšířit vstupní data. V~případě malého rozměru konvolučního jádra může dojít k~nechtěné změně rozměrů vstupních dat a proto se tato data po stranách rozšíří na takový rozměr, aby po konvoluci byl výsledný tvar v~požadovaném rozměru. Vyplnění ukazuje obrázek~\ref{fig:conv_padding}.
 
 
-\todo{Tyto obrazky stylove sjednotit a dat je vedle sebe mozna}
+\todo{Tyto tri obrazky stylove sjednotit a dat je vedle sebe mozna}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/stride.png}
@@ -301,21 +301,28 @@ Hodnota padding určuje, o kolik se mají rozšířit vstupní data. V případ�
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{obrazky-figures/padding.png}
-    \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
+    \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o~danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
+\end{figure}
+
+Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišení nebo pokrytí dat konvolučním jádrem během konvoluční operace (viz obrázek \ref{fig:conv_dilation}). Zatímco pole působnosti roste exponenciálně, počet parametrů roste pouze lineárně. Této vlastnosti se využívá například v~temporal convolutional networks (TCN), kde dilation faktor nabývá hodnot $1, 2, 4, 8, \dots$. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1.0]{obrazky-figures/cnndilation.png}
+    \caption{\label{fig:conv_dilation}Vizualizace hodnoty dilation upravující pole působnosti}
 \end{figure}
 
 
-
 \section{Učení neuronových sítí}
-Cílem trénování je naučit neuronovou síť vykonávat nějaký úkol. Trénování založené na metodě učení s učitelem vyžaduje dostatečně velký dataset obsahující dvojice vstup--výstup a obnáší volbu objektivní funkce, kterou se během trénování snažíme minimalizovat. 
+Cílem trénování je naučit neuronovou síť vykonávat nějaký úkol. Trénování založené na metodě učení s~učitelem vyžaduje dostatečně velký dataset obsahující dvojice vstup--výstup a obnáší volbu objektivní funkce, kterou se během trénování snažíme minimalizovat. 
 
 Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je předána vstupní hodnota $x$, pro kterou síť definuje mapování na výstupní hodnotu jako $y = f(x; \theta)$, kde $\theta$ je parametr, který se síť učí tak, aby dosáhla nejlepší aproximace funkce~\cite[p.~163]{mitdeeplearning}.
 
 
 \subsection{Objektivní funkce}
-Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce, protože její výstupní hodnota nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
+Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v~závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s~touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce, protože její výstupní hodnota nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z~datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s~opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
 
-V rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V takovém případě bude dobře sloužit pro účely trénování. V případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě~ \cite{mitdeeplearning}. 
+V~rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V~takovém případě bude dobře sloužit pro účely trénování. V~případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě~ \cite{mitdeeplearning}. 
 
 Nejčastěji se pro regresní problémy používají objektivní funkce \textit{Mean Squared Error Loss} a \textit{Mean Absolute Error Loss}.
 
@@ -325,7 +332,7 @@ MSELoss je nejčastěji používaná objektivní funkce při řešení regresní
 \begin{equation}
   MSE = \frac{1}{N}\sum_{i=1}^N(y_i - \hat{y_i})^2
 \end{equation}
-kde $N$ je počet trénovacích dat v datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$, jak lze vidět na obrázku \ref{fig:mseloss}. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví. Funkce dosahuje L2 regularizace.
+kde $N$ je počet trénovacích dat v~datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k~druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$, jak lze vidět na obrázku \ref{fig:mseloss}. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví. Funkce dosahuje L2 regularizace.
 
 \begin{figure}[H]
     \centering
@@ -335,12 +342,12 @@ kde $N$ je počet trénovacích dat v datasetu, $y_i$ je předpovězená hodnota
 
 
 \subsection*{MAELoss (Mean Absolute Error Loss)}
-MAE je velmi podobná objektivní funkce jako MSE, ale s téměř opačnými vlastnosti. Stejně jako MSE, ani tato funkce nenabývá negativní hodnoty, ale narozdíl od MSE, která má tuto vlastnost díky druhé mocnině rozdílu, MAE toho dosahuje tak, že rozdíl předpovídané hodnoty $y_j$ a odhadnuté hodnoty $\hat{y_j}$ je uzavřen v absolutní hodnotě. Vypočítá se jako
+MAE je velmi podobná objektivní funkce jako MSE, ale s~téměř opačnými vlastnosti. Stejně jako MSE, ani tato funkce nenabývá negativní hodnoty, ale narozdíl od MSE, která má tuto vlastnost díky druhé mocnině rozdílu, MAE toho dosahuje tak, že rozdíl předpovídané hodnoty $y_j$ a odhadnuté hodnoty $\hat{y_j}$ je uzavřen v~absolutní hodnotě. Vypočítá se jako
 \begin{equation}
   MAE = \frac{1}{N}\sum_{j=1}^N|y_j - \hat{y_j}|
 \end{equation}
 
-Výhodnou MAE je její lineární průběh, takže se větší chyby projeví úměrně více než chyby menší, oproti MSE, kde je závislost kvadratická. Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v hodnotě $x=0$, což může mít negativní následky pro výpočet gradientu.
+Výhodnou MAE je její lineární průběh, takže se větší chyby projeví úměrně více než chyby menší, oproti MSE, kde je závislost kvadratická. Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $x=0$, což může mít negativní následky pro výpočet gradientu.
 
 \begin{figure}[H]
     \centering
@@ -352,7 +359,7 @@ Výhodnou MAE je její lineární průběh, takže se větší chyby projeví ú
 
 
 \subsection{Backpropagation}
-Backpropagation (backprop) je algoritmus typu učení s učitelem pro učení neuronových sítí. Algoritmus zpětně prochází neuronovou síťí a na základě hodnoty cost funkce $J(\theta)$ počítá její gradient metodou \textit{gradient descent}. Cílem je upravit všechny váhy v síti na základě toho, jak moc každá váha přispívá k celkové chybě. Algoritmus backpropagation počítá řetězové pravidlo (\textit{chain rule}).
+Backpropagation (backprop) je algoritmus typu učení s~učitelem pro učení neuronových sítí. Algoritmus zpětně prochází neuronovou síťí a na základě hodnoty cost funkce $J(\theta)$ počítá její gradient metodou \textit{gradient descent}. Cílem je upravit všechny váhy v~síti na základě toho, jak moc každá váha přispívá k~celkové chybě. Algoritmus backpropagation počítá řetězové pravidlo (\textit{chain rule}).
 
 Algoritmus se skládá ze 3 opakujících se kroků. Prvním krokem je forward fáze, ve které se počítá pro každou dvojici vstupu a referenčního výstupu 
 
@@ -373,7 +380,7 @@ Algoritmus se skládá ze 3 opakujících se kroků. Prvním krokem je forward f
 
 
 \subsection*{Gradient descent}
-Gradient descent je iterativní optimalizační algoritmus pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu, úpravou těchto parametrů v opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
+Gradient descent je iterativní optimalizační algoritmus pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu, úpravou těchto parametrů v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{obrazky-figures/gradientdescent.png}
@@ -385,14 +392,14 @@ Gradient descent je iterativní optimalizační algoritmus pro hledání lokáln
 
 
 \subsection{Underfitting a generalizace}
-Generalizace, neboli \textit{test error}, je vlastnost modelu, která udává, jak dobře model pracuje s dříve neviděnými daty, tedy s daty, které nebyly použity pro jeho učení. Během učení vzniká učící chyba, která je trénováním postupně minimalizována, ale kvalita modelu je pak měřena na testovacích datech. 
-Testovací chyba by ideálně měla být co nejblíže chybě na trénovací sadě. Z rozdílu mezi těmito chybovými hodnotami se dají diagnostikovat problémy s naučením sítě -- podučení (\textit{underfitting}) a přeučení(\textit{overfitting}). 
+Generalizace, neboli \textit{test error}, je vlastnost modelu, která udává, jak dobře model pracuje s~dříve neviděnými daty, tedy s~daty, které nebyly použity pro jeho učení. Během učení vzniká učící chyba, která je trénováním postupně minimalizována, ale kvalita modelu je pak měřena na testovacích datech. 
+Testovací chyba by ideálně měla být co nejblíže chybě na trénovací sadě. Z~rozdílu mezi těmito chybovými hodnotami se dají diagnostikovat problémy s~naučením sítě -- podučení (\textit{underfitting}) a přeučení(\textit{overfitting}). 
 
-\textit{Underfitting} nastane v případě, že model již nedokáže v důsledku jeho kapacity zmenšit dostatečně jeho chybovou hodnotu na trénovacím datasetu.
+\textit{Underfitting} nastane v~případě, že model již nedokáže v~důsledku jeho kapacity zmenšit dostatečně jeho chybovou hodnotu na trénovacím datasetu.
 
 \textit{Overfitting} nastane, když rozdíl mezi trénovací chybou a testovací chybou je příliš velký.
 
-Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. V případě nízké kapacity se model nedokáže naučit všechny příznaky z trénovacích dat a v případě vysoké kapacity se mohou přeučit zapamatováním si jejich příznaků a tím sice dosáhnou nízké trénovací chyby, ale špatných výsledků během testování~\cite[p107]{mitdeeplearning}.
+Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. V~případě nízké kapacity se model nedokáže naučit všechny příznaky z~trénovacích dat a v~případě vysoké kapacity se mohou přeučit zapamatováním si jejich příznaků a tím sice dosáhnou nízké trénovací chyby, ale špatných výsledků během testování~\cite[p107]{mitdeeplearning}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.3]{obrazky-figures/capacity_vs_error.jpg}
@@ -405,7 +412,7 @@ Regularizace je souhrn postupů, které říkají, jak modifikovat učící algo
 
 
 \subsection{Reziduální spojení}
-Velmi hluboké neuronové sítě přinesly v mnoha aplikacích velmi dobré výsledky. S přibývající hloubkou se ale stává její trénování složitější. Jeden z problémů, který se při učení projevoval, byl explodující a mizející gradient~\cite{279181}. Tento problém byl adresován zavedením normalizačních vrstev~\cite{ioffe2015batch} a počáteční optimalizované inicializace, což dovolilo sítím konvergovat s využitím \textit{stochastic gradient descent} se zpětnou propagací (\textit{back--propagation})~ \cite{6795724}. Poté se objevil problém degradace, který nebyl zapříčiněn přetrénováním, a způsobil, že s přibývající hloubkou sítě její přesnost náhle prudce klesla, což indikovalo, že systémy nelze optimalizovat stejným způsobem a přidání dalších vrstev pouze zvýšilo trénovací chybu. Problém degradace lze řešit zakomponováním reziduálních spojení, které je zobrazeno na obrázku \ref{fig:residualconnection}~\cite{he2015deep}.
+Velmi hluboké neuronové sítě přinesly v~mnoha aplikacích velmi dobré výsledky. S~přibývající hloubkou se ale stává její trénování složitější. Jeden z~problémů, který se při učení projevoval, byl explodující a mizející gradient~\cite{279181}. Tento problém byl adresován zavedením normalizačních vrstev~\cite{ioffe2015batch} a počáteční optimalizované inicializace, což dovolilo sítím konvergovat s~využitím \textit{stochastic gradient descent} se zpětnou propagací (\textit{back--propagation})~ \cite{6795724}. Poté se objevil problém degradace, který nebyl zapříčiněn přetrénováním, a způsobil, že s~přibývající hloubkou sítě její přesnost náhle prudce klesla, což indikovalo, že systémy nelze optimalizovat stejným způsobem a přidání dalších vrstev pouze zvýšilo trénovací chybu. Problém degradace lze řešit zakomponováním reziduálních spojení, které je zobrazeno na obrázku \ref{fig:residualconnection}~\cite{he2015deep}.
 
 \begin{figure}[H]
     \centering
@@ -414,7 +421,7 @@ Velmi hluboké neuronové sítě přinesly v mnoha aplikacích velmi dobré výs
 \end{figure}
 
 \todo{prepsat F na to specialni}
-Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost~\cite{he2015deep}\cite{zaeemzadeh2018normpreservation}.
+Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z~předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s~výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost~\cite{he2015deep}\cite{zaeemzadeh2018normpreservation}.
 
 
 
@@ -430,7 +437,7 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 
 
 \bigskip
-V této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back--propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
+V~této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V~návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back--propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
 
 
 
@@ -439,13 +446,13 @@ V této kapitole byly popsány základní principy neuronových sítí, jejich z
 \chapter{TasNet - Time--Domain Audio Separation Network}
 \label{tasnet}
 
-Tato kapitola vychází z referenční studie \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet} a popisuje její navrhnuté řešení pro separaci mluvčích v časové doméně.
+Tato kapitola vychází z~referenční studie \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet} a popisuje její navrhnuté řešení pro separaci mluvčích v~časové doméně.
 
-Přestože metody pro zpracování řeči v takovém akustickém prostředí, ve kterém se současně prolíná mnoho řečových signálů, v poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v aplikacích, které by mohly zpracovávat řeč v reálném čase.
+Přestože metody pro zpracování řeči v~takovém akustickém prostředí, ve kterém se současně prolíná mnoho řečových signálů, v~poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u~těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v~aplikacích, které by mohly zpracovávat řeč v~reálném čase.
 
-Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)~\cite{speechseparationoverview}. Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
+Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)~\cite{speechseparationoverview}. Tento převod ale měl pro využití v~reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
 
-Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v každém časovém kroku jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v kapitole budou jednotlivé části popsány detailněji.
+Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
 
 \begin{figure}[H]
     \centering
@@ -462,7 +469,7 @@ Cílem je odhadnout $s_i(t), i = 1, \dots, C$ ze signálu směsi $x(t)$.
 \todo{sem mozna tabulka hyperparametrů a jejich pojmenovani X, R, N, L, P, ...}
 
 \section{Konvoluční auto--enkodér}
-Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z reprezentace na původní nahrávku, jak ukazuje obrázek \ref{fig:tasnet-autoenkoder}.
+Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z~reprezentace na původní nahrávku, jak ukazuje obrázek \ref{fig:tasnet-autoenkoder}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/autoenkoder.png}
@@ -471,28 +478,28 @@ Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezáporno
 
 
 \subsection{Enkódování směsi}
-\todo{spravit znak pro konvolucni operator v math env}
-Každý segment směsi o délce $L$, $x_k \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $w \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
+\todo{spravit znak pro konvolucni operator v~math env}
+Každý segment směsi o~délce $L$, $x_k \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $w \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
 %w = ReLU(x \textcircled{\star} U)
 \begin{equation}
   	w = ReLU(x \star U)
 \end{equation}
-kde $U \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace \textcircled{$\star$} značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v podkapitole \ref{relu}.
+kde $U \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace \textcircled{$\star$} značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v~podkapitole \ref{relu}.
 
 
 \subsection{Dekódování extrahovaných mluvčích}
-Pro převod z reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $x$ jako $x \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
+Pro převod z~reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $x$ jako $x \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
 \begin{equation}
   \hat{x} = wV
 \end{equation}
-kde každý řádek v matici $V \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s délkou $L$.
+kde každý řádek v~matici $V \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s~délkou $L$.
 
 %-------------------------------
 
 \section{Separační modul}
-Cílem separačního modulu je najít váhovanou funkci, neboli masku, pro každého zdrojového mluvčího pro každý výstup enkodéru v každém časovém kroku. Formálně lze zapsat, že cílem je odhadnout $C$ masek $m_i \in \mathbb{R}^{1 \times N}, i = 1, \dots, C$, kde $C$ představuje počet mluvčích ve směsi. Vektory masek $m_i$ mají takové omezení, že $\sum_{i=0}^{C}m_i=1$, kde $1$ je jednotkový vektor v $\mathbb{R}^{1 \times N}$. Toto omezení garantuje, že rekonstruované zdroje po sečtení zformují původní směs $\hat{x} = \sum_{i=1}^{C}\hat{s}_i$.
+Cílem separačního modulu je najít váhovanou funkci, neboli masku, pro každého zdrojového mluvčího pro každý výstup enkodéru v~každém časovém kroku. Formálně lze zapsat, že cílem je odhadnout $C$ masek $m_i \in \mathbb{R}^{1 \times N}, i = 1, \dots, C$, kde $C$ představuje počet mluvčích ve směsi. Vektory masek $m_i$ mají takové omezení, že $\sum_{i=0}^{C}m_i=1$, kde $1$ je jednotkový vektor v~$\mathbb{R}^{1 \times N}$. Toto omezení garantuje, že rekonstruované zdroje po sečtení zformují původní směs $\hat{x} = \sum_{i=1}^{C}\hat{s}_i$.
 
-Separace je pro každý zdroj provedena vynásobením odpovídající masky $m_i$ s nezápornou reprezentací (výstupem enkodéru) $w$, jako
+Separace je pro každý zdroj provedena vynásobením odpovídající masky $m_i$ s~nezápornou reprezentací (výstupem enkodéru) $w$, jako
 \begin{equation}
 	d_i = w \odot m_i
 \end{equation}
@@ -510,20 +517,20 @@ Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahr�
     \caption{\label{fig:tasnet-autoenkoder}Schéma kompletního separačního modulu, jehož vstupem je nezáporná reprezentace směsi mluvčích}
 \end{figure}
 
-\todo{obrazky mozna nektere zcuknout k sobe nebo vedle sebe}
+\todo{obrazky mozna nektere zcuknout k~sobe nebo vedle sebe}
 
 Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. 
 
 \subsection{Temporal Convolutional Network}
-Jádrem separační části je \textit{temporal convolutional network} skládající se z naskládaných  1--D konvolučních bloků s časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v TCN obsahuje bloky se zvyšující se časovou dilatací, která se zvyšuje exponenciálně v závislosti na parametru $X$, který udává počet konvolučních bloků \todo{v jedné vrstvě} a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
+Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje bloky se zvyšující se časovou dilatací, která se zvyšuje exponenciálně v~závislosti na parametru $X$, který udává počet konvolučních bloků \todo{v~jedné vrstvě} a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
 
-Výstup posledního bloku posledního opakování v TCN je předán $1 \times 1$ konvoluční vrstvě, která má $N \times C$ filtrů a nakonec aktivační funkci softmax k odhadu $C$ vektorů masek pro každého z $C$ cílových mluvčích.
+Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$ konvoluční vrstvě, která má $N \times C$ filtrů a nakonec aktivační funkci softmax k~odhadu $C$ vektorů masek pro každého z~$C$ cílových mluvčích.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/stacked_resblocks.jpg}
-    \caption{\label{fig:tasnet-stacked-resblocks}Jádro separačního modulu -- naskládané konvoluční bloky s časovou dilatací odhadující masky na základě nezáporné reprezentace\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}}
+    \caption{\label{fig:tasnet-stacked-resblocks}Jádro separačního modulu -- naskládané konvoluční bloky s~časovou dilatací odhadující masky na základě nezáporné reprezentace\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}}
 \end{figure}
 
 \begin{figure}[H]
@@ -538,7 +545,7 @@ Výstup posledního bloku posledního opakování v TCN je předán $1 \times 1$
 \todo{Pozn: vrstvy bloku a residualni spojeni}
 Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 1$ konvolučních bloků za \textit{depthwise separable convolution} (S--conv), která pomáhá snížit počet parametrů a ukázala se jako efektivní ve zpracováni obrazu\todo{citace 26 27}.
 
-\textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s velikostí konvolučního jádra 1:
+\textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s~velikostí konvolučního jádra 1:
 
 \begin{equation}
 	D-conv(Y, K) = concat(y_j conv k_j), j = 1, \dots, N
@@ -548,7 +555,7 @@ Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 
 	S-conv(Y, K, L) = D-conv(Y, K) conv L
 \end{equation}
 
-kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \times P}$ je konvoluční jádro o velikosti $P$, dále $y_j \in \mathbb{R}^{1 \times M}$ a $k_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $Y$ a $K$. $L \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
+kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $y_j \in \mathbb{R}^{1 \times M}$ a $k_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $Y$ a $K$. $L \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
 
 
 \begin{figure}[H]
@@ -557,17 +564,17 @@ kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \t
     \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok obsahující reziduální spojení mezi vstupem a výstupem\todo{graficky zde ukazat a zakrouzkovat co je sconv a co je dconv}}
 \end{figure}
 
-V každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU~\cite{he2015delving}, která byla popsána v kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení~\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
+V~každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU~\cite{he2015delving}, která byla popsána v~kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení~\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
 
 \todo{zvýraznit na obrázku konvolučního bloku residuální spojení a hodit tam sipku nebo neco ze to je to spojeni}
 
 \todo{Kam uvozovky, kam bold, kam italic ZEPTAT SE}
 \section{Normalizace}
-Při trénování neuronových sítí může docházet k fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch}\cite{ba2016layer}.
+Při trénování neuronových sítí může docházet k~fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch}\cite{ba2016layer}.
 
-Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s channel--wise layer normalization (cLN)~\todo{cite}, global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}.
+Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s~channel--wise layer normalization (cLN)~\todo{cite}, global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}.
 
-Metoda cLN je aplikována na vstup separačního modulu pro zajištění invariance při změně měřítka vstupních dat. Tato metoda je vhodná pro použití v kauzální i nekauzální konfiguraci, je--li použita v konvolučních blocích. Normalizace cLN je aplikována na každý segment $y_k$. 
+Metoda cLN je aplikována na vstup separačního modulu pro zajištění invariance při změně měřítka vstupních dat. Tato metoda je vhodná pro použití v~kauzální i nekauzální konfiguraci, je--li použita v~konvolučních blocích. Normalizace cLN je aplikována na každý segment $y_k$. 
 
 Metoda gLN je aplikována globálně na každý příznak na rozměry kanálu i času. Tuto normalizaci lze použít pouze při nekauzální konfiguraci, protože výpočet probíhá na základě celého vstupu.
 Při kauzální konfiguraci může být použita také metoda BN.
@@ -596,21 +603,21 @@ Normalizace BN je počítána následovně:
 \end{figure}
 
 
-V této kapitole byla popsána navržená architektura Conv--TasNet pro separaci navzájem se překrývajících mluvčích v časové doméně, skládající se z konvolučního auto--enkodéru, který převádí vstupní směs mluvčích na nezápornou reprezentaci, ze které je následně v separačním modulu složeném z konvolučních bloků se zvyšující se časovou dilatací odhadnuty multiplikativní funkce (tzv. masky) pro každý ze zdrojů. Ty jsou nakonec aplikovány na reprezentaci a výsledek lineárním dekodérem převeden zpět na hlasovou, nyní již separovanou nahrávku.
+V~této kapitole byla popsána navržená architektura Conv--TasNet pro separaci navzájem se překrývajících mluvčích v~časové doméně, skládající se z~konvolučního auto--enkodéru, který převádí vstupní směs mluvčích na nezápornou reprezentaci, ze které je následně v~separačním modulu složeném z~konvolučních bloků se zvyšující se časovou dilatací odhadnuty multiplikativní funkce (tzv. masky) pro každý ze zdrojů. Ty jsou nakonec aplikovány na reprezentaci a výsledek lineárním dekodérem převeden zpět na hlasovou, nyní již separovanou nahrávku.
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
 \chapter{Implementace sítě}
 \label{implementace}
-Pro implementaci neuronových sítí vzniklo mnoho frameworků jako PyTorch, Tensorflow, Keras a další, které umožňují síť poskládat z již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s datasety, funkce pro vykreslování grafů a pro matematické operace.
+Pro implementaci neuronových sítí vzniklo mnoho frameworků jako PyTorch, Tensorflow, Keras a další, které umožňují síť poskládat z~již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s~datasety, funkce pro vykreslování grafů a pro matematické operace.
 
-Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet pro separaci mluvčích v časové doméně. V rámci zadání jsem si zvolil použít framework s názvem PyTorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. PyTorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2) a mimo jiné podporuje práci s datasety, včetně implementace vlastního nahrávání a manipulace s daty. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku PyTorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána síti ke zpracování. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
+Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet pro separaci mluvčích v~časové doméně. V~rámci zadání jsem si zvolil použít framework s~názvem PyTorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. PyTorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v~celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2) a mimo jiné podporuje práci s~datasety, včetně implementace vlastního nahrávání a manipulace s~daty. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku PyTorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána síti ke zpracování. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v~textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v~příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z~terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
 
-Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v závislosti na tom, která z nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
+Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k~náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v~závislosti na tom, která z~nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
 
 \bigskip
-\todo{zamyslet se co tu chci ukazat v tom algu, pripadne vypustit parsovani, instanciaci atd}
+\todo{zamyslet se co tu chci ukazat v~tom algu, pripadne vypustit parsovani, instanciaci atd}
 \begin{algorithm}[H]
  \LinesNumbered
  parsování argumentů programu\;
@@ -620,21 +627,21 @@ Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobn�
  }
  instanciace třídy SegmentDataset a dataloaderu pro trénovací data\;
  instanciace třídy SegmentDataset a dataloaderu pro validační data\;
- \For{epocha v args.Epochs}{
+ \For{epocha v~args.Epochs}{
   \tcc{trénování}
   loss = 0\;
-  \For{směs\_mluvčích z trénovacího datasetu}{
-    \tcc{cyklus načítá z dataloaderu segmenty nahrávek, které jsou generovány v třídě SegmentDataset}
+  \For{směs\_mluvčích z~trénovacího datasetu}{
+    \tcc{cyklus načítá z~dataloaderu segmenty nahrávek, které jsou generovány v~třídě SegmentDataset}
   	$odhadovaná\_separace = TasNet(směs\_mluvčích)$\;
   	$loss = sisnr(optimální\_separace, odhadovaná\_separace)$\;
   	propagace chyby a úprava vah\;
   }
   \tcc{validace}
   vypnout gradient\;
-  \For{směs\_mluvčích z validačního datasetu}{
+  \For{směs\_mluvčích z~validačního datasetu}{
   	$odhadovaná\_separace = TasNet(směs\_mluvčích)$\;
   	$validacni\_loss = sisnr(optimální\_separace, odhadovaná\_separace)$\;
-  	\If{hodnota validační loss neklesla potřetí v řadě}{
+  	\If{hodnota validační loss neklesla potřetí v~řadě}{
 		$learning\_rate = learning\_rate / 2$\;
   	}
   }
@@ -646,51 +653,51 @@ Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobn�
 %------------------
 
 \section{Implementace modelu}
-\todo{today DNES - miniuvod k implementaci modelu - nic podrobneho, je to uz zmineno predtim ze to je v pytorchi atd}
+\todo{today DNES - miniuvod k~implementaci modelu - nic podrobneho, je to uz zmineno predtim ze to je v~pytorchi atd}
 \todo{Pozn: pytorch, scripty, tridy, moduly, parametry a volby spusteni}
 
 
-Model se skládá ze separační části, která se skládá z konvolučních bloků, dále z...
+Model se skládá ze separační části, která se skládá z~konvolučních bloků, dále z...
 
 
 
 \subsection*{Třídy SegmentDataset a AudioDataset}
 \todo{zpracovani datasetu, jedna segmentuje, druha ne}
-Blizsi popis segmentace v podkapitole \ref{sec:segmentace}.
+Blizsi popis segmentace v~podkapitole \ref{sec:segmentace}.
 
 %------------------
 
 \subsection*{Třída Tasnet}
-Třída Tasnet.py reprezentuje model neuronové sítě. Atributy třídy představují jednotlivé vrstvy neuronové sítě. Síť obsahuje konvoluční vrstvy, enkodér, dekodér a \textit{temporal convolutionan network}, která je tvořena sekvencí konvolučních bloků, které jsou zmíněny dále. V této třídě jsou také inicializovány váhy algoritmem xavier\todo{citovat}. Ve funkci $forward()$, která je volána, když jsou instanci sítě předána data ke zpracování, jsou sekvenčně volány jednotlivé vrstvy. Během zpracování předaných dat je v této sekvenci vypočítána maska a aplikována na zpracovávanou směs. Tím vzniknou dvě separované nahrávky, které jsou předány na výstup. 
+Třída Tasnet.py reprezentuje model neuronové sítě. Atributy třídy představují jednotlivé vrstvy neuronové sítě. Síť obsahuje konvoluční vrstvy, enkodér, dekodér a \textit{temporal convolutionan network}, která je tvořena sekvencí konvolučních bloků, které jsou zmíněny dále. V~této třídě jsou také inicializovány váhy algoritmem xavier\todo{citovat}. Ve funkci $forward()$, která je volána, když jsou instanci sítě předána data ke zpracování, jsou sekvenčně volány jednotlivé vrstvy. Během zpracování předaných dat je v~této sekvenci vypočítána maska a aplikována na zpracovávanou směs. Tím vzniknou dvě separované nahrávky, které jsou předány na výstup. 
 \todo{zminit stride, padding, a mozna obrazek co to je a mozna trochu prepsat (ktere, ktera, ktere).}
 
 %------------------
 
 \subsection*{Třída ResBlock}
-Třída ResBlock reprezentuje jeden konvoluční blok, který je opakován se zvyšující se dilatací v \textit{temporal convolutional network} v separační části určené k odhadu masek. Podobně jako třída Tasnet, i tato třída obsahuje inicializaci a zřetězení vrstev. V inicializaci jsou nastaveny hodnoty pro konvoluční operace jako počet konvolučních jader, časová dilatace a počet kanálů. Tyto operace jsou ve funkci \textit{forward} zřetězeny do sekvence konvolučních operací a aktivačních funkcí, podle vzorové architektury TasNet. Třída ResBlock je specifická svým residuálním spojením, kde dochází k rozdělení dat při zpracování, kdy jedna kopie je transformována operacemi v bloku a na konci sečtena s daty, které transformacemi neprošly a tento součet je výstupem bloku. Residuální spojení jsou podrobněji popsána v kapitole \ref{neuronovky}.
+Třída ResBlock reprezentuje jeden konvoluční blok, který je opakován se zvyšující se dilatací v~\textit{temporal convolutional network} v~separační části určené k~odhadu masek. Podobně jako třída Tasnet, i tato třída obsahuje inicializaci a zřetězení vrstev. V~inicializaci jsou nastaveny hodnoty pro konvoluční operace jako počet konvolučních jader, časová dilatace a počet kanálů. Tyto operace jsou ve funkci \textit{forward} zřetězeny do sekvence konvolučních operací a aktivačních funkcí, podle vzorové architektury TasNet. Třída ResBlock je specifická svým residuálním spojením, kde dochází k~rozdělení dat při zpracování, kdy jedna kopie je transformována operacemi v~bloku a na konci sečtena s~daty, které transformacemi neprošly a tento součet je výstupem bloku. Residuální spojení jsou podrobněji popsána v~kapitole \ref{neuronovky}.
 
 %------------------------------------------------------
 
 \section{Segmentace nahrávek}
 \label{sec:segmentace}
-Pro účely trénování sítě byly vstupní nahrávky rozdělovány na segmenty o délce 4, případně 2 sekund. Délku segmentů $L_s$ lze nastavit přes argument $\texttt{----segment\_length}$ při volání skriptu $train.py$. Tato hodnota reprezentuje jeden z hyper--parametrů sítě. Výchozí hodnota je 4 sekundy. Při nižších hodnotách se prodlužuje délka trénování, protože se z jedné vstupní nahrávky o délce $L$ vygeneruje až $L/L_s$  segmentů a tím narůstá počet dat, který síť musí zpracovat. 
+Pro účely trénování sítě byly vstupní nahrávky rozdělovány na segmenty o~délce 4, případně 2 sekund. Délku segmentů $L_s$ lze nastavit přes argument $\texttt{----segment\_length}$ při volání skriptu $train.py$. Tato hodnota reprezentuje jeden z~hyper--parametrů sítě. Výchozí hodnota je 4 sekundy. Při nižších hodnotách se prodlužuje délka trénování, protože se z~jedné vstupní nahrávky o~délce $L$ vygeneruje až $L/L_s$  segmentů a tím narůstá počet dat, který síť musí zpracovat. 
 
-Poslední segment by byl kratší, pokud by délka nahrávky byla kratší než délka segmentu. V takovém případě je segment doplněn nulami do délky ostatních segmentů jak lze vidět na obrázku \ref{fig:segmentace_padding}. Toto doplnění je nutné kvůli dávkovému zpracování (\textbf{batches}), které neumožňuje rozdílnou délku elementů v dávce. Pokud je délka nahrávky delší než délka segmentu, tak se poslední segment vezme od konce bez nutnosti ho pak nulami doplňovat. Skládání segmentů do minibatche zobrazuje obrázek \ref{fig:minibatch_segmentace}. Při vzorkovací frekvenci $f_s = 8000Hz$, obsahují segmenty $f_s * L_s$ vzorků vstupní nahrávky. 
+Poslední segment by byl kratší, pokud by délka nahrávky byla kratší než délka segmentu. V~takovém případě je segment doplněn nulami do délky ostatních segmentů jak lze vidět na obrázku \ref{fig:segmentace_padding}. Toto doplnění je nutné kvůli dávkovému zpracování (\textbf{batches}), které neumožňuje rozdílnou délku elementů v~dávce. Pokud je délka nahrávky delší než délka segmentu, tak se poslední segment vezme od konce bez nutnosti ho pak nulami doplňovat. Skládání segmentů do minibatche zobrazuje obrázek \ref{fig:minibatch_segmentace}. Při vzorkovací frekvenci $f_s = 8000Hz$, obsahují segmenty $f_s * L_s$ vzorků vstupní nahrávky. 
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.30]{obrazky-figures/minibatch_segmentace.jpg}
-    \caption{\label{fig:minibatch_segmentace}Dělení nahrávky na segmenty o délce \textbf{segment\_len} a jejich následné vkládání do minibatche. Lze si všimnout, že pokud poslední segment není dostatečně dlouhý, tak se vezme od konce nahrávky a jeho počáteční vzorky budou duplicitní s posledními vzorky předešlého segmentu}
+    \caption{\label{fig:minibatch_segmentace}Dělení nahrávky na segmenty o~délce \textbf{segment\_len} a jejich následné vkládání do minibatche. Lze si všimnout, že pokud poslední segment není dostatečně dlouhý, tak se vezme od konce nahrávky a jeho počáteční vzorky budou duplicitní s~posledními vzorky předešlého segmentu}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.30]{obrazky-figures/minibatch_segmentace_padding.jpg}
-    \caption{\label{fig:segmentace_padding}Je--li zpracovávána nahrávka, jejíž délka je kratší než je délka segmentu, je tento segment doplněn z prava nulami do požadované délky}
+    \caption{\label{fig:segmentace_padding}Je--li zpracovávána nahrávka, jejíž délka je kratší než je délka segmentu, je tento segment doplněn z~prava nulami do požadované délky}
 \end{figure}
 
 \todo{mozna tento odstavec jeste nejak upravit a doplnit obrazek kde je nacitani asi 3 audio nahravek}
-Algoritmus \ref{alg:segmentace_nahravek} a obrázek \ref{fig:generovani_segmentu} zobrazují proces segmentace. Funkce $\texttt{segmentGenerator()}$, která slouží jako generátor, pracuje současně se třemi nahrávkami -- se směsí dvou mluvčích, s nahrávkou prvního mluvčího a s nahrávkou druhého mluvčího, které jsou do atributů $\texttt{current\_mixture}$, $\texttt{current\_source1}$ a $\texttt{current\_source2}$ třídy $\texttt{SegmentDataset}$ nahrávány funkcí $\texttt{loadNextAudio()}$ poté, co z předchozí trojice nahrávek již nelze vygenerovat další segmenty.
+Algoritmus \ref{alg:segmentace_nahravek} a obrázek \ref{fig:generovani_segmentu} zobrazují proces segmentace. Funkce $\texttt{segmentGenerator()}$, která slouží jako generátor, pracuje současně se třemi nahrávkami -- se směsí dvou mluvčích, s~nahrávkou prvního mluvčího a s~nahrávkou druhého mluvčího, které jsou do atributů $\texttt{current\_mixture}$, $\texttt{current\_source1}$ a $\texttt{current\_source2}$ třídy $\texttt{SegmentDataset}$ nahrávány funkcí $\texttt{loadNextAudio()}$ poté, co z~předchozí trojice nahrávek již nelze vygenerovat další segmenty.
 
 \bigskip
 
@@ -707,7 +714,7 @@ Algoritmus \ref{alg:segmentace_nahravek} a obrázek \ref{fig:generovani_segmentu
 			$\texttt{yield s1\_segment}$\;
 		}{
 			\eIf{$\texttt{segptr} + \texttt{SEGMENT\_LENGTH} < \texttt{current\_mixture\_len}$}{
-				\tcc{z aktuální nahrávky vzít segment}				
+				\tcc{z~aktuální nahrávky vzít segment}				
 				$\texttt{s1\_segment} = \texttt{current\_source1[(segptr+SEGMENT\_LENGTH)]}$\;
 				$\texttt{segptr} += \texttt{SEGMENT\_LENGTH}$\;
 				$\texttt{yield s1\_segment}$\;
@@ -720,7 +727,7 @@ Algoritmus \ref{alg:segmentace_nahravek} a obrázek \ref{fig:generovani_segmentu
 		}
 	}
  }
- \caption{\label{alg:segmentace_nahravek}Algoritmus segmenace nahrávek používá výhody python generátoru, který, narozdíl od běžných funkcí, po vrácení hodnoty příkazem \texttt{yield} neztrácí svůj vnitřní stav a při jeho dalším zavolání pokračuje tam, kde skončil. V uvedeném příkladě je znázorněna pouze segmentace nahrávky jednoho mluvčího, ale analogicky se segmentují i nahrávky směsi mluvčích a nahrávky druhého mluvčího}
+ \caption{\label{alg:segmentace_nahravek}Algoritmus segmenace nahrávek používá výhody python generátoru, který, narozdíl od běžných funkcí, po vrácení hodnoty příkazem \texttt{yield} neztrácí svůj vnitřní stav a při jeho dalším zavolání pokračuje tam, kde skončil. V~uvedeném příkladě je znázorněna pouze segmentace nahrávky jednoho mluvčího, ale analogicky se segmentují i nahrávky směsi mluvčích a nahrávky druhého mluvčího}
 \end{algorithm}
 
 
@@ -731,12 +738,12 @@ Algoritmus \ref{alg:segmentace_nahravek} a obrázek \ref{fig:generovani_segmentu
 \end{figure}
 
 
-Kód segmentace také umožňuje určit délku, o kterou se segmenty budou překrývat. Této funkcionality je docíleno zavedením proměnné \texttt{overlap}, která obsahuje délku překrytí a při segmentaci je od proměnné \texttt{offset}, který určuje začátek následujícího segmentu, tato hodnota odečtena, jak ukazuje obrázek \ref{fig:segment_overlap}. Při trénování je překrytí nulové, protože by to zvýšilo počet trénovacích dat jejich částečnou duplikací, což by negativně ovlivnilo délku trénování.
+Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou překrývat. Této funkcionality je docíleno zavedením proměnné \texttt{overlap}, která obsahuje délku překrytí a při segmentaci je od proměnné \texttt{offset}, který určuje začátek následujícího segmentu, tato hodnota odečtena, jak ukazuje obrázek \ref{fig:segment_overlap}. Při trénování je překrytí nulové, protože by to zvýšilo počet trénovacích dat jejich částečnou duplikací, což by negativně ovlivnilo délku trénování.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.25]{obrazky-figures/segment_overlap.jpg}
-    \caption{\label{fig:segment_overlap}Segmentace nahrávek s nenulovým překrytím}
+    \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím}
 \end{figure}
 
 %------------------
@@ -754,19 +761,19 @@ Kód segmentace také umožňuje určit délku, o kterou se segmenty budou přek
 
 
 \section{Pomocné skripty}
-Během implementace se vyskytla potřeba zjednodušit si některé repetetivní úkony a jelikož upřednostňuji práci z terminálu, tak jsem si pro ně naprogramoval několik skriptů za použití jazyků python3 a bash. 
+Během implementace se vyskytla potřeba zjednodušit si některé repetetivní úkony a jelikož upřednostňuji práci z~terminálu, tak jsem si pro ně naprogramoval několik skriptů za použití jazyků python3 a bash. 
 
-Skript \textbf{\textit{gupload.sh}} pro odesílání zdrojových souborů na \textit{Google Drive}\footnote{\url{https://www.google.com/drive/}}, ze kterého \textit{Google Colab}\footnote{\url{https://colab.research.google.com/notebooks/intro.ipynb}} načítá data a kód, který lze následně po částech spouštět z grafického rozhraní. K interakci s Google Drive jsem použil nástroj \textit{rclone}\footnote{\url{https://rclone.org/}}, který nabízí mnoho operací pro vzdálenou práci s Google Drive z terminálu. S pomocí \textit{rclone} lze stahovat či nahrávat data, vzdáleně měnit adresářovou strukturu, mazat, vytvářet a upravovat soubory a podobně. 
+Skript \textbf{\textit{gupload.sh}} pro odesílání zdrojových souborů na \textit{Google Drive}\footnote{\url{https://www.google.com/drive/}}, ze kterého \textit{Google Colab}\footnote{\url{https://colab.research.google.com/notebooks/intro.ipynb}} načítá data a kód, který lze následně po částech spouštět z~grafického rozhraní. K~interakci s~Google Drive jsem použil nástroj \textit{rclone}\footnote{\url{https://rclone.org/}}, který nabízí mnoho operací pro vzdálenou práci s~Google Drive z~terminálu. S~pomocí \textit{rclone} lze stahovat či nahrávat data, vzdáleně měnit adresářovou strukturu, mazat, vytvářet a upravovat soubory a podobně. 
 
-Skript \textbf{\textit{gdownload.sh}} je určený pro snadné stahování dat z Google Drive. Stejně jako předchozí skript, používá operace poskytované nástrojem rsync. Při zavolání stáhne adresář obsahující data z posledního trénování, nebo adresář, jehož název je předán jako argument skriptu v přikazové řádce.   
-Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot $[zpracováno_nahrávek, loss]$, které lze jednoduše vykreslit do grafu, a nakonec soubor s výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
+Skript \textbf{\textit{gdownload.sh}} je určený pro snadné stahování dat z~Google Drive. Stejně jako předchozí skript, používá operace poskytované nástrojem rsync. Při zavolání stáhne adresář obsahující data z~posledního trénování, nebo adresář, jehož název je předán jako argument skriptu v~přikazové řádce.   
+Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot $[zpracováno_nahrávek, loss]$, které lze jednoduše vykreslit do grafu, a nakonec soubor s~výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
 
-Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}.
+Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s~různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k~adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}.
 
 
 \bigskip
 
-Implementace samotného modelu ve frameworku PyTorch nebyla náročná. Vzhledem k netriviálnímu úkolu jsem musel implementovat některé části, jako třeba segmentace nahrávek, sám. To přineslo mnoho potíží při odstraňování chyb v samotném modelu. Síť jsem prvně trénoval a ladil na CPU svého notebooku, takže probíhalo velmi pomalu (v řádu desítek hodin i při nízké velikosti modelu), a některé chyby se objevily až v průběhu trénování nebo dokonce na jeho konci. Situaci razantně zlepšil přechod na Google Colab, kde jsem síť trénoval na poskytovaných GPU a trénování tak zabralo \todo{"pouze" (opravit uvozovky)} několik hodin, takže se případná chyba objevila dříve, ale i přesto mi lazení sítě zabralo mnoho času. Pro další usnadnění samotné implementace jsem vytvořil několik skriptů, které mi usnadnily spouštění a lazení sítě.
+Implementace samotného modelu ve frameworku PyTorch nebyla náročná. Vzhledem k~netriviálnímu úkolu jsem musel implementovat některé části, jako třeba segmentace nahrávek, sám. To přineslo mnoho potíží při odstraňování chyb v~samotném modelu. Síť jsem prvně trénoval a ladil na CPU svého notebooku, takže probíhalo velmi pomalu (v~řádu desítek hodin i při nízké velikosti modelu), a některé chyby se objevily až v~průběhu trénování nebo dokonce na jeho konci. Situaci razantně zlepšil přechod na Google Colab, kde jsem síť trénoval na poskytovaných GPU a trénování tak zabralo \todo{"pouze" (opravit uvozovky)} několik hodin, takže se případná chyba objevila dříve, ale i přesto mi lazení sítě zabralo mnoho času. Pro další usnadnění samotné implementace jsem vytvořil několik skriptů, které mi usnadnily spouštění a lazení sítě.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -782,18 +789,18 @@ Implementace samotného modelu ve frameworku PyTorch nebyla náročná. Vzhledem
 - pametova narocnost modelu
 
 
-Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Je proto podstatné, na jakém stroji je síť učena a od toho se odvíjí čas trénování.
+Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Je proto podstatné, na jakém stroji je síť učena a od toho se odvíjí čas trénování.
 
-Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry, které určují například počet vrstev sítě, velikost segmentace a další vlastnosti.
+Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry, které určují například počet vrstev sítě, velikost segmentace a další vlastnosti.
 
-Cílem experimentů je zjistit, které z hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace mluvčích. Tato kvalita je měřena primárně metrikami STOI, SI--SNR a PESQ, které byly popsány v kapitole \ref{separace}.
-\todo{ref na zdroje u metrik}
+Cílem experimentů je zjistit, které z~hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace mluvčích. Tato kvalita je měřena primárně metrikami STOI, SI--SNR a PESQ, které byly popsány v~kapitole \ref{separace}.
+\todo{ref na zdroje u~metrik}
 
 
 \section{Dataset}
-Dataset je množina dat, na kterých je síť učena a testována. Dataset se dá rozdělit na 3 podmnožiny, které jsou navzájem exkluzivní. Trénovací dataset je určen k trénování sítě a bývá největší. Validační dataset se prochází po zpracování trénovacího datasetu v průběhu trénování a slouží pro ověření, že hodnota loss na dosud neviděných datech stále klesá a nedochází tak k přetrénování. Při zpracování tohoto datasetu je síti zabráněno v učení. Poslední je testovací dataset, na kterém probíhá vyhodnocení sítě, tedy výpočet hodnot jednotlivých metrik. 
+Dataset je množina dat, na kterých je síť učena a testována. Dataset se dá rozdělit na 3 podmnožiny, které jsou navzájem exkluzivní. Trénovací dataset je určen k~trénování sítě a bývá největší. Validační dataset se prochází po zpracování trénovacího datasetu v~průběhu trénování a slouží pro ověření, že hodnota loss na dosud neviděných datech stále klesá a nedochází tak k~přetrénování. Při zpracování tohoto datasetu je síti zabráněno v~učení. Poslední je testovací dataset, na kterém probíhá vyhodnocení sítě, tedy výpočet hodnot jednotlivých metrik. 
 
-Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0) a vytvořením směsi mluvčích z těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci \todo{[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu]}.
+Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0) a vytvořením směsi mluvčích z~těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci \todo{[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu]}.
 
 \begin{figure}[H]
     \centering
@@ -828,7 +835,7 @@ Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku 
 
 \section{Průběh trénování}
 \todo{miniÚvod - konkretni hyperparams, vykon a cas trenovani, seg--len, bylo natrenovano nekolik modelu ... konkretni hyperparams, vykon a cas trenovani, seg--len}.
-Bylo natrénováno několik, různě velkých modelů, které se lišily velikostí jejich hyper--parametrů, konkrétně počtem konvolučních bloků, počtem jejich opakování a velikostí segmentů zpracovávaných nahrávek z datasetu. 
+Bylo natrénováno několik, různě velkých modelů, které se lišily velikostí jejich hyper--parametrů, konkrétně počtem konvolučních bloků, počtem jejich opakování a velikostí segmentů zpracovávaných nahrávek z~datasetu. 
 
 \todo{https://www.tablesgenerator.com/}.
 
@@ -863,7 +870,7 @@ Bylo natrénováno několik, různě velkých modelů, které se lišily velikos
 
 %------------------------------------------------------------------------------
 
-\section{Experimenty s modely}
+\section{Experimenty s~modely}
 \todo{rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
 experimenty:
 sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat.}
@@ -873,7 +880,7 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr v
 
 
 \subsection{Výsledky referenčního modelu TasNet}
-\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v tech vecech ktere tu merim a vyhodnocuji ja} 
+\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v~tech vecech ktere tu merim a vyhodnocuji ja} 
 
 
 \subsection{Vliv hyper--parametru X}
@@ -886,7 +893,7 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr v
 \todo{zmensovani a zvetsovani SL, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, obrazky, grafy}
 
 \subsection{Vyhodnocení a porovnání modelů}
-\todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s ref studii, obrazky, grafy}
+\todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy}
 
 
 
