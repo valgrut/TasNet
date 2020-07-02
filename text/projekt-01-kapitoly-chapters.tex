@@ -1,9 +1,9 @@
 \chapter{Úvod}
 Zpracování řeči hraje v~dnešní době důležitou roli v~mnoha rozličných oborech. Mezi jeden z~hlavních úkolů bezesporu patří separace zdrojů v~zaznamenaném signálu, který může být složen ze signálů N mluvčích, ale i nechtěného hluku okolí. Vyřešení problému je předpoklad k~dalším úkonům jako identifikace konkrétního mluvčího nebo třeba přepis konverzace na text. Se stále se zrychlujícím vývojem počítačů a s~jejich zvyšujícím se výkonem se do popředí dostávají metody zpracování řeči založené na neuronových sítích, které v~mnoha ohledech předčily ostatní algoritmy strojového učení.
 
-Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short--Time Fourier Transform). Taková reprezentace signálu není optimalizovaná pro separaci řeči a nemusí pro tento úkol být optimální. V~architektuře, která je navržena v~referenční studii s názvem \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation} \cite{luo2018convtasnet}, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zárověň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
+Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short--Time Fourier Transform). Taková reprezentace signálu není optimalizovaná pro separaci řeči a nemusí pro tento úkol být optimální. V~architektuře, která je navržena v~referenční studii s názvem \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet}, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zárověň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
 
-Úkolem této práce je nastudovat si problematiku neuronových sítí a jejich základní principy, seznámit se problémem separace mluvčích pomocí neuronových sítí a následně implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně, která byla navržena a popsána ve studii \cite{luo2018convtasnet}. Poté tuto neuronovou síť natrénovat s~různými kombinacemi hodnot hyperparametrů, které ovlivňují velikost sítě a její vlastnosti, a nakonec porovnat přesnost a kvalitu separace mezi jednotlivými, různě velkými sitěmi a s výsledky, kterých bylo dosaženo ve studii. Přesnost a kvalita separace bude vypočítána pomocí metrik určených k hodnocení kvality řečového signálu. Sítě budou testovány a vyhodnocovány na testovací množině jednokanálových směsí dvou mluvčích.
+Úkolem této práce je nastudovat si problematiku neuronových sítí a jejich základní principy, seznámit se problémem separace mluvčích pomocí neuronových sítí a následně implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně, která byla navržena a popsána ve studii~\cite{luo2018convtasnet}. Poté tuto neuronovou síť natrénovat s~různými kombinacemi hodnot hyperparametrů, které ovlivňují velikost sítě a její vlastnosti, a nakonec porovnat přesnost a kvalitu separace mezi jednotlivými, různě velkými sitěmi a s výsledky, kterých bylo dosaženo ve studii. Přesnost a kvalita separace bude vypočítána pomocí metrik určených k hodnocení kvality řečového signálu. Sítě budou testovány a vyhodnocovány na testovací množině jednokanálových směsí dvou mluvčích.
 
 Text je rozdělen na několik kapitol, které postupně pokrývají různé logické celky. V kapitole \ref{separace} je popsán problém separace mluvčích a dosavadní přistupy k jeho řešení. Kapitola \ref{neuronovky} se zabývá základními vlastnostmi a principi neuronových sítí. Kapitola \ref{tasnet} je věnována architektuře TasNet, kterou se moje práce zabývá. Dále kapitola \ref{implementace} popisuje implementaci sítě a pomocných nástrojů a nakonec v kapitole \ref{experimenty} jsou experimenty a vyhodnocování přesnosti sítě.
 
@@ -20,7 +20,7 @@ Tento problém se nejlépe dá popsat jako schopnost soustředit se na jeden kon
 
 
 \section{Metody pro separaci jednokanálových nahrávek}
-Pro separaci zdrojových signálů z nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z nichž asi nejznámější jsou computational auditory scene analysis (\textit{CASA})\todo{ref?} a non-negative matrix factorization (\textit{NMF}) \todo{ref?}, používané pro separaci jednokanálových nahrávek. V posledních letech se do popředí dostaly přistupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody \textit{beamforming} nebo state--of--the--art \textit{Multi-channel blind source separation}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v článku \cite{speechseparation}.
+Pro separaci zdrojových signálů z nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z nichž asi nejznámější jsou computational auditory scene analysis (\textit{CASA})\todo{ref?} a non-negative matrix factorization (\textit{NMF}) \todo{ref?}, používané pro separaci jednokanálových nahrávek. V posledních letech se do popředí dostaly přistupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody \textit{beamforming} nebo state--of--the--art \textit{Multi-channel blind source separation}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v článku~\cite{speechseparation}.
 
 
 \subsection{CASA -- computational auditory scene analysis}
@@ -49,7 +49,7 @@ V testovací fázi jsou naučené slovníky jednotlivých zdrojů $s$ spojeny do
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.6]{obrazky-figures/nmf.png}
-    \caption{\label{fig:nmf}Znázornění trénovací a testovací fáze. Obrázek byl inspirován  \cite{speechseparation}}
+    \caption{\label{fig:nmf}Znázornění trénovací a testovací fáze. Obrázek byl inspirován~\cite{speechseparation}}
 \end{figure}
 
 Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použití pro řešení reálných problémů separace.
@@ -100,7 +100,7 @@ SDR je jedna z nejznámějších metrik pro měření kvality řečového signá
 \subsection{PESQ -- Perceptual evaluation of speech qualit}
 \footnote{\url{https://github.com/ludlows/python-pesq}}
 
-Procentuální vyhodnocení kvality řeči (PESQ \cite{pesq-itut}) je standardizovaná metrika pro vyhodnocování kvality řeči. Jeho hodnota se pohybuje od -0.5 do 4.5 s tím, že vyšší hodnota znamená lepší procentuální kvalitu \cite{DBLP:journals/corr/abs-1901-09146}.
+Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná metrika pro vyhodnocování kvality řeči. Jeho hodnota se pohybuje od -0.5 do 4.5 s tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{DBLP:journals/corr/abs-1901-09146}.
 
 \todo{rozepsat}
 
@@ -117,7 +117,7 @@ Bylo navrženo mnoho konvenčních přístupů a metod pro řešení problému k
 \label{neuronovky}
 V~dnešní době zažívají neuronové sítě díky výkonosti počítačů velký rozmach. Jejich využití prostupuje skrze mnohé vědní obory a dokáží řešit celou řadu problémů, ve kterých dosahují výborných výsledků, které zdaleka předčily dosavadní postupy. 
 
-Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model, který je inspirovaný strukturou lidského mozku, ve kterém je obrovské množství propojených a komunikujících neuronů. Ty se skládají ze vstupních dendridů, výstupních axonů a samotného těla neuronu. Na základě vnitřního potenciálu a vstupních hodnot je po přesažení prahové hodnoty neuron vybuzen a je vyslán signál na výstupní axon. Signál je nakonec předán dalším neuronům skrze jejich vstupní dendridy \cite[p.~65--66]{mitdeeplearning_small}.
+Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model, který je inspirovaný strukturou lidského mozku, ve kterém je obrovské množství propojených a komunikujících neuronů. Ty se skládají ze vstupních dendridů, výstupních axonů a samotného těla neuronu. Na základě vnitřního potenciálu a vstupních hodnot je po přesažení prahové hodnoty neuron vybuzen a je vyslán signál na výstupní axon. Signál je nakonec předán dalším neuronům skrze jejich vstupní dendridy~\cite[p.~65--66]{mitdeeplearning_small}.
 
 Účelem neuronové sítě je naučit se plnit zadanou úlohu. Rozdíl oproti běžným algoritmům je ale ten, že způsob, jakým síť má problém řešit, není explicitně naprogramován, ale je postupně naučen. Základní způsoby učení jsou s~učitelem (\textit{supervised}) a bez učitele (\textit{unsupervised}). 
 
@@ -134,7 +134,7 @@ Feed forward neuronové sítě (\textit{Multi Layer Perceptron -- MLP}) jsou typ
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/feedforward_vs_recurrent.png}
-    \caption{\label{fig:netcomparison}Příklad grafu feed forward sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~feed forward sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu \cite{FFandRecNN}.}
+    \caption{\label{fig:netcomparison}Příklad grafu feed forward sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~feed forward sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu~\cite{FFandRecNN}.}
 \end{figure}
 
 Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázky \ref{fig:netcomparison} a \ref{fig:mlp}). Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup v případě klasifikátorů, nebo predikce hodnot na základě vstupních dat v případě regrese. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
@@ -178,7 +178,7 @@ kde $f$ je aktivační funkce, $x_k \in \mathbb{R}$ je vstupní hodnota, $w_k \i
 \section{Aktivační funkce}
 Aktivační, neboli prahová funkce, určuje výstupní hodnotu neuronu. Funkce se vybírá na základě problému, který se má neuronová síť naučit řešit. Správná volba aktivační funkce vede k~lepší konvergenci učení sítě. Naopak špatná volba může vést ke stále větší odchylce od správného řešení -- může divergovat. Povaha problému může vyžadovat specifické vlastnosti aktivační funkce -- lineární nebo nelineární. Pro nestandardní problémy je obvykle potřeba experimentálně zjistit, která funkce bude nejlépe vyhovovat danému problému. 
 
-Pokud by veškeré aktivační funkce v~modelu byly lineární, tak celkové mapování sítě by bylo omezeno pouze na lineární mapování vstupu na výstup. Reálné problémy ale lineární obvykle nejsou a v~případě pokusu modelovat takovým modelem nelineární vztahy by vedlo k~velice nepřesným výsledkům, který by byl zapříčiněn podučením (\textit{underfitting}), což znamená, že model, který se učí zakódovat nějaký vzor v~datasetu, je příliš jednoduchý. Proto je potřeba zavést do modelu i nelineární aktivační funkce, které tento problém řeší \cite[p.~77--78]{mitdeeplearning_small}.
+Pokud by veškeré aktivační funkce v~modelu byly lineární, tak celkové mapování sítě by bylo omezeno pouze na lineární mapování vstupu na výstup. Reálné problémy ale lineární obvykle nejsou a v~případě pokusu modelovat takovým modelem nelineární vztahy by vedlo k~velice nepřesným výsledkům, který by byl zapříčiněn podučením (\textit{underfitting}), což znamená, že model, který se učí zakódovat nějaký vzor v~datasetu, je příliš jednoduchý. Proto je potřeba zavést do modelu i nelineární aktivační funkce, které tento problém řeší~\cite[p.~77--78]{mitdeeplearning_small}.
 
 Z~pohledu učení je také důležité, aby aktivační funkce byla diferencovatelná. To umožňuje použití učících metod založených na výpočtu gradientu, jako je algoritmus backpropagation.
 
@@ -232,7 +232,7 @@ Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje
 
 
 \subsection*{PReLU}
-Parametrizovaná ReLU (PReLU) \cite{he2015delving} je nelineární aktivační funkce, která se používá v~případě, že chceme produkovat na výstup malý nenulový gradient i v~případě záporné vstupní hodnoty $x$. V~tom případě je vstupní hodnota vynásobena parametrem $\alpha$ a to představuje výsledek. Parametr $\alpha$ se společně s~ostatními váhami učí během učícího procesu.
+Parametrizovaná ReLU (PReLU)~\cite{he2015delving} je nelineární aktivační funkce, která se používá v~případě, že chceme produkovat na výstup malý nenulový gradient i v~případě záporné vstupní hodnoty $x$. V~tom případě je vstupní hodnota vynásobena parametrem $\alpha$ a to představuje výsledek. Parametr $\alpha$ se společně s~ostatními váhami učí během učícího procesu.
 \begin{equation}
   f(x) =
   \begin{cases}
@@ -255,7 +255,7 @@ Parametrizovaná ReLU (PReLU) \cite{he2015delving} je nelineární aktivační f
     \includegraphics[scale=0.5]{obrazky-figures/conv_nn_audio.jpg}
     \caption{\label{fig:conv_nn}Konvoluční neuronové sítě}
 \end{figure}
-Konvoluční neuronová síť \todo{citovat LeCun 1989} je typ neuronových sítí pro zpracování dat v mřížkovitém uspořádání, což může být například ve 2--D obrázek ve formě pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v čase pro 1--D. Konvoluční síť je typ feed forward sítě, která obsahuje jednu nebo více konvolučních vrstev. Ty používají místo běžného násobení matic speciální typ lineární operace -- konvoluci. 
+Konvoluční neuronová síť \todo{citovat LeCun 1989} je typ neuronových sítí pro zpracování dat v mřížkovitém uspořádání, což může být ve 2--D obrázek ve formě pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v čase v 1--D. Konvoluční síť je typ feed forward sítě, která obsahuje jednu nebo více konvolučních vrstev. Ty používají místo běžného násobení matic speciální typ lineární operace -- konvoluci. 
 
 
 Diskrétní konvoluce je definována jako
@@ -289,13 +289,13 @@ kde $x$ jsou vstupní data obvykle ve formě multidimenzionílního pole (tenzor
 \section{Učení neuronových sítí}
 Cílem trénování je naučit neuronovou síť vykonávat nějaký úkol. Trénování založené na metodě učení s učitelem vyžaduje dostatečně velký dataset obsahující dvojice vstup--výstup a obnáší volbu objektivní funkce, kterou se během trénování snažíme minimalizovat. 
 
-Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je předána vstupní hodnota $x$, pro kterou síť definuje mapování na výstupní hodnotu jako $y = f(x; \theta)$, kde $\theta$ je parametr, který se síť učí tak, aby dosáhla nejlepší aproximace funkce. \cite[p.~163]{mitdeeplearning}.
+Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je předána vstupní hodnota $x$, pro kterou síť definuje mapování na výstupní hodnotu jako $y = f(x; \theta)$, kde $\theta$ je parametr, který se síť učí tak, aby dosáhla nejlepší aproximace funkce~\cite[p.~163]{mitdeeplearning}.
 
 
 \subsection{Objektivní funkce}
 Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce, protože její výstupní hodnota nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
 
-V rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V takovém případě bude dobře sloužit pro účely trénování. V případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě  \cite{mitdeeplearning}. 
+V rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V takovém případě bude dobře sloužit pro účely trénování. V případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě~ \cite{mitdeeplearning}. 
 
 Nejčastěji se pro regresní problémy používají objektivní funkce \textit{Mean Squared Error Loss} a \textit{Mean Absolute Error Loss}.
 
@@ -353,7 +353,7 @@ Algoritmus se skládá ze 3 opakujících se kroků. Prvním krokem je forward f
 
 
 \subsection*{Gradient descent}
-Gradient descent je iterativní optimalizační algoritmus pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu, úpravou těchto parametrů v opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno \cite{ruder2016overview}.
+Gradient descent je iterativní optimalizační algoritmus pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu, úpravou těchto parametrů v opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{obrazky-figures/gradientdescent.png}
@@ -372,29 +372,29 @@ Testovací chyba by ideálně měla být co nejblíže chybě na trénovací sad
 
 \textit{Overfitting} nastane, když rozdíl mezi trénovací chybou a testovací chybou je příliš velký.
 
-Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. V případě nízké kapacity se model nedokáže naučit všechny příznaky z trénovacích dat a v případě vysoké kapacity se mohou přeučit zapamatováním si jejich příznaků a tím sice dosáhnou nízké trénovací chyby, ale špatných výsledků během testování \cite[p107]{mitdeeplearning}.
+Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. V případě nízké kapacity se model nedokáže naučit všechny příznaky z trénovacích dat a v případě vysoké kapacity se mohou přeučit zapamatováním si jejich příznaků a tím sice dosáhnou nízké trénovací chyby, ale špatných výsledků během testování~\cite[p107]{mitdeeplearning}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.3]{obrazky-figures/capacity_vs_error.jpg}
-    \caption{\label{fig:gradientdescent}Vliv kapacity modelu trénovací a testovací chybu. Obrázek inspirován podle \cite{trainingvstesterror}}
+    \caption{\label{fig:gradientdescent}Vliv kapacity modelu trénovací a testovací chybu. Obrázek inspirován podle~\cite{trainingvstesterror}}
 \end{figure}
 
 
 \subsection{Regularizace}
-Regularizace je souhrn postupů, které říkají, jak modifikovat učící algoritmus tak, aby se zredukovala chyba generalizace, zatímco testovací chyba zůstane stejná \cite[p117]{mitdeeplearning}.
+Regularizace je souhrn postupů, které říkají, jak modifikovat učící algoritmus tak, aby se zredukovala chyba generalizace, zatímco testovací chyba zůstane stejná~\cite[p117]{mitdeeplearning}.
 
 
 \subsection{Reziduální spojení}
-Velmi hluboké neuronové sítě přinesly v mnoha aplikacích velmi dobré výsledky. S přibývající hloubkou se ale stává její trénování složitější. Jeden z problémů, který se při učení projevoval, byl explodující a mizející gradient \cite{279181}. Tento problém byl adresován zavedením normalizačních vrstev \cite{ioffe2015batch} a počáteční optimalizované inicializace, což dovolilo sítím konvergovat s využitím \textit{stochastic gradient descent} se zpětnou propagací (\textit{back--propagation})  \cite{6795724}. Poté se objevil problém degradace, který nebyl zapříčiněn přetrénováním, a způsobil, že s přibývající hloubkou sítě její přesnost náhle prudce klesla, což indikovalo, že systémy nelze optimalizovat stejným způsobem a přidání dalších vrstev pouze zvýšilo trénovací chybu. Problém degradace lze řešit zakomponováním reziduálních spojení, které je zobrazeno na obrázku \ref{fig:residualconnection} \cite{he2015deep}.
+Velmi hluboké neuronové sítě přinesly v mnoha aplikacích velmi dobré výsledky. S přibývající hloubkou se ale stává její trénování složitější. Jeden z problémů, který se při učení projevoval, byl explodující a mizející gradient~\cite{279181}. Tento problém byl adresován zavedením normalizačních vrstev~\cite{ioffe2015batch} a počáteční optimalizované inicializace, což dovolilo sítím konvergovat s využitím \textit{stochastic gradient descent} se zpětnou propagací (\textit{back--propagation})~ \cite{6795724}. Poté se objevil problém degradace, který nebyl zapříčiněn přetrénováním, a způsobil, že s přibývající hloubkou sítě její přesnost náhle prudce klesla, což indikovalo, že systémy nelze optimalizovat stejným způsobem a přidání dalších vrstev pouze zvýšilo trénovací chybu. Problém degradace lze řešit zakomponováním reziduálních spojení, které je zobrazeno na obrázku \ref{fig:residualconnection}~\cite{he2015deep}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/residual_connection.png}
-    \caption{\label{fig:residualconnection}Reziduální spojení mezi vstupem a výstupem stavebního bloku sítě \cite{he2015deep}}
+    \caption{\label{fig:residualconnection}Reziduální spojení mezi vstupem a výstupem stavebního bloku sítě~\cite{he2015deep}}
 \end{figure}
 
 \todo{prepsat F na to specialni}
-Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost \cite{he2015deep}\cite{zaeemzadeh2018normpreservation}.
+Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost~\cite{he2015deep}\cite{zaeemzadeh2018normpreservation}.
 
 
 
@@ -419,11 +419,11 @@ V této kapitole byly popsány základní principy neuronových sítí, jejich z
 \chapter{TasNet - Time--Domain Audio Separation Network}
 \label{tasnet}
 
-Tato kapitola vychází z referenční studie \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation} \cite{luo2018convtasnet} a popisuje její navrhnuté řešení pro separaci mluvčích v časové doméně.
+Tato kapitola vychází z referenční studie \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet} a popisuje její navrhnuté řešení pro separaci mluvčích v časové doméně.
 
 Přestože metody pro zpracování řeči v takovém akustickém prostředí, ve kterém se současně prolíná mnoho řečových signálů, v poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v aplikacích, které by mohly zpracovávat řeč v reálném čase.
 
-Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT) \cite{speechseparationoverview}. Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
+Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)~\cite{speechseparationoverview}. Tento převod ale měl pro využití v reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
 
 Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v každém časovém kroku jsou odhadnuty v TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v kapitole budou jednotlivé části popsány detailněji.
 
@@ -537,15 +537,15 @@ kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \t
     \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok obsahující reziduální spojení mezi vstupem a výstupem\todo{graficky zde ukazat a zakrouzkovat co je sconv a co je dconv}}
 \end{figure}
 
-V každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU \cite{he2015delving}, která byla popsána v kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení \cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
+V každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU~\cite{he2015delving}, která byla popsána v kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení~\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
 
 \todo{zvýraznit na obrázku konvolučního bloku residuální spojení a hodit tam sipku nebo neco ze to je to spojeni}
 
 \todo{Kam uvozovky, kam bold, kam italic ZEPTAT SE}
 \section{Normalizace}
-Při trénování neuronových sítí může docházet k fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat \cite{ioffe2015batch}\cite{ba2016layer}.
+Při trénování neuronových sítí může docházet k fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch}\cite{ba2016layer}.
 
-Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s channel--wise layer normalization (cLN) \todo{cite}, global layer normalization (gLN) a batch normalization (BN) \cite{ioffe2015batch}.
+Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s channel--wise layer normalization (cLN)~\todo{cite}, global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}.
 
 Metoda cLN je aplikována na vstup separačního modulu pro zajištění invariance při změně měřítka vstupních dat. Tato metoda je vhodná pro použití v kauzální i nekauzální konfiguraci, je--li použita v konvolučních blocích. Normalizace cLN je aplikována na každý segment $y_k$. 
 
