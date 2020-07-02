@@ -1,4 +1,9 @@
 '''
+Tento soubor je soucasti prevzateho zdrojoveho kodu pro vypocet si-sdr: snr.py
+https://github.com/sigsep/bsseval
+'''
+
+'''
 This submodule collects useful functionality required across the task
 submodules, such as preprocessing, validation, and common computations.
 '''

@@ -224,6 +224,8 @@ if __name__== "__main__":
             ref_sources = np.concatenate((ref_source1_prep, ref_source2_prep))
 
             # calculation of metrics
+            ###################################################################
+            # bss_eval_sources calculation taken from https://github.com/sigsep/bsseval
             (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources, estimated_sources, compute_permutation=True)
             # print(sdr, sir, sarn, perm)
 

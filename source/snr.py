@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 '''
+Tento zdrojovy soubor byl prevzat pro vypocet si-sdr z https://github.com/sigsep/bsseval
+'''
+
+'''
 Source separation algorithms attempt to extract recordings of individual
 sources from a recording of a mixture of sources.  Evaluation methods for
 source separation compare the extracted sources from reference sources and
