@@ -261,17 +261,15 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
 Účelem CNN je v prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. Pro 2--D vstup to mohou být úsečky v různých úhlech nebo části křivek a pro 1--D tóny o různé frekvenci. V pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrogram}) a lze s ním pracovat stejně, jako při zpracování obrazu. 
 
 
-\todo{obrazek spektrogramu reci}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/spektrum.png}
+    \includegraphics[scale=1.0]{obrazky-figures/spektrum.png}
     \caption{\label{fig:spektrogram}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa y) z nahrávky řeči v čase (osa x). Zvuk se na spektrogram převádí pomocí operace short time fourier transform (STFT)}
 \end{figure}
 
-\todo{tento obrazek - levej a pravej}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/cnnfeatures.png}
+    \includegraphics[scale=0.35]{obrazky-figures/cnnfeatures.png}
     \caption{\label{fig:conv_nn_image_feature}Obrázek vlevo zobrazuje, jak probíhá konvoluování jádra se vstupními 2--D daty a mapování lokálních příznaků na prostor příznaků (feature space), což je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup. Obrázek napravo zobrazuje, jak mohou vypadat lokální příznaky.}
 \end{figure}
 
@@ -281,7 +279,6 @@ Konvoluování jádra přes nějaký vstup (například obrázek či zvuk) je ek
 Během trénování CNN jsou učeny váhy sítě (filtry) k detekci různých úrovní komplexnosti příznaků. Aby síť dokázala detekovat příznak nezávisle na jeho transformaci (pootočení, převrácení, posuvu), měla by být invariantní. Toho lze docílit tak, že nneurony budou sdílet některé váhy (filtry).
 
 
-\todo{Prepsat a nekam dat nasledujici odstavec.}
 Konvoluční operace je definována jako
 \begin{equation}
    s[n] = (x \star w)[n]
@@ -293,6 +290,8 @@ Průběh a chování konvoluce lze řídit hyperparametry \textit{stride}, \text
 
 Hodnota padding určuje, o kolik se mají rozšířit vstupní data. V případě malého rozměru konvolučního jádra může dojít k nechtěné změně rozměrů vstupních dat a proto se tato data po stranách rozšíří na takový rozměr, aby po konvoluci byl výsledný tvar v požadovaném rozměru. Vyplnění ukazuje obrázek~\ref{fig:conv_padding}.
 
+
+\todo{Tyto obrazky stylove sjednotit a dat je vedle sebe mozna}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/stride.png}
@@ -301,7 +300,7 @@ Hodnota padding určuje, o kolik se mají rozšířit vstupní data. V případ�
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/padding.jpg}
+    \includegraphics[scale=0.7]{obrazky-figures/padding.png}
     \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
 \end{figure}
 
