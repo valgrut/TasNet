@@ -249,14 +249,7 @@ Parametrizovaná ReLU (PReLU)~\cite{he2015delving} je nelineární aktivační f
 
 
 \section{Konvoluční vrstvy}
-\todo{tento obrazek nahradit necim jinym, tento je hroznej}
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.5]{obrazky-figures/conv_nn_audio.jpg}
-    \caption{\label{fig:conv_nn}Konvoluční neuronové sítě}
-\end{figure}
-Konvoluční neuronová síť \todo{citovat LeCun 1989} je typ neuronových sítí pro zpracování dat v mřížkovitém uspořádání, což může být ve 2--D obrázek ve formě pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v čase v 1--D. Konvoluční síť je typ feed forward sítě, která obsahuje jednu nebo více konvolučních vrstev. Ty používají místo běžného násobení matic speciální typ lineární operace -- konvoluci. 
-
+Konvoluční neuronová síť (CNN)~\cite{6795724} je typ feed forward neuronových sítí, která obsahuje jednu či více konvolučních vrstev. CNN jsou vhodné pro zpracování dat v mřížkovitém uspořádání. To může být ve 2--D obrázek ve formě pole pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v čase v 1--D. Konvoluční vrstvy používají místo běžného násobení matic speciální typ lineární operace -- konvoluci.
 
 Diskrétní konvoluce je definována jako
 \begin{equation}
@@ -265,6 +258,30 @@ Diskrétní konvoluce je definována jako
 kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je konvoluční jádro a $f_i$ a $g_i$ jsou hodnoty funkce na indexu $i$.
 
 
+Účelem CNN je v prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. Pro 2--D vstup to mohou být úsečky v různých úhlech nebo části křivek a pro 1--D tóny o různé frekvenci. V pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrogram}) a lze s ním pracovat stejně, jako při zpracování obrazu. 
+
+
+\todo{obrazek spektrogramu reci}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{obrazky-figures/spektrum.png}
+    \caption{\label{fig:spektrogram}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa y) z nahrávky řeči v čase (osa x). Zvuk se na spektrogram převádí pomocí operace short time fourier transform (STFT)}
+\end{figure}
+
+\todo{tento obrazek - levej a pravej}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{obrazky-figures/cnnfeatures.png}
+    \caption{\label{fig:conv_nn_image_feature}Obrázek vlevo zobrazuje, jak probíhá konvoluování jádra se vstupními 2--D daty a mapování lokálních příznaků na prostor příznaků (feature space), což je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup. Obrázek napravo zobrazuje, jak mohou vypadat lokální příznaky.}
+\end{figure}
+
+
+Konvoluování jádra přes nějaký vstup (například obrázek či zvuk) je ekvivalentní s detektorem, který detekuje nějaký lokální příznak. Při aplikaci takového detektoru přes nějaký vstup zaznamenává všechny pozice, kde se příznak nacházel~\cite{mitdeeplearning_small}.
+
+Během trénování CNN jsou učeny váhy sítě (filtry) k detekci různých úrovní komplexnosti příznaků. Aby síť dokázala detekovat příznak nezávisle na jeho transformaci (pootočení, převrácení, posuvu), měla by být invariantní. Toho lze docílit tak, že nneurony budou sdílet některé váhy (filtry).
+
+
+\todo{Prepsat a nekam dat nasledujici odstavec.}
 Konvoluční operace je definována jako
 \begin{equation}
    s[n] = (x \star w)[n]
@@ -272,18 +289,22 @@ Konvoluční operace je definována jako
 kde $x$ jsou vstupní data obvykle ve formě multidimenzionílního pole (tenzoru) a funkce $w$ je konvoluční jádro. Výstupem operace je mapa příznaků. Konvoluční operaci lze definovat i pro vyšší dimenze. Máme--li například 2--D vstupní obrázek, pak i konvoluční jádro bude dvourozměrné. Přestože v mnoha knihovnách lze nalézt implementovanou operaci konvoluce, často se jedná o cross--korelaci.
 
 
+Průběh a chování konvoluce lze řídit hyperparametry \textit{stride}, \textit{padding} a \textit{dilation}. Hodnota stride modifikuje velikost kroku konvolučního jádra. Výchozí hodnota kroku je $1$. Chování při různých hodnotách lze vidět na obrázku~\ref{fig:conv_stride}. 
+
+Hodnota padding určuje, o kolik se mají rozšířit vstupní data. V případě malého rozměru konvolučního jádra může dojít k nechtěné změně rozměrů vstupních dat a proto se tato data po stranách rozšíří na takový rozměr, aby po konvoluci byl výsledný tvar v požadovaném rozměru. Vyplnění ukazuje obrázek~\ref{fig:conv_padding}.
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/stride.png}
-    \caption{\label{fig:conv_stride}TODO}
+    \caption{\label{fig:conv_stride}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
 \end{figure}
-
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/padding.jpg}
-    \caption{\label{fig:conv_padding}TODO}
+    \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
 \end{figure}
+
 
 
 \section{Učení neuronových sítí}
