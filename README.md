@@ -186,5 +186,5 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         - PESQ vypocet - min, nebo aktualni max?
     - natrenovane modely (Tecky na papire)  
     - Text - je to jinak OK?
-
+    - zkratky a anglicke nazvy metod... kdy bold, kdy italic 
 
