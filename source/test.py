@@ -168,9 +168,9 @@ if __name__== "__main__":
             if (global_audio_cnt) % 500 == 0.0:
                 print("")
                 print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), epoch, audio_cnt)
-                with open(training_dir + "testing.log", "a") as testlog:
+                # with open(training_dir + "testing.log", "a") as testlog:
                     # Note: value of sdr is decreasing, because global_audio_cnt is increasing and sdr is divided by that value in this log
-                    testlog.write("Audio_cnt: " + str(audio_cnt) + " SDR: " + str(sdr_sum/global_audio_cnt) + "\n")
+                    # testlog.write("Audio_cnt: " + str(audio_cnt) + " SDR: " + str(sdr_sum/global_audio_cnt) + "\n")
 
             input_mixture  = data[0]
             target_source1 = data[1]
