@@ -597,10 +597,12 @@ Normalizace BN je počítána následovně:
 	Var(Y) = \frac{1}{NT} \sum_{NT}(Y - E[Y])^2
 \end{equation}
 
+\todo{Asi jeste popsat jednotlive promenne ve vzorcich}
 
 \bigskip
 
-\todo{shrnuti kompletni architektury viz schema}
+Jak vypadá kompletní schéma architektury po sestavení a propojení jednotlivých modulů lze vidět na obrázku~\ref{fig:tasnet-modul}. 
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{obrazky-figures/tasnet-architecture.png}
@@ -668,7 +670,7 @@ Tyto třídy používají některé pomocné funkce definované v souboru \textb
 
 Při spuštění programu jsou nahrány názvy wav souborů do polí, které jsou poté buď náhodně či sekvenčně procházeny a postupně dochází k načítání trojic nahrávek na aktuálním indexu. 
 
-Obě třídy jsou periodicky volány instancí třídy Dataloader, která v cyklu posílá požadavky na data ke zpracování. Rozdíl mezi třídami je ten, že třída AudioDataset předává trojice nahrávek v původním stavu a délka epochy tak trvá tolik iterací, kolik je nahrávek ve zpracovávaném datasetu a je kvůli tomu používána během testování sítě, kde chceme vyhodnocovat celé nahrávky. Třída SegmentDataset je použita pro trénovací a validační dataset, kde jsou nahrávky rozdělovány na segmenty o parametrem dané délce a až poté jsou poskytnuty ven. Segmentace je detailně popsána v~podkapitole~\ref{sec:segmentace}.
+Obě třídy jsou periodicky volány instancí třídy Dataloader\footnote{\url{https://pytorch.org/docs/stable/data.html\#torch.utils.data.DataLoader}}, která v cyklu posílá požadavky na data ke zpracování. Rozdíl mezi třídami je ten, že třída AudioDataset předává trojice nahrávek v původním stavu a délka epochy tak trvá tolik iterací, kolik je nahrávek ve zpracovávaném datasetu a je kvůli tomu používána během testování sítě, kde chceme vyhodnocovat celé nahrávky. Třída SegmentDataset je použita pro trénovací a validační dataset, kde jsou nahrávky rozdělovány na segmenty o parametrem dané délce a až poté jsou poskytnuty ven. Segmentace je detailně popsána v~podkapitole~\ref{sec:segmentace}.
 
 Po vyčerpání datasetu obě třídy vyvolají vyjímku \textbf{StopIteration}, která je detekována Dataloaderem a ten ukončí cyklus, ve kterém se dataset zpracovával. Tím v případě trénování končí učení sítě a začíná validace, v případě validace končí jedna epocha a v případě testování končí vyhodnocování sítě.
 
@@ -751,21 +753,20 @@ Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou přek
 
 
 
+%\section{Výpočet hodnoty loss za pomoci si--snr}
+%\todo{MOZNA}
+%\todo{popsat implementaci sisnr a vypocet loss za pomoci cross vypoctu, obrazek}
+%
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.25]{obrazky-figures/sisnr_cross_calculation.jpg}
+%    \caption{\label{fig:implementace_loss_sisnr} Implementace a zjištění správné pozice korespondujících nahrávek pro výpočet hodnoty loss}
+%\end{figure}
+%
+% Alg:
+% pro kazdou dvojici output--target od 0 do batch_size:
+%	vzorecek pro si--sdr loss
 
-%------------------
-\section{Výpočet hodnoty loss za pomoci si--snr}
-\todo{MOZNA}
-\todo{popsat implementaci sisnr a vypocet loss za pomoci cross vypoctu, obrazek}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.25]{obrazky-figures/sisnr_cross_calculation.jpg}
-    \caption{\label{fig:implementace_loss_sisnr} Implementace a zjištění správné pozice korespondujících nahrávek pro výpočet hodnoty loss}
-\end{figure}
-
-
-%------------------
-%------------------
 
 
 \section{Pomocné skripty}
