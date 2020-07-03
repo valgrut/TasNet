@@ -74,21 +74,21 @@ Metody převáděly směs do časově--frekvenční reprezentace znázorněné n
 Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba závisí na řešeném problému.
 
 
-\subsection{Signal--to--noise ratio}
-Nejzákladnější metrika pro určení kvality separace je signal--to--noise ratio (SNR), která porovnává zastoupení chtěného signálu a šumu v~pozadí a je definována jako poměr energie originálního (ideálního) signálu a energie rozdílu mezi originálním a rekonstruovaným signálem.
-
-
-\begin{equation}
-  SNR = \frac{E_s}{E_N}
-\end{equation}
-
-Výsledný poměr často bývá vyjádřen v~decibelech jako
-
-\begin{equation}
-  SNR(dB) = 10log_{10}\frac{E_s}{E_N}
-\end{equation}
-
-kde kladná SNR hodnota udává, že zastoupení signálu je větší, než zastoupení šumu \todo{citovat https://labrosa.ee.columbia.edu/~dpwe/pubs/Ellis04-sepeval.pdf}.
+%\subsection{Signal--to--noise ratio}
+%Nejzákladnější metrika pro určení kvality separace je signal--to--noise ratio (SNR), která porovnává zastoupení chtěného signálu a šumu v~pozadí a je definována jako poměr energie originálního (ideálního) signálu a energie rozdílu mezi originálním a rekonstruovaným signálem.
+%
+%
+%\begin{equation}
+%  SNR = \frac{E_s}{E_N}
+%\end{equation}
+%
+%Výsledný poměr často bývá vyjádřen v~decibelech jako
+%
+%\begin{equation}
+%  SNR(dB) = 10log_{10}\frac{E_s}{E_N}
+%\end{equation}
+%
+%kde kladná SNR hodnota udává, že zastoupení signálu je větší, než zastoupení šumu \todo{citovat https://labrosa.ee.columbia.edu/~dpwe/pubs/Ellis04-sepeval.pdf}.
 
 
 \subsection{SDR -- Source Distortion Ratio}
@@ -107,11 +107,16 @@ Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardiz
 
 \subsection{STOI}
 \footnote{\url{https://github.com/mpariente/pystoi}}
-Bylo navrženo mnoho konvenčních přístupů a metod pro řešení problému koktejl párty a s~ním spojené separace mluvčích, ale většina z~nich nedosahuje dostatečné přesnosti nebo výkonu k~použití v~reálných situacích. Přístupy založené na hlubokém učení a neuronových sítích předčily dosavadní techniky jak v~přesnosti, tak ve výkonu, což umožňuje jejich nasazení v~běžném životě.
-
 \todo{rozepsat}
 
 
+
+\bigskip
+
+Bylo navrženo mnoho konvenčních přístupů a metod pro řešení problému koktejl párty a s~ním spojené separace mluvčích, ale většina z~nich nedosahuje dostatečné přesnosti nebo výkonu k~použití v~reálných situacích. Přístupy založené na hlubokém učení a neuronových sítích předčily dosavadní techniky jak v~přesnosti, tak ve výkonu, což umožňuje jejich nasazení v~běžném životě.
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Neuronové sítě}
 \label{neuronovky}
@@ -385,7 +390,7 @@ Algoritmus se skládá ze 3 opakujících se kroků. Prvním krokem je forward f
 
 
 \subsection*{Gradient descent}
-Gradient descent je iterativní optimalizační algoritmus pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu, úpravou těchto parametrů v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
+Gradient descent je iterativní optimalizační algoritmus. Je určený pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu. Hledání lokálního minima probíhá úpravou parametrů modelu v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{obrazky-figures/gradientdescent.png}
@@ -393,7 +398,7 @@ Gradient descent je iterativní optimalizační algoritmus pro hledání lokáln
 \end{figure}
 
 
-\todo{popsat vice vliv LR na loss}
+\todo{MOZNA popsat vice vliv LR na loss}
 
 
 \subsection{Underfitting a generalizace}
@@ -412,7 +417,6 @@ Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. 
 \end{figure}
 
 
-\subsection{Regularizace}
 Regularizace je souhrn postupů, které říkají, jak modifikovat učící algoritmus tak, aby se zredukovala chyba generalizace, zatímco testovací chyba zůstane stejná~\cite[p117]{mitdeeplearning}.
 
 
@@ -457,7 +461,7 @@ Přestože metody pro zpracování řeči v~takovém akustickém prostředí, ve
 
 Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)~\cite{speechseparationoverview}. Tento převod ale měl pro využití v~reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
 
-Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~TCN, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
+Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~temporal convolutional network (TCN)~\todo{citace}, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
 
 \begin{figure}[H]
     \centering
@@ -572,6 +576,7 @@ kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \t
 V~každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU~\cite{he2015delving}, která byla popsána v~kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení~\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
 
 \todo{zvýraznit na obrázku konvolučního bloku residuální spojení a hodit tam sipku nebo neco ze to je to spojeni}
+
 
 \todo{Kam uvozovky, kam bold, kam italic ZEPTAT SE}
 \section{Normalizace}
