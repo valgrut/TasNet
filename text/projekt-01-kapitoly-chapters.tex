@@ -313,6 +313,11 @@ Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišen�
 \end{figure}
 
 
+
+\subsection{Bottle--neck vrstva}
+\todo{Mozna, kdyz bude cas}
+
+
 \section{Učení neuronových sítí}
 Cílem trénování je naučit neuronovou síť vykonávat nějaký úkol. Trénování založené na metodě učení s~učitelem vyžaduje dostatečně velký dataset obsahující dvojice vstup--výstup a obnáší volbu objektivní funkce, kterou se během trénování snažíme minimalizovat. 
 
@@ -612,7 +617,7 @@ V~této kapitole byla popsána navržená architektura Conv--TasNet pro separaci
 \label{implementace}
 Pro implementaci neuronových sítí vzniklo mnoho frameworků jako PyTorch, Tensorflow, Keras a další, které umožňují síť poskládat z~již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s~datasety, funkce pro vykreslování grafů a pro matematické operace.
 
-Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet pro separaci mluvčích v~časové doméně. V~rámci zadání jsem si zvolil použít framework s~názvem PyTorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. PyTorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v~celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2) a mimo jiné podporuje práci s~datasety, včetně implementace vlastního nahrávání a manipulace s~daty. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku PyTorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána síti ke zpracování. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v~textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v~příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z~terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
+Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet~\cite{luo2018convtasnet} pro separaci mluvčích v~časové doméně. V~rámci zadání jsem si zvolil použít framework s~názvem PyTorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. PyTorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v~celé práci používám jeho aktuálně nejnovější verzi (Python 3.8.2). Mimo jiné podporuje práci s~datasety, včetně implementace vlastního nahrávání a manipulace s~daty. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku PyTorch je \textbf{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána síti ke zpracování. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v~textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v~příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z~terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
 
 Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k~náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v~závislosti na tom, která z~nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
 
@@ -650,33 +655,31 @@ Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobn�
  \caption{\label{alg:zakladnibeh}Zjednodušený algoritmus běhu programu pro trénování sítě}
 \end{algorithm}
 
-%------------------
-
-\section{Implementace modelu}
-\todo{today DNES - miniuvod k~implementaci modelu - nic podrobneho, je to uz zmineno predtim ze to je v~pytorchi atd}
-\todo{Pozn: pytorch, scripty, tridy, moduly, parametry a volby spusteni}
 
 
-Model se skládá ze separační části, která se skládá z~konvolučních bloků, dále z...
-
+\section{Implementace tříd a modelu}
+Model neuronové sítě byl logicky rozdělen na několik dílčích částí, z nichž každá je reprezentována jednou třídou. Jednotlivé třídy obsahují metody pro nahrávání a transformaci dat, segmentaci nahrávek a další jsou přímo stavebním blokem neuronové sítě. Některé parametry předané třídám při jejich instanciaci jsou hyperparametry, jejichž hodnoty byly určeny parametry z příkazové řádky při volání programu. Každá z tříd bude popsána dále v textu.
 
 
 \subsection*{Třídy SegmentDataset a AudioDataset}
-\todo{zpracovani datasetu, jedna segmentuje, druha ne}
-Blizsi popis segmentace v~podkapitole \ref{sec:segmentace}.
+Třídy \textbf{SegmentDataset} a \textbf{AudioDataset} slouží pro načítání korespondujících trojic nahrávek směs--zdroj1--zdroj2 z adresáře, kde je uložen dataset. Nahrávky jsou ve formátu wav a vzorkovány na 8KHz. Třídy tato data dále transformují na tenzory a normalizují na jednotkovou varianci a zero--mean. 
 
-%------------------
+Tyto třídy používají některé pomocné funkce definované v souboru \textbf{tools.py} pro dorovnání nedostatečně velkých nahrávek ve zpracovávaném mini--batchi nulami na velikost nejdelší z nich, protože data obsažená v mini--batchi musejí mít stejnou velikost.
+
+Při spuštění programu jsou nahrány názvy wav souborů do polí, které jsou poté buď náhodně či sekvenčně procházeny a postupně dochází k načítání trojic nahrávek na aktuálním indexu. 
+
+Obě třídy jsou periodicky volány instancí třídy Dataloader, která v cyklu posílá požadavky na data ke zpracování. Rozdíl mezi třídami je ten, že třída AudioDataset předává trojice nahrávek v původním stavu a délka epochy tak trvá tolik iterací, kolik je nahrávek ve zpracovávaném datasetu a je kvůli tomu používána během testování sítě, kde chceme vyhodnocovat celé nahrávky. Třída SegmentDataset je použita pro trénovací a validační dataset, kde jsou nahrávky rozdělovány na segmenty o parametrem dané délce a až poté jsou poskytnuty ven. Segmentace je detailně popsána v~podkapitole~\ref{sec:segmentace}.
+
+Po vyčerpání datasetu obě třídy vyvolají vyjímku \textbf{StopIteration}, která je detekována Dataloaderem a ten ukončí cyklus, ve kterém se dataset zpracovával. Tím v případě trénování končí učení sítě a začíná validace, v případě validace končí jedna epocha a v případě testování končí vyhodnocování sítě.
+
 
 \subsection*{Třída Tasnet}
-Třída Tasnet.py reprezentuje model neuronové sítě. Atributy třídy představují jednotlivé vrstvy neuronové sítě. Síť obsahuje konvoluční vrstvy, enkodér, dekodér a \textit{temporal convolutionan network}, která je tvořena sekvencí konvolučních bloků, které jsou zmíněny dále. V~této třídě jsou také inicializovány váhy algoritmem xavier\todo{citovat}. Ve funkci $forward()$, která je volána, když jsou instanci sítě předána data ke zpracování, jsou sekvenčně volány jednotlivé vrstvy. Během zpracování předaných dat je v~této sekvenci vypočítána maska a aplikována na zpracovávanou směs. Tím vzniknou dvě separované nahrávky, které jsou předány na výstup. 
-\todo{zminit stride, padding, a mozna obrazek co to je a mozna trochu prepsat (ktere, ktera, ktere).}
+Třída Tasnet.py reprezentuje model neuronové sítě. Atributy třídy představují jednotlivé vrstvy neuronové sítě. Síť obsahuje konvoluční vrstvy, enkodér, dekodér a \textit{temporal convolutionan network}, která je tvořena sekvencí konvolučních bloků, které jsou rozebrány později. Konvolučním vrstvám jsou nastaveny hodnoty \textit{padding} a \textit{stride}, které ovlivňují chování konvolučních vrstev. V~této třídě jsou také inicializovány váhy (filtry) konvolučních vrstev algoritmem Xavier~\cite{pmlr-v9-glorot10a}. Ve funkci $forward()$, která je volána, když jsou instanci sítě předána data ke zpracování, jsou sekvenčně volány jednotlivé vrstvy. Během zpracování předaných dat je v~této sekvenci vypočítána maska a aplikována na zpracovávanou směs. Tím vzniknou dvě separované nahrávky, které jsou předány na výstup v podobě tensoru. 
 
-%------------------
 
 \subsection*{Třída ResBlock}
 Třída ResBlock reprezentuje jeden konvoluční blok, který je opakován se zvyšující se dilatací v~\textit{temporal convolutional network} v~separační části určené k~odhadu masek. Podobně jako třída Tasnet, i tato třída obsahuje inicializaci a zřetězení vrstev. V~inicializaci jsou nastaveny hodnoty pro konvoluční operace jako počet konvolučních jader, časová dilatace a počet kanálů. Tyto operace jsou ve funkci \textit{forward} zřetězeny do sekvence konvolučních operací a aktivačních funkcí, podle vzorové architektury TasNet. Třída ResBlock je specifická svým residuálním spojením, kde dochází k~rozdělení dat při zpracování, kdy jedna kopie je transformována operacemi v~bloku a na konci sečtena s~daty, které transformacemi neprošly a tento součet je výstupem bloku. Residuální spojení jsou podrobněji popsána v~kapitole \ref{neuronovky}.
 
-%------------------------------------------------------
 
 \section{Segmentace nahrávek}
 \label{sec:segmentace}
@@ -746,6 +749,9 @@ Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou přek
     \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím}
 \end{figure}
 
+
+
+
 %------------------
 \section{Výpočet hodnoty loss za pomoci si--snr}
 \todo{popsat implementaci sisnr a vypocet loss za pomoci cross vypoctu, obrazek}
@@ -755,6 +761,7 @@ Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou přek
     \includegraphics[scale=0.25]{obrazky-figures/sisnr_cross_calculation.jpg}
     \caption{\label{fig:implementace_loss_sisnr} Implementace a zjištění správné pozice korespondujících nahrávek pro výpočet hodnoty loss}
 \end{figure}
+
 
 %------------------
 %------------------
@@ -774,6 +781,8 @@ Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění tr�
 \bigskip
 
 Implementace samotného modelu ve frameworku PyTorch nebyla náročná. Vzhledem k~netriviálnímu úkolu jsem musel implementovat některé části, jako třeba segmentace nahrávek, sám. To přineslo mnoho potíží při odstraňování chyb v~samotném modelu. Síť jsem prvně trénoval a ladil na CPU svého notebooku, takže probíhalo velmi pomalu (v~řádu desítek hodin i při nízké velikosti modelu), a některé chyby se objevily až v~průběhu trénování nebo dokonce na jeho konci. Situaci razantně zlepšil přechod na Google Colab, kde jsem síť trénoval na poskytovaných GPU a trénování tak zabralo \todo{"pouze" (opravit uvozovky)} několik hodin, takže se případná chyba objevila dříve, ale i přesto mi lazení sítě zabralo mnoho času. Pro další usnadnění samotné implementace jsem vytvořil několik skriptů, které mi usnadnily spouštění a lazení sítě.
+
+
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
