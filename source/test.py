@@ -6,6 +6,7 @@ from torch.autograd import Variable
 import torchvision.transforms as transforms
 import os
 from datetime import datetime
+import math
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
@@ -228,8 +229,12 @@ if __name__== "__main__":
             # bss_eval_sources calculation taken from https://github.com/sigsep/bsseval
             (sdr, sir, sarn, perm) = bss_eval_sources(ref_sources, estimated_sources, compute_permutation=True)
             # print(sdr, sir, sarn, perm)
+            
+            with open(args.checkpoint_file + ".sdr", "a") as testsdr:
+                testsdr.write("mixtureXYZTODO" + " " + str(np.round(max(sdr), 12)) + "\n")
 
-
+            # print(type(np.round(max(sdr))))
+            
             ###################################################################
             # stoi function taken from https://github.com/mpariente/pystoi
             stoi1 = stoi(ref_sources[0], estimated_sources[0], 8000, extended=False)

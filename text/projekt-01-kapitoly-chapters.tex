@@ -94,6 +94,7 @@ Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba 
 \subsection{SDR -- Source Distortion Ratio}
 \footnote{\url{https://github.com/sigsep/bsseval}}
 SDR je jedna z~nejznámějších metrik pro měření kvality řečového signálu.
+
 \todo{rozepsat}
 
 
@@ -378,16 +379,18 @@ Algoritmus se skládá ze 3 opakujících se kroků. Prvním krokem je forward f
 \cite[p~197]{deeplearning}
 
 
+
 - zpetne sireni chyby
 - adaptacni algoritmus, podil neuronu na chybe,
 - 3 opakujici se faze uceni:
 
 1) feedforward - dopredu
 2) zpetne sireni chyby - Backpropagation
+	- chain rule
 3) uprava vah a biasu na zaklade chyby pomoci gradient descent
-- chain rule
 
 
+\todo{k poslednimu vodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat. toto Podsekce na konci experimentu.}
 
 \subsection*{Gradient descent}
 Gradient descent je iterativní optimalizační algoritmus. Je určený pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu. Hledání lokálního minima probíhá úpravou parametrů modelu v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
@@ -397,7 +400,7 @@ Gradient descent je iterativní optimalizační algoritmus. Je určený pro hled
     \caption{\label{fig:gradientdescent}Ukázka algoritmu gradient descent při hledání minima dané funkce postupným přibližováním dle nastavené velikosti kroku}
 \end{figure}
 
-
+\todo{mozna sem hodit tu rovnici updatu vah}
 \todo{MOZNA popsat vice vliv LR na loss}
 
 
@@ -896,7 +899,7 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr v
 
 
 \subsection{Výsledky referenčního modelu TasNet}
-\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v~tech vecech ktere tu merim a vyhodnocuji ja} 
+\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v~tech vecech ktere tu merim a vyhodnocuji ja. Pozn: dat to na konec experimentu, muj nej a srovnat s tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.} 
 
 
 \subsection{Vliv hyper--parametru X}
@@ -909,9 +912,9 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr v
 \todo{zmensovani a zvetsovani SL, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, obrazky, grafy}
 
 \subsection{Vyhodnocení a porovnání modelů}
-\todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy}
+\todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z pohledu vysledku evaluace.}
 
-
+histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz, atd, v nahrakach je ID, a podle toho to zkusit zmapovat. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.
 
 
 \section{Možná rozšíření a navrhnutá vylepšení}
@@ -920,6 +923,8 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr v
 - hlučné prostředí
 - identifikace konkrétního řečníka
 - realtime separace
+poznamka viz backpropagation.
+
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
