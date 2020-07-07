@@ -9,15 +9,28 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 
-def parseGendre(mixname):
-    if mixname.find("MM") > -1:
-        return "MM"
-    elif mixname.find("MZ") > -1:
+def findInArray(name, array):
+    if name in array:
+        return True
+
+def parseGendre(mixname, men_speech_array, women_speech_array):
+    parsed_name = mixname.split('_')
+    result = ""
+    # print(parsed_name[0])
+    if parsed_name[0] in men_speech_array:
+        result += "M"
+    if parsed_name[2] in men_speech_array:
+        result += "M"
+    if parsed_name[0] in women_speech_array:
+        result += "Z"
+    if parsed_name[2] in women_speech_array:
+        result += "Z"
+    
+    if result == "ZM" or result == "MZ":
         return "MZ"
-    elif mixname.find("ZM") > -1:
-        return "MZ"
-    else:
-        return "ZZ"
+    return result
+    # print("result ", result)
+
 
 if __name__== "__main__":
     parser = argparse.ArgumentParser(description='Choose the type of histogram')
@@ -27,6 +40,16 @@ if __name__== "__main__":
             type=str,
             help='Full path to file with sdr values')
 
+    parser.add_argument('--men-id-path',
+            dest='men_id_path',
+            type=str,
+            help='Full path to file with men speaker ids')
+    
+    parser.add_argument('--women-id-path',
+            dest='women_id_path',
+            type=str,
+            help='Full path to file with women speaker ids')
+    
     parser.add_argument('--round',
             dest='round',
             default=4,
@@ -47,6 +70,14 @@ if __name__== "__main__":
         print("Chyba: Pozadovana cesta k souboru s hodnotami sdr")
         exit(1)
 
+    if not args.men_id_path:
+        print("Chyba: Pozadovana cesta k souboru s men id")
+        exit(1)
+    
+    if not args.women_id_path:
+        print("Chyba: Pozadovana cesta k souboru s women id")
+        exit(1)
+    
     if args.round < 1 or args.round > 20:
         print("Chyba: Parametr round prijima pouze hodnotu v rozmezi 1 - 20")
         exit(2)
@@ -67,6 +98,19 @@ if __name__== "__main__":
             speech_sdr_map.update({line[0]+str(cnt) : sdr})
             # print("Line {}: {}".format(line[0]+str(cnt), line[1]))
     
+    # Load IDs of speakers
+    men_id = []
+    women_id = []
+    with open(args.men_id_path) as fp:
+        for cnt, line in enumerate(fp):
+            line = line.split('\n')
+            men_id.append(line[0])
+
+    with open(args.women_id_path) as fp:
+        for cnt, line in enumerate(fp):
+            line = line.split('\n')
+            women_id.append(line[0])
+
     # Process data - create histogram of sdr values
     modus = 0
     median = 0
@@ -84,20 +128,21 @@ if __name__== "__main__":
             histogram[round_sdr] += 1
 
         # Create histogram of sdr based on genre
-        combination = parseGendre(mixture)
+        combination = parseGendre(mixture, men_id, women_id)
         if combination not in histogram_gendre:
             histogram_gendre.update({combination : []})
         else:
             histogram_gendre[combination].append(round_sdr)
     
-    # Calculate mean... for gendre histogram
+    # Calculate avg for gendre histogram
     gendres = ["MM", "MZ", "ZZ"]
     MM_avg = sum(histogram_gendre["MM"]) / len(histogram_gendre["MM"])
     MZ_avg = sum(histogram_gendre["MZ"]) / len(histogram_gendre["MZ"])
     ZZ_avg = sum(histogram_gendre["ZZ"]) / len(histogram_gendre["ZZ"])
     gendre_sdr = [MM_avg, MZ_avg, ZZ_avg]
 
-    # Print histogram values
+
+    # Prepare and print basic histogram values
     sort_key = 0            # index of array to be used for sorting
     reverse_sort = True    # reverse sort - asc / desc
     sorted_histogram = sorted(histogram.items(), key=lambda x: x[sort_key], reverse=reverse_sort)
@@ -105,23 +150,25 @@ if __name__== "__main__":
     x = [] 
     y = []
     for pair in sorted_histogram:
-        # print(pair[0], " : ", pair[1])
+        print(pair[0], " : ", pair[1])
         x.append(pair[0])
         y.append(pair[1])
         
-    # Draw histogram
+    # Draw basic histogram
+    plt.figure(1)
     plt.title('SDR Histogram')
     plt.xlabel('SDR value')
     plt.ylabel('Number of SDR occurence')
+    plt.subplot(121)
     plt.bar(x, y, width=0.1, color='g')
-    plt.show()
+    # plt.show()
     
+    # Draw gendre histogram
     plt.title('SDR Histogram')
     plt.xlabel('Pohlavi mluvcich na smesi')
     plt.ylabel('Prumerne SDR')
-    plt.bar(gendres, gendre_sdr, width=0.1, color='g')
+    plt.subplot(122)
+    plt.bar(gendres, gendre_sdr, width=0.5, color='g')
     plt.show()
-
-
 
 

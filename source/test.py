@@ -176,6 +176,7 @@ if __name__== "__main__":
             input_mixture  = data[0]
             target_source1 = data[1]
             target_source2 = data[2]
+            mixture_name   = data[3][0]
 
             if use_cuda and torch.cuda.is_available():
                 input_mixture = input_mixture.cuda()
@@ -231,10 +232,8 @@ if __name__== "__main__":
             # print(sdr, sir, sarn, perm)
             
             with open(args.checkpoint_file + ".sdr", "a") as testsdr:
-                testsdr.write("mixtureXYZTODO" + " " + str(np.round(max(sdr), 12)) + "\n")
+                testsdr.write(mixture_name + " " + str(np.round(max(sdr), 12)) + "\n")
 
-            # print(type(np.round(max(sdr))))
-            
             ###################################################################
             # stoi function taken from https://github.com/mpariente/pystoi
             stoi1 = stoi(ref_sources[0], estimated_sources[0], 8000, extended=False)

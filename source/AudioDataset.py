@@ -80,7 +80,8 @@ class AudioDataset(data_utils.Dataset):
         mixture.unsqueeze_(0)
         source1.unsqueeze_(0)
         source2.unsqueeze_(0)
-        return mixture, source1, source2
+        # return mixture, source1, source2
+        return mixture, source1, source2, self.mixtures[index]
 
     def getAudioSamples(self, audio_file_path):
         """
