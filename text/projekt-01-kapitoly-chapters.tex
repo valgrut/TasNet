@@ -172,8 +172,6 @@ Hodnota bias $b$, která je přičtena k~sumě násobků vah a vstupních hodnot
 \end{figure}
 
 
-
-
 Výstup neuronu se vypočítá jako
 \begin{equation}
 	y = f\Big((\sum_{k=1}^n w_kx_k) + b\Big)
@@ -186,16 +184,16 @@ Aktivační, neboli prahová funkce, určuje výstupní hodnotu neuronu. Funkce 
 
 Pokud by veškeré aktivační funkce v~modelu byly lineární, tak celkové mapování sítě by bylo omezeno pouze na lineární mapování vstupu na výstup. Reálné problémy ale lineární obvykle nejsou a v~případě pokusu modelovat takovým modelem nelineární vztahy by vedlo k~velice nepřesným výsledkům, který by byl zapříčiněn podučením (\textit{underfitting}), což znamená, že model, který se učí zakódovat nějaký vzor v~datasetu, je příliš jednoduchý. Proto je potřeba zavést do modelu i nelineární aktivační funkce, které tento problém řeší~\cite[p.~77--78]{mitdeeplearning_small}.
 
-Z~pohledu učení je také důležité, aby aktivační funkce byla diferencovatelná. To umožňuje použití učících metod založených na výpočtu gradientu, jako je algoritmus backpropagation.
+Z~pohledu učení je také důležité, aby aktivační funkce byla diferencovatelná. To umožňuje použití trénovacích metod založených na výpočtu gradientu, jako je algoritmus backpropagation.
 
 
 
 \subsection*{Logická sigmoida}
+Logická sigmoida je nelineární aktivační funkce používaná v hlubokém učení, nejčastějí v dopředných neuronových sítích. Graf funkce má hladký průběh, jak lze vidět na obrázku~\ref{fig:sigmoid}. Je to omezená diferencovatelná funkce, definovaná jako
 \begin{equation}
   f(x) = \frac{1}{1+\exp(-x)}
 \end{equation}
-
-\todo{popsat}
+Používá se na výstupních vrstvách pro predikci výstupu na základě pravděpodobnosti, čehož se využívá při řešení logistických regresních problémů, u binárních klasifikátorů a dalších oblastí neuronových sítí. Podle~\cite{NEAL199271} je nejčastěji používána v sítích s menším počtem vrstev (tzv. shallow networks). Mezi hlavní nevýhody patří ostrý gradient během zpětné propagace, saturace gradientu a pomalá konvergence~\cite{nwankpa2018activation}.
 
 \begin{figure}[H]
     \centering
@@ -206,24 +204,24 @@ Z~pohledu učení je také důležité, aby aktivační funkce byla diferencovat
 
 
 \subsection*{Softmax}
+Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z vektoru reálných čísel. Výstupem je hodnota v rozmezí $0$ a $1$, jak zobrazuje graf~\ref{fig:softmax}. V klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
+
 \begin{equation}
-  f(x) = \frac{1}{1+\exp(-x)}
+  f(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 \end{equation}
 
-\todo{popsat}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/softmax.png}
-    \caption{\label{fig:softmax}Graf aktivační funkce softmax}
+    \caption{\label{fig:softmax}Graf aktivační funkce softmax\todo{lepsi graf udelat}}
 \end{figure}
 
 
 
-
-\subsection*{ReLU}
+\subsection*{Rectified Linear Unit}
 \label{relu}
-Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje-li neuronová síť nějakou nelinearitu, je ReLU pro většinu případů ideální. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$, jak udává rovnice 
+Rectified Linear Unit (ReLU) je nejčastěji používaná aktivační funkce a stojí za nedávnými úspěchy v oblasti neuronových sítí~\cite{NIPS2012_4824}. Vyžaduje-li síť nějakou nelinearitu, je ReLU pro většinu případů ideální. Její použití zrychluje konvergenci trénovacího procesu a vede k lepším výsledkům, než u jednotek používající konvenční sigmoidní aktivační funkce~\cite{40811}. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$, jak udává rovnice 
 \begin{equation}
    f(x)=max(0,x)
 \end{equation}
@@ -237,8 +235,10 @@ Rectified Linear Unit je nejčastěji používaná aktivační funkce. Vyžaduje
 
 
 
-\subsection*{PReLU}
-Parametrizovaná ReLU (PReLU)~\cite{he2015delving} je nelineární aktivační funkce, která se používá v~případě, že chceme produkovat na výstup malý nenulový gradient i v~případě záporné vstupní hodnoty $x$. V~tom případě je vstupní hodnota vynásobena parametrem $\alpha$ a to představuje výsledek. Parametr $\alpha$ se společně s~ostatními váhami učí během učícího procesu.
+\subsection*{Parametric Rectified Linear Unit}
+Parametrizovaná ReLU (PReLU)~\cite{he2015delving} je nelineární aktivační funkce a je to generi4t2j39 varianta funkce ReLU. Používá se v~případě, že chceme produkovat na výstup malý nenulový gradient i v~případě záporné vstupní hodnoty $x$, kdy je vynásobena parametrem $\alpha$. Parametr $\alpha$ reguluje klesání záporné části grafu a adaptivně se učí společně s~ostatními váhami během trénovacího procesu.
+
+Předpis funkce PReLU je definován jako
 \begin{equation}
   f(x) =
   \begin{cases}
@@ -252,6 +252,8 @@ Parametrizovaná ReLU (PReLU)~\cite{he2015delving} je nelineární aktivační f
     \includegraphics[scale=1.4]{obrazky-figures/prelu.jpg}
     \caption{\label{fig:prelu}Graf aktivační funkce PReLU}
 \end{figure}
+
+V případě, že je hodnota parametru $\alpha=0$, pak se jedná o ReLU. Je--li parametr $\alpha = c$, kde $c\in\mathbb{R}$ je malá konstanta (například $c = 0.03$), jedná se o Leaky ReLU (LReLU) a motivací pro její zavedení bylo vyhnout se nulovému gradientu.
 
 
 \section{Konvoluční vrstvy}

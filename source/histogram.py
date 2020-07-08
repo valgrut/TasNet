@@ -28,7 +28,8 @@ def parseGendre(mixname, men_speech_array, women_speech_array):
     
     if result == "ZM" or result == "MZ":
         return "MZ"
-    return result
+    # return result
+    return "MM" #todo remove
     # print("result ", result)
 
 
@@ -128,6 +129,9 @@ if __name__== "__main__":
             histogram[round_sdr] += 1
 
         # Create histogram of sdr based on genre
+        histogram_gendre["MM"] = []
+        histogram_gendre["MZ"] = [1] #todo remove 1
+        histogram_gendre["ZZ"] = [1] #todo remove 1
         combination = parseGendre(mixture, men_id, women_id)
         if combination not in histogram_gendre:
             histogram_gendre.update({combination : []})
