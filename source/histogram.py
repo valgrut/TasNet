@@ -9,28 +9,22 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 
-def findInArray(name, array):
-    if name in array:
-        return True
 
 def parseGendre(mixname, men_speech_array, women_speech_array):
     parsed_name = mixname.split('_')
     result = ""
-    # print(parsed_name[0])
-    if parsed_name[0] in men_speech_array:
+    if parsed_name[0][:3] in men_speech_array:
         result += "M"
-    if parsed_name[2] in men_speech_array:
+    if parsed_name[2][:3] in men_speech_array:
         result += "M"
-    if parsed_name[0] in women_speech_array:
+    if parsed_name[0][:3] in  women_speech_array:
         result += "Z"
-    if parsed_name[2] in women_speech_array:
+    if parsed_name[2][:3] in women_speech_array:
         result += "Z"
     
     if result == "ZM" or result == "MZ":
         return "MZ"
-    # return result
-    return "MM" #todo remove
-    # print("result ", result)
+    return result
 
 
 if __name__== "__main__":
@@ -100,17 +94,17 @@ if __name__== "__main__":
             # print("Line {}: {}".format(line[0]+str(cnt), line[1]))
     
     # Load IDs of speakers
-    men_id = []
-    women_id = []
+    men_prefix = []
+    women_prefix = []
     with open(args.men_id_path) as fp:
         for cnt, line in enumerate(fp):
             line = line.split('\n')
-            men_id.append(line[0])
+            men_prefix.append(line[0])
 
     with open(args.women_id_path) as fp:
         for cnt, line in enumerate(fp):
             line = line.split('\n')
-            women_id.append(line[0])
+            women_prefix.append(line[0])
 
     # Process data - create histogram of sdr values
     modus = 0
@@ -118,6 +112,9 @@ if __name__== "__main__":
     average = 0
     histogram = {}
     histogram_gendre = {}
+    histogram_gendre["MM"] = []
+    histogram_gendre["MZ"] = []
+    histogram_gendre["ZZ"] = []
     for mixture, sdr in speech_sdr_map.items():
         round_sdr = np.round(sdr, args.round)
         # print(mixture, " : ", round_sdr)
@@ -129,15 +126,10 @@ if __name__== "__main__":
             histogram[round_sdr] += 1
 
         # Create histogram of sdr based on genre
-        histogram_gendre["MM"] = []
-        histogram_gendre["MZ"] = [1] #todo remove 1
-        histogram_gendre["ZZ"] = [1] #todo remove 1
-        combination = parseGendre(mixture, men_id, women_id)
-        if combination not in histogram_gendre:
-            histogram_gendre.update({combination : []})
-        else:
-            histogram_gendre[combination].append(round_sdr)
+        combination = parseGendre(mixture, men_prefix, women_prefix)
+        histogram_gendre[combination].append(round_sdr)
     
+
     # Calculate avg for gendre histogram
     gendres = ["MM", "MZ", "ZZ"]
     MM_avg = sum(histogram_gendre["MM"]) / len(histogram_gendre["MM"])
@@ -154,7 +146,7 @@ if __name__== "__main__":
     x = [] 
     y = []
     for pair in sorted_histogram:
-        print(pair[0], " : ", pair[1])
+        # print(pair[0], " : ", pair[1])
         x.append(pair[0])
         y.append(pair[1])
         
