@@ -71,45 +71,46 @@ Metody převáděly směs do časově--frekvenční reprezentace znázorněné n
 
 
 \section{Vyhodnocovací metriky}
-Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba závisí na řešeném problému.
+Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba závisí na řešeném problému. Jejich výpočet probíhá na testovacím datasetu. Nejčastěji používané metriky pro měření kvality separace jsou metriky pro vyhodnocování slepé separace zdrojů (BSS), dále short-time objective intelligibility (STOI) a procentuální vyhodnocení kvality řeči (PESQ). Metriky pro BSS jsou source--to--distortion ratio (SDR), signal--to--inference ratio (SIR) a signal--to--artifacts ratio (SAR).
 
 
-%\subsection{Signal--to--noise ratio}
-%Nejzákladnější metrika pro určení kvality separace je signal--to--noise ratio (SNR), která porovnává zastoupení chtěného signálu a šumu v~pozadí a je definována jako poměr energie originálního (ideálního) signálu a energie rozdílu mezi originálním a rekonstruovaným signálem.
-%
-%
-%\begin{equation}
-%  SNR = \frac{E_s}{E_N}
-%\end{equation}
-%
-%Výsledný poměr často bývá vyjádřen v~decibelech jako
-%
-%\begin{equation}
-%  SNR(dB) = 10log_{10}\frac{E_s}{E_N}
-%\end{equation}
-%
-%kde kladná SNR hodnota udává, že zastoupení signálu je větší, než zastoupení šumu \todo{citovat https://labrosa.ee.columbia.edu/~dpwe/pubs/Ellis04-sepeval.pdf}.
+\subsection{Source to distortion ratio}
+SDR~\cite{vincent-inria-00544230} je jedna z~nejznámějších metrik pro měření kvality separace mluvčích. Hodnota je udávána v decibelech (dB). Na výstupu separačního algoritmu se může nacházet rušení, které lze kategorizovat jako inference a artefakty. 
+
+Inference odkazuje na přetrvávající podíl druhého zdroje na separované nahrávce prvního zdroje. SIR je tedy metrika zachycující schopnost algoritmu odstranit ostatní zdroje a zachovat pouze ten požadovaný.
+
+Během separace může algoritmus do separovaných nahrávek zanést artefakty, které se mohou projevovat jako rušení či zvuky, které na původní nahrávce nebyly. SAR je metrika zachycující schopnost algoritmu separovat nahrávky bez toho, aby do nich zanesl nechtěné artefakty~\cite{venkataramani2018performance}.
+
+Metriky SIR a SAR lze zkombinovat do jediné metriky SDR, která udává celkovou kvalitu separace. 
+
+Hodnota SDR se vypočítá jako 
+\begin{equation}
+  SDR = 10*log_{10}\frac{\|s_{target}\|^2}{\|e_{interf} + e_{noise} + e_{artif}\|^2}
+\end{equation}
+
+\todo{popsat e_infer atd}
+%odsud \url{https://hal.inria.fr/inria-00544230/PDF/vincent_TASLP06bis.pdf}
+
+% neco o si-sdr
+%http://www.jonathanleroux.org/pdf/LeRoux2019ICASSP05sdr.pdf
 
 
-\subsection{SDR -- Source Distortion Ratio}
-\footnote{\url{https://github.com/sigsep/bsseval}}
-SDR je jedna z~nejznámějších metrik pro měření kvality řečového signálu.
+\subsection{Perceptual evaluation of speech qualit}
+Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná metrika pro vyhodnocování kvality řeči. Jeho hodnota se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{DBLP:journals/corr/abs-1901-09146}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Algoritmus PESQ může být použit pro změření end--to--end kvality připojení.
+
+Měření kvality přeneseného řečového signálu lze provádět ve třech módech: \textit{Uplink audio}, \textit{downlink audio} a \textit{both}.
+
+% http://rfmw.em.keysight.com/rfcomms/refdocs/wcdma/wcdma_meas_pesq_desc.html
+% https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4452133/
+
+\todo{dopsat -- ale co}
+
+
+\subsection{Short--time objective intelligibility}
+Short--time objective intelligibility (STOI)~\cite{stoi}.
+
 
 \todo{rozepsat}
-
-
-\subsection{PESQ -- Perceptual evaluation of speech qualit}
-\footnote{\url{https://github.com/ludlows/python-pesq}}
-
-Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná metrika pro vyhodnocování kvality řeči. Jeho hodnota se pohybuje od -0.5 do 4.5 s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{DBLP:journals/corr/abs-1901-09146}.
-
-\todo{rozepsat}
-
-
-\subsection{STOI}
-\footnote{\url{https://github.com/mpariente/pystoi}}
-\todo{rozepsat}
-
 
 
 \bigskip
@@ -633,6 +634,8 @@ Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet~\cite
 
 Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k~náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožňilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24 hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v~závislosti na tom, která z~nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
 
+Pro vyhodnocování výkonu sítě byly použity metriky SDR, PESQ a STOI. Pro výpočet SDR jsem použil zdrojový kód nacházející se na githubu~\footnote{\url{https://github.com/craffel/mir_eval}}. Metriky PESQ~\footnote{\url{https://github.com/ludlows/python-pesq}} a STOI~\footnote{\url{https://github.com/mpariente/pystoi}} byly nainstalovány pomocí balíkového nástroje pip~\footnote{\url{https://pypi.org/project/pip/}}.
+
 \bigskip
 \todo{zamyslet se co tu chci ukazat v~tom algu, pripadne vypustit parsovani, instanciaci atd}
 \begin{algorithm}[H]
@@ -742,7 +745,7 @@ Algoritmus \ref{alg:segmentace_nahravek} a obrázek \ref{fig:generovani_segmentu
 		}
 	}
  }
- \caption{\label{alg:segmentace_nahravek}Algoritmus segmenace nahrávek používá výhody python generátoru, který, narozdíl od běžných funkcí, po vrácení hodnoty příkazem \texttt{yield} neztrácí svůj vnitřní stav a při jeho dalším zavolání pokračuje tam, kde skončil. V~uvedeném příkladě je znázorněna pouze segmentace nahrávky jednoho mluvčího, ale analogicky se segmentují i nahrávky směsi mluvčích a nahrávky druhého mluvčího}
+ \caption{\label{alg:segmentace_nahravek}Algoritmus segmenace nahrávek používá výhody Python generátoru, který, narozdíl od běžných funkcí, po vrácení hodnoty příkazem \texttt{yield} neztrácí svůj vnitřní stav a při jeho dalším zavolání pokračuje tam, kde skončil. V~uvedeném příkladě je znázorněna pouze segmentace nahrávky jednoho mluvčího, ale analogicky se segmentují i nahrávky směsi mluvčích a nahrávky druhého mluvčího}
 \end{algorithm}
 
 
@@ -778,9 +781,8 @@ Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou přek
 %	vzorecek pro si--sdr loss
 
 
-
 \section{Pomocné skripty}
-Během implementace se vyskytla potřeba zjednodušit si některé repetetivní úkony a jelikož upřednostňuji práci z~terminálu, tak jsem si pro ně naprogramoval několik skriptů za použití jazyků python3 a bash. 
+Během implementace se vyskytla potřeba zjednodušit si některé repetetivní úkony a jelikož upřednostňuji práci z~terminálu, tak jsem si pro ně naprogramoval několik skriptů za použití jazyků Python3 a Bash. 
 
 Skript \textbf{\textit{gupload.sh}} pro odesílání zdrojových souborů na \textit{Google Drive}\footnote{\url{https://www.google.com/drive/}}, ze kterého \textit{Google Colab}\footnote{\url{https://colab.research.google.com/notebooks/intro.ipynb}} načítá data a kód, který lze následně po částech spouštět z~grafického rozhraní. K~interakci s~Google Drive jsem použil nástroj \textit{rclone}\footnote{\url{https://rclone.org/}}, který nabízí mnoho operací pro vzdálenou práci s~Google Drive z~terminálu. S~pomocí \textit{rclone} lze stahovat či nahrávat data, vzdáleně měnit adresářovou strukturu, mazat, vytvářet a upravovat soubory a podobně. 
 
@@ -935,7 +937,7 @@ poznamka viz backpropagation.
 \label{zaver}
 \todo{co jak dopadlo, vysledky a vyhodnoceni velikosti modelu a jaky byl nejlepsi}
 
-Cílem práce bylo implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně a porovnat vliv velikosti sítě na kvalitu separace. Síť byla implementována za pomoci frameworku PyTorch a jazyku python a natrénována na datasetu obsahujícím jednokanálové směsi dvou mluvčích. Trénování proběhlo na \todo{X} modelech, které se od sebe lišily počtem opakujících se konvolučních bloků, velikostí časové dilatace a délkou vstupních segmentů směsí. Pro účel vyhodnocení modelů byla použita metrika si-snr, která udává poměr chtěného signálu ku šumu na pozadí, tedy obecně kvalitu separace. 
+Cílem práce bylo implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně a porovnat vliv velikosti sítě na kvalitu separace. Síť byla implementována za pomoci frameworku PyTorch a jazyku Python a natrénována na datasetu obsahujícím jednokanálové směsi dvou mluvčích. Trénování proběhlo na \todo{X} modelech, které se od sebe lišily počtem opakujících se konvolučních bloků, velikostí časové dilatace a délkou vstupních segmentů směsí. Pro účel vyhodnocení modelů byla použita metrika si-snr, která udává poměr chtěného signálu ku šumu na pozadí, tedy obecně kvalitu separace. 
 
 Experimenty ukázaly, že během testování nejlépe dopadla síť, která měla 8 konvolučních bloků po 4 opakováních, s~délkou vstupního segmentu $L=2$ sekundy. Tento model dosáhl po 100 epochách trénování hodnoty až \todo{13,4} a tím se stal nejúspěšnějším modelem. Při fyzickém poslechu separovaných nahrávek bychom neslyšeli téměř žádný náznak druhého mluvčího. Oproti tomu, nejméně přesný model měl pouze 4 konvoluční bloky, 2 opakování a při délce segmentů $L=4$ sekundy dosahoval hodnoty SDR pouze \todo{9.2}.
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
-Tento zdrojovy soubor byl prevzat pro vypocet si-sdr z https://github.com/sigsep/bsseval
+Tento zdrojovy soubor byl prevzat pro vypocet si-sdr z webu 
+https://github.com/craffel/mir_eval
 '''
 
 '''

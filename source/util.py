@@ -1,6 +1,6 @@
 '''
 Tento soubor je soucasti prevzateho zdrojoveho kodu pro vypocet si-sdr: snr.py
-https://github.com/sigsep/bsseval
+https://github.com/craffel/mir_eval
 '''
 
 '''

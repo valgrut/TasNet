@@ -10,6 +10,7 @@ pip3 install https://github.com/ludlows/python-pesq/archive/master.zip
 
 si-sdr
 https://github.com/sigsep/bsseval
+pip install bsseval
 
 
 PyTorch
