@@ -8,10 +8,11 @@ Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~por
 Text je rozdělen na několik kapitol, které postupně pokrývají různé logické celky. V~kapitole \ref{separace} je popsán problém separace mluvčích a dosavadní přistupy k~jeho řešení. Kapitola \ref{neuronovky} se zabývá základními vlastnostmi a principi neuronových sítí. Kapitola \ref{tasnet} je věnována architektuře TasNet, kterou se moje práce zabývá. Dále kapitola \ref{implementace} popisuje implementaci sítě a pomocných nástrojů a nakonec v~kapitole \ref{experimenty} jsou experimenty a vyhodnocování přesnosti sítě.
 
 
+
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Separace mluvčích}
 \label{separace}
-Živočichové mají vrozenou schopnost zaměřit se na jeden konkrétní zvuk, zatímco všechny ostatní dokážou potlačit. Naučit ale této dovednosti počítač se ukázalo jako obtížný úkol, který je překážkou ASR (\textit{automatic speech recognition}) systémům v~rozsáhlejším nasazení do běžného života. Tento problém se nazývá koktejl párty. Vyřešení tohoto problému, tedy separování zdrojů, umožňuje širokou aplikaci v~oblasti zpracování řeči, jako  přepis konverzací na text, ovládání počítače hlasem, používání hlasových asistentů či identifikace konkrétního mluvčího v~prostředí s~mnoha současně mluvícími lidmi.
+Živočichové mají vrozenou schopnost zaměřit se na jeden konkrétní zvuk, zatímco všechny ostatní dokážou potlačit (efekt selektivní pozornosti)~\cite{GETZMANN20171}. Naučit ale této dovednosti počítač se ukázalo jako obtížný úkol, který je překážkou automatic speech recognition (ASR) systémům v~rozsáhlejším nasazení do běžného života. Tento problém se nazývá separace mluvčích. Vyřešení tohoto problému, tedy separování zdrojů, umožňuje širokou aplikaci v~oblasti zpracování řeči, jako přepis konverzací na text, ovládání počítače hlasem, používání hlasových asistentů či identifikace konkrétního mluvčího v~prostředí s~mnoha současně mluvícími lidmi.\todo{cite?}
 
 \section{Koktejl párty efekt}
 Tento problém se nejlépe dá popsat jako schopnost soustředit se na jeden konkrétní zdroj zvuku z~mnoha souběžných zdrojů jako hudba, konkrétní hudební nástroj, řeč dalších lidí či okolní zvuky, a přepínat mezi nimi dynamicky pozornost. 
@@ -20,19 +21,18 @@ Tento problém se nejlépe dá popsat jako schopnost soustředit se na jeden kon
 
 
 \section{Metody pro separaci jednokanálových nahrávek}
-Pro separaci zdrojových signálů z~nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z~nichž asi nejznámější jsou computational auditory scene analysis (\textit{CASA})\todo{ref?} a non-negative matrix factorization (\textit{NMF}) \todo{ref?}, používané pro separaci jednokanálových nahrávek. V~posledních letech se do popředí dostaly přistupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody \textit{beamforming} nebo state--of--the--art \textit{Multi-channel blind source separation}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v~článku~\cite{speechseparation}.
+Pro separaci zdrojových signálů z~nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z~nichž asi nejznámější jsou computational auditory scene analysis (CASA)~\cite{choi2005blind} a non--negative matrix factorization (NMF)~\cite{NIPS2000_1861},~\cite{yoshii2013beyond}, používané pro separaci jednokanálových nahrávek. V~posledních letech se do popředí dostaly přistupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody beamforming~\cite{adel2012beamforming} nebo state--of--the--art multi-channel blind source separation~\cite{Negro_2016}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v~článku~\cite{speechseparation}.
 
 
-\subsection{CASA -- computational auditory scene analysis}
-Metoda CASA je založena na procesu v~lidském mozku, který separuje zdroje ze směsi mluvčích a simuluje vysokoúrovňové chování lidského sluchu. Pro separaci jsou většinou manuálně navrhnuta segmentační pravidla pro operování nad nízkoúrovňovými příznaky k~odhadu časově frekvenční (\textit{T--F}) masky, která izoluje komponenty signálu jednotlivých mluvčích a následně je použita pro rekonstrukci všech zdrojů.
-\todo{Hodit sem teda ty zdroje jako v~3.1 pro ASA, CASA a pod? jak jsou tam asi 3 po sobe?}
+\subsection{Computational auditory scene analysis}
+Metoda computational auditory scene analysis (CASA) je založena na procesu v~lidském mozku, který separuje zdroje ze směsi mluvčích a simuluje vysokoúrovňové chování lidského sluchu. Pro separaci jsou většinou manuálně navrhnuta segmentační pravidla pro operování nad nízkoúrovňovými příznaky k~odhadu časově frekvenční (T--F) masky, která izoluje komponenty signálu jednotlivých mluvčích a následně je použita pro rekonstrukci všech zdrojů.
 
 Přestože tato metoda byla i nadále rozvíjena, tak má mnoho nevýhod jako špatnou generalizaci v~důsledku manuálního vytváření pravidel, nemožnost automatického učení z~dat nebo nemožnost použití na separaci jiných zdrojů než je lidská řeč, které značně omezují její použití v~mnoha reálných případech.
 
 
 
-\subsection{NMF -- non-negative matrix factorization}
-Nezáporná maticová faktorizace (\textit{NMF}) \todo{[(Lee and Seung, 2001)]} patří mezi daty řízené metody a je založena na předpokladu, že struktura spektrogramu může být reprezentována malým počtem bází.
+\subsection{Non--negative matrix factorization}
+Non-negative matrix factorization (NMF) patří mezi daty řízené metody a je založena na předpokladu, že struktura spektrogramu může být reprezentována malým počtem bází.
 
 Pro NMF platí
 
@@ -99,12 +99,13 @@ Hodnota SDR se vypočítá jako
 
 
 \subsection{Perceptual evaluation of speech qualit}
-Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná objektivní metoda pro vyhodnocování kvality řeči na end--to--end síti. PESQ byla vyvinuta pro předpověď subjektivního skóre \textit{mean opinion score} (MOS), kde posluchač hodnotil kvalitu připojení (řeči) jednou z pěti možností (bad, poor, fair, good, excellent). Těmto možnostem odpovídaly číselné hodnoty \todo{1--5 udelat spravne pomlcku}, které pak byly zprůměrovány, což nakonec byla finální hodnota MOS.
+Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná objektivní metoda pro vyhodnocování kvality řeči na end--to--end síti. PESQ byla vyvinuta pro předpověď subjektivního skóre \textit{mean opinion score} (MOS), kde posluchač hodnotil kvalitu připojení (řeči) jednou z pěti možností ("bad", "poor", "fair", "good", "excellent"). Těmto možnostem odpovídaly číselné hodnoty $1$ až $5$, které pak byly zprůměrovány, což nakonec byla finální hodnota MOS.
 
-Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{DBLP:journals/corr/abs-1901-09146}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Lze ho ale aplikovat i pro vyhodnocení separace mluvčích, kde referenční nahrávka je porovnána s nahrávkou, která byla vyprodukována neuronovou sítí.
+Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{sdr-pesq-optimization}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Lze ho ale aplikovat i pro vyhodnocení separace mluvčích, kde referenční nahrávka je porovnána s nahrávkou, která byla vyprodukována neuronovou sítí.
 %http://wireless.feld.cvut.cz/mesaqin2002/full09.pdf
 
 \todo{popsat vic nebo ne.. treba to ze je tam nejake alignment, input filter, FFT viz odkaz}
+\todo{fix uvozovky ASI}
 % http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.5.9136&rep=rep1&type=pdf
 %nebo 
 % https://arxiv.org/abs/1901.09146
@@ -126,9 +127,7 @@ Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pom
 % https://ieeexplore.ieee.org/document/5495701
 % https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4452133/
 
-\bigskip
 
-Bylo navrženo mnoho konvenčních přístupů a metod pro řešení problému koktejl párty a s~ním spojené separace mluvčích, ale většina z~nich nedosahuje dostatečné přesnosti nebo výkonu k~použití v~reálných situacích. Přístupy založené na hlubokém učení a neuronových sítích předčily dosavadní techniky jak v~přesnosti, tak ve výkonu, což umožňuje jejich nasazení v~běžném životě.
 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -196,7 +195,7 @@ kde $f$ je aktivační funkce, $x_k \in \mathbb{R}$ je vstupní hodnota, $w_k \i
 \section{Aktivační funkce}
 Aktivační, neboli prahová funkce, určuje výstupní hodnotu neuronu. Funkce se vybírá na základě problému, který se má neuronová síť naučit řešit. Správná volba aktivační funkce vede k~lepší konvergenci učení sítě. Naopak špatná volba může vést ke stále větší odchylce od správného řešení -- může divergovat. Povaha problému může vyžadovat specifické vlastnosti aktivační funkce -- lineární nebo nelineární. Pro nestandardní problémy je obvykle potřeba experimentálně zjistit, která funkce bude nejlépe vyhovovat danému problému. 
 
-Pokud by veškeré aktivační funkce v~modelu byly lineární, tak celkové mapování sítě by bylo omezeno pouze na lineární mapování vstupu na výstup. Reálné problémy ale lineární obvykle nejsou a v~případě pokusu modelovat takovým modelem nelineární vztahy by vedlo k~velice nepřesným výsledkům, který by byl zapříčiněn podučením (\textit{underfitting}), což znamená, že model, který se učí zakódovat nějaký vzor v~datasetu, je příliš jednoduchý. Proto je potřeba zavést do modelu i nelineární aktivační funkce, které tento problém řeší~\cite[p.~77--78]{mitdeeplearning_small}.
+Pokud by veškeré aktivační funkce v~modelu byly lineární, tak celkové mapování sítě by bylo omezeno pouze na lineární mapování vstupu na výstup. Reálné problémy ale lineární obvykle nejsou a v~případě pokusu modelovat takovým modelem nelineární vztahy by vedlo k~velice nepřesným výsledkům, který by byl zapříčiněn podučením (\textit{underfitting}), což znamená, že model, který se učí zakódovat nějaký vzor v~datasetu, je příliš jednoduchý. Proto je potřeba zavést do modelu i nelineární aktivační funkce, které tento problém řeší~\cite{mitdeeplearning_small}.
 
 Z~pohledu učení je také důležité, aby aktivační funkce byla diferencovatelná. To umožňuje použití trénovacích metod založených na výpočtu gradientu, jako je algoritmus backpropagation.
 
@@ -218,7 +217,7 @@ Používá se na výstupních vrstvách pro predikci výstupu na základě pravd
 
 
 \subsection*{Softmax}
-Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z vektoru reálných čísel. Výstupem je hodnota v rozmezí $0$ a $1$, jak zobrazuje graf~\ref{fig:softmax}. V klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
+Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z vektoru reálných čísel. Výstupem je hodnota v rozmezí $0$ až $1$, jak zobrazuje graf~\ref{fig:softmax}. V klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
 
 \begin{equation}
   f(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
@@ -354,8 +353,8 @@ V~rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dosta
 Nejčastěji se pro regresní problémy používají objektivní funkce \textit{Mean Squared Error Loss} a \textit{Mean Absolute Error Loss}.
 
 
-\subsection*{MSELoss (Mean Squared Error Loss)}
-MSELoss je nejčastěji používaná objektivní funkce při řešení regresních problémů. Vypočítá se jako
+\subsection*{Mean squared error loss}
+Mean squared error loss (MSE) je nejčastěji používaná objektivní funkce při řešení regresních problémů. Vypočítá se jako
 \begin{equation}
   MSE = \frac{1}{N}\sum_{i=1}^N(y_i - \hat{y_i})^2
 \end{equation}
@@ -368,8 +367,8 @@ kde $N$ je počet trénovacích dat v~datasetu, $y_i$ je předpovězená hodnota
 \end{figure}
 
 
-\subsection*{MAELoss (Mean Absolute Error Loss)}
-MAE je velmi podobná objektivní funkce jako MSE, ale s~téměř opačnými vlastnosti. Stejně jako MSE, ani tato funkce nenabývá negativní hodnoty, ale narozdíl od MSE, která má tuto vlastnost díky druhé mocnině rozdílu, MAE toho dosahuje tak, že rozdíl předpovídané hodnoty $y_j$ a odhadnuté hodnoty $\hat{y_j}$ je uzavřen v~absolutní hodnotě. Vypočítá se jako
+\subsection*{Mean absolute error loss}
+Mean absolute error loss (MAE) je velmi podobná objektivní funkce jako MSE, ale s~téměř opačnými vlastnosti. Stejně jako MSE, ani tato funkce nenabývá negativní hodnoty, ale narozdíl od MSE, která má tuto vlastnost díky druhé mocnině rozdílu, MAE toho dosahuje tak, že rozdíl předpovídané hodnoty $y_j$ a odhadnuté hodnoty $\hat{y_j}$ je uzavřen v~absolutní hodnotě. Vypočítá se jako
 \begin{equation}
   MAE = \frac{1}{N}\sum_{j=1}^N|y_j - \hat{y_j}|
 \end{equation}
@@ -382,42 +381,28 @@ Výhodnou MAE je její lineární průběh, takže se větší chyby projeví ú
     \caption{\label{fig:maeloss}Graf objektivní funkce MAE Loss (červeně)}
 \end{figure}
 
-\todo{Hinge loss mozna}
 
 
-\subsection{Backpropagation}
-Backpropagation (backprop) je algoritmus typu učení s~učitelem pro učení neuronových sítí. Algoritmus zpětně prochází neuronovou síťí a na základě hodnoty cost funkce $J(\theta)$ počítá její gradient metodou \textit{gradient descent}. Cílem je upravit všechny váhy v~síti na základě toho, jak moc každá váha přispívá k~celkové chybě. Algoritmus backpropagation počítá řetězové pravidlo (\textit{chain rule}).
+\subsection{Algoritmus zpětné propagace}
+Algoritmus zpětné propagace (backpropagation algorithm) je adaptační algoritmus pro učení neuronových sítí metodou učení s~učitelem. Algoritmus pozpátku prochází neuronovou síťí a na základě skalární hodnoty loss, která je výstupem objektivní funkce $J(\theta)$, počítá její gradient s ohledem ke všem váhám v~síti na základě toho, jak moc každá váha přispívá k~celkové chybě. Cílem je minimalizovat hodnotu loss. Algoritmus je nejčastěji používán během trénování neuronových sítí, ale obecně ho lze použít pro výpočet jakékoli derivace~\cite{mitdeeplearning_small},~\cite{mitdeeplearning}.
 
-Algoritmus se skládá ze 3 opakujících se kroků. Prvním krokem je forward fáze, ve které se počítá pro každou dvojici vstupu a referenčního výstupu 
-
-
-\cite{web-brilliant}
-\cite[p~197]{deeplearning}
+Proces začíná na výstupní vrstvě sítě. Algoritmus zde pro každý neuron spočítá chybový gradient $\delta$ reprezentující citlivost chyby sítě na změnu váhovaného součtu daného neuronu. Tyto gradienty jsou iterativně zpětně propagovány do předchozích vrstev, na základě nichž jsou počítány gradienty neuronů v předchozích vrstvách, až po vrstvu vstupní. Pro úpravu vah na základě vypočítaných chybových gradientů se obvykle používá algoritmus gradient descent~\cite{mitdeeplearning_small}.
 
 
+%\cite{web-brilliant}
+%https://ml-cheatsheet.readthedocs.io/en/latest/backpropagation.html
 
-- zpetne sireni chyby
-- adaptacni algoritmus, podil neuronu na chybe,
-- 3 opakujici se faze uceni:
-
-1) feedforward - dopredu
-2) zpetne sireni chyby - Backpropagation
-	- chain rule
-3) uprava vah a biasu na zaklade chyby pomoci gradient descent
-
-
-\todo{k poslednimu vodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat. toto Podsekce na konci experimentu.}
 
 \subsection*{Gradient descent}
-Gradient descent je iterativní optimalizační algoritmus. Je určený pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu. Hledání lokálního minima probíhá úpravou parametrů modelu v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
+Gradient descent je iterativní optimalizační algoritmus, definující pravidla pro samotnou úpravu vah v síti. Je určený pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu. Hledání lokálního minima probíhá úpravou parametrů modelu v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{obrazky-figures/gradientdescent.png}
     \caption{\label{fig:gradientdescent}Ukázka algoritmu gradient descent při hledání minima dané funkce postupným přibližováním dle nastavené velikosti kroku}
 \end{figure}
 
-\todo{mozna sem hodit tu rovnici updatu vah}
-\todo{MOZNA popsat vice vliv LR na loss}
+\todo{MOZNA sem hodit tu rovnici updatu vah}
+%https://ml-cheatsheet.readthedocs.io/en/latest/backpropagation.html
 
 
 \subsection{Underfitting a generalizace}
@@ -449,7 +434,7 @@ Velmi hluboké neuronové sítě přinesly v~mnoha aplikacích velmi dobré výs
 \end{figure}
 
 \todo{prepsat F na to specialni}
-Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z~předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s~výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost~\cite{he2015deep}\cite{zaeemzadeh2018normpreservation}.
+Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z~předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s~výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost~\cite{he2015deep},~\cite{zaeemzadeh2018normpreservation}.
 
 
 
@@ -480,7 +465,7 @@ Přestože metody pro zpracování řeči v~takovém akustickém prostředí, ve
 
 Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)~\cite{speechseparationoverview}. Tento převod ale měl pro využití v~reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
 
-Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~temporal convolutional network (TCN)~\todo{citace}, která je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
+Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~temporal convolutional network (TCN)~\cite{lea2016temporal},~\cite{bai2018empirical}. TCN je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
 
 \begin{figure}[H]
     \centering
@@ -493,6 +478,8 @@ Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odh
   x(t) = \sum_{i=1}^C s_i(t)
 \end{equation}
 Cílem je odhadnout $s_i(t), i = 1, \dots, C$ ze signálu směsi $x(t)$.
+
+\todo{info: je to zde protoze dale text pracuje s nekterymi promennymi, takze zde jsou aspon uvedeny}
 
 \todo{sem mozna tabulka hyperparametrů a jejich pojmenovani X, R, N, L, P, ...}
 
@@ -599,7 +586,7 @@ V~každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv násled
 
 \todo{Kam uvozovky, kam bold, kam italic ZEPTAT SE}
 \section{Normalizace}
-Při trénování neuronových sítí může docházet k~fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch}\cite{ba2016layer}.
+Při trénování neuronových sítí může docházet k~fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch},~\cite{ba2016layer}.
 
 Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s~channel--wise layer normalization (cLN)~\todo{cite}, global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}.
 
@@ -907,9 +894,15 @@ Bylo natrénováno několik, různě velkých modelů, které se lišily velikos
 %------------------------------------------------------------------------------
 
 \section{Experimenty s~modely}
+\todo{grafy v experimentech -- trenovani a loss 1 mozna 1 az 2 grafy}
+\todo{kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r, jakoze v podkapitole Vliv X budou grafy takove, ze pro kazdou metriku bude graf jeden, kde se meni X a je tam videt jak se jednotlive hodnoty metriky lisi pro ruzna X}
 \todo{rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
 experimenty:
 sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat.}
+\todo{zahrnout do podkapitol, nebo udelat samostatnou podkapitolu o SDR a pohlavi}
+\todo{jedna podkapitola o rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr mensi loss}
+\todo{z TasNet shrnout jejich vysledky jako jedna z poslednich podkapitol}
+
 
 \todo{miniÚvod}
 Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ \todo{mozna ref}.  
@@ -927,6 +920,7 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr v
 
 \subsection{Vliv hyper--parametru délka--segmentu}
 \todo{zmensovani a zvetsovani SL, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, obrazky, grafy}
+\todo{toto bude pouze pro posledni sit s velikosti X 8 R 4, kterou mam natrenovanou dvakrat, s ruznymi seg len}
 
 \subsection{Vyhodnocení a porovnání modelů}
 \todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z pohledu vysledku evaluace.}
@@ -935,6 +929,8 @@ histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vys
 
 
 \section{Možná rozšíření a navrhnutá vylepšení}
+\todo{k poslednimu bodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat. toto Podsekce na konci experimentu.}
+
 - variabilnější dataset, mikrofony, šum a bordel prostředí
 - separace více mluvčích
 - hlučné prostředí
