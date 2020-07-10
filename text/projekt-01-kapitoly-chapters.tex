@@ -88,30 +88,43 @@ Hodnota SDR se vypočítá jako
   SDR = 10*log_{10}\frac{\|s_{target}\|^2}{\|e_{interf} + e_{noise} + e_{artif}\|^2}
 \end{equation}
 
-\todo{popsat e_infer atd}
+\todo{popsat einfer atd nevim jestli ANO nebo NE}
 %odsud \url{https://hal.inria.fr/inria-00544230/PDF/vincent_TASLP06bis.pdf}
+%nebo 
+% https://arxiv.org/abs/1901.09146
+%  \cite{sdr-pesq-optimization}
 
 % neco o si-sdr
 %http://www.jonathanleroux.org/pdf/LeRoux2019ICASSP05sdr.pdf
 
 
 \subsection{Perceptual evaluation of speech qualit}
-Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná metrika pro vyhodnocování kvality řeči. Jeho hodnota se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{DBLP:journals/corr/abs-1901-09146}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Algoritmus PESQ může být použit pro změření end--to--end kvality připojení.
+Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná objektivní metoda pro vyhodnocování kvality řeči na end--to--end síti. PESQ byla vyvinuta pro předpověď subjektivního skóre \textit{mean opinion score} (MOS), kde posluchač hodnotil kvalitu připojení (řeči) jednou z pěti možností (bad, poor, fair, good, excellent). Těmto možnostem odpovídaly číselné hodnoty \todo{1--5 udelat spravne pomlcku}, které pak byly zprůměrovány, což nakonec byla finální hodnota MOS.
 
-Měření kvality přeneseného řečového signálu lze provádět ve třech módech: \textit{Uplink audio}, \textit{downlink audio} a \textit{both}.
+Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{DBLP:journals/corr/abs-1901-09146}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Lze ho ale aplikovat i pro vyhodnocení separace mluvčích, kde referenční nahrávka je porovnána s nahrávkou, která byla vyprodukována neuronovou sítí.
+%http://wireless.feld.cvut.cz/mesaqin2002/full09.pdf
+
+\todo{popsat vic nebo ne.. treba to ze je tam nejake alignment, input filter, FFT viz odkaz}
+% http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.5.9136&rep=rep1&type=pdf
+%nebo 
+% https://arxiv.org/abs/1901.09146
+%  \cite{sdr-pesq-optimization}
+%dobrej search: https://www.google.com/search?client=firefox-b-d&q=how+pesq+is+calculated
 
 % http://rfmw.em.keysight.com/rfcomms/refdocs/wcdma/wcdma_meas_pesq_desc.html
 % https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4452133/
 
-\todo{dopsat -- ale co}
 
 
 \subsection{Short--time objective intelligibility}
-Short--time objective intelligibility (STOI)~\cite{stoi}.
+Short--time objective intelligibility (STOI)~\cite{taal-stoi} je metrika založená na hodnotě korelačního koeficientu mezi časově--frekvenčním spektrem referenčního a odhadnutého signálu řeči v krátkých překrývajících se segmentech~\cite{5713237}. Spektrum čisté a separované nahrávky je získáno pomocí short--time fourier transform (STFT).
 
+Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pomocí STFT, následně segmentovány na krátké úseky s $50\%$ překrytím, normalizovány, klipnuty a nakonec porovnány průměry hodnot korelačních koeficientů~\cite{taal-stoi}. Hodnota STOI se pohybuje v rozmezí $0$ a $1$, korespondující s procentuální úspěšností.
 
-\todo{rozepsat}
-
+% Kniha: https://books.google.cz/books?id=ib9ODwAAQBAJ&pg=PA215&lpg=PA215&dq=what+gives+value+of+stoi+in+good+speech&source=bl&ots=14SyU3Hc95&sig=ACfU3U3kMNnhD5fqdunpK2VJ3QRPNHrWTA&hl=en&sa=X&ved=2ahUKEwiQ2ML5gsPqAhUrRBUIHQfOB2wQ6AEwA3oECAgQAQ#v=onepage&q=what%20gives%20value%20of%20stoi%20in%20good%20speech&f=false
+% http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.696.995&rep=rep1&type=pdf
+% https://ieeexplore.ieee.org/document/5495701
+% https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4452133/
 
 \bigskip
 

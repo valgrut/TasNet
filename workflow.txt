@@ -1,0 +1,11 @@
+- write
+- sendToMerlin
+-   login to merlin.sh
+-   build the text (./prep)
+-   if FAIL
+-       fix text
+-       goto 2
+- getFromMerlin.sh
+- git add .
+- git commit -m "comment"
+- git push
