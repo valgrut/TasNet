@@ -181,16 +181,17 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         - ozdrojovane nejake obrazky kterymi jsem se inspiroval
         - Obj funkce, mseloss, cross entrophy
 
-### 3. 7. 2020
+### 3. 7. 2020 - face to face konzultace
     - Prokonzultovat SDR, STOI, PESQ vysledky testovani
         - impl PESQ vypocet - min, nebo aktualni max?
     - natrenovane modely info
-    - Text - je to jinak OK?
     - zkratky a anglicke nazvy metod... kdy bold, kdy italic 
-    - ukazat komentar prevzateho kodu - jestli to staci.
-    -- tucnym setrit, jen kdyz neco hodne zvyraznit, ale moc nepouzivat.
-    -- v rovnicich vektory a matice jsou tucne.
-    -- kurziva taky zridka. proste podle citu
-    -- bottleneck dat do TasNet, pokud to tam vubec dam nakonec
-    -- do nazvu podkapitol nedavat zkratku, jen ten angl nazev - relu ...
-    -- feedforward -> dopredna
+    - tucnym setrit, jen kdyz neco hodne zvyraznit, ale moc nepouzivat.
+    - kurziva taky zridka. proste podle citu
+    - TODO:
+    - [] ukazat komentar prevzateho kodu - jestli to staci.
+    - [DONE] do nazvu podkapitol nedavat zkratku, jen ten angl nazev - relu ...
+    - [] feedforward -> dopredna
+    - []bottleneck dat do TasNet, pokud to tam vubec dam nakonec
+    - [] v rovnicich vektory a matice jsou tucne.
+

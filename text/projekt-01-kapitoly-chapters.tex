@@ -12,7 +12,8 @@ Text je rozdělen na několik kapitol, které postupně pokrývají různé logi
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Separace mluvčích}
 \label{separace}
-Živočichové mají vrozenou schopnost zaměřit se na jeden konkrétní zvuk, zatímco všechny ostatní dokážou potlačit (efekt selektivní pozornosti)~\cite{GETZMANN20171}. Naučit ale této dovednosti počítač se ukázalo jako obtížný úkol, který je překážkou automatic speech recognition (ASR) systémům v~rozsáhlejším nasazení do běžného života. Tento problém se nazývá separace mluvčích. Vyřešení tohoto problému, tedy separování zdrojů, umožňuje širokou aplikaci v~oblasti zpracování řeči, jako přepis konverzací na text, ovládání počítače hlasem, používání hlasových asistentů či identifikace konkrétního mluvčího v~prostředí s~mnoha současně mluvícími lidmi.\todo{cite?}
+Živočichové mají vrozenou schopnost zaměřit se na jeden konkrétní zvuk, zatímco všechny ostatní dokážou potlačit (efekt selektivní pozornosti)~\cite{GETZMANN20171}. Naučit ale této dovednosti počítač se ukázalo jako obtížný úkol, který je překážkou automatic speech recognition (ASR) systémům v~rozsáhlejším nasazení do běžného života. Tento problém se nazývá separace mluvčích. Vyřešení tohoto problému, tedy separování zdrojů, umožňuje širokou aplikaci v~oblasti zpracování řeči, jako přepis konverzací na text, ovládání počítače hlasem, používání hlasových asistentů či identifikace konkrétního mluvčího v~prostředí s~mnoha současně mluvícími lidmi.
+
 
 \section{Koktejl párty efekt}
 Tento problém se nejlépe dá popsat jako schopnost soustředit se na jeden konkrétní zdroj zvuku z~mnoha souběžných zdrojů jako hudba, konkrétní hudební nástroj, řeč dalších lidí či okolní zvuky, a přepínat mezi nimi dynamicky pozornost. 
@@ -58,13 +59,13 @@ Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použ
 
 \subsection{Hluboké neuronové sítě}
 Nejlépe si při řešení problému koktejl párty vedou postupy založené na hlubokém učení a neuronových sítích.
-Metody převáděly směs do časově--frekvenční reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí STFT (\textit{short time fourier transformation}).
+Metody převáděly směs do časově--frekvenční reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short time fourier transform (STFT).
 
 \todo{rozepsat}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{obrazky-figures/spektrum.png}
+    \includegraphics[scale=0.8]{obrazky-figures/spektrum.png}
     \caption{\label{fig:spektrum}Časově--frekvenční reprezentace řeči, neboli spektrum}
 \end{figure}
 
@@ -449,8 +450,8 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 
 
 
-\bigskip
-V~této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V~návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back--propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
+%\bigskip
+%V~této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V~návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back--propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
 
 
 
@@ -621,7 +622,8 @@ Jak vypadá kompletní schéma architektury po sestavení a propojení jednotliv
 \end{figure}
 
 
-V~této kapitole byla popsána navržená architektura Conv--TasNet pro separaci navzájem se překrývajících mluvčích v~časové doméně, skládající se z~konvolučního auto--enkodéru, který převádí vstupní směs mluvčích na nezápornou reprezentaci, ze které je následně v~separačním modulu složeném z~konvolučních bloků se zvyšující se časovou dilatací odhadnuty multiplikativní funkce (tzv. masky) pro každý ze zdrojů. Ty jsou nakonec aplikovány na reprezentaci a výsledek lineárním dekodérem převeden zpět na hlasovou, nyní již separovanou nahrávku.
+%\bigskip
+%V~této kapitole byla popsána navržená architektura Conv--TasNet pro separaci navzájem se překrývajících mluvčích v~časové doméně, skládající se z~konvolučního auto--enkodéru, který převádí vstupní směs mluvčích na nezápornou reprezentaci, ze které je následně v~separačním modulu složeném z~konvolučních bloků se zvyšující se časovou dilatací odhadnuty multiplikativní funkce (tzv. masky) pro každý ze zdrojů. Ty jsou nakonec aplikovány na reprezentaci a výsledek lineárním dekodérem převeden zpět na hlasovou, nyní již separovanou nahrávku.
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -794,7 +796,7 @@ Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění tr�
 
 \bigskip
 
-Implementace samotného modelu ve frameworku PyTorch nebyla náročná. Vzhledem k~netriviálnímu úkolu jsem musel implementovat některé části, jako třeba segmentace nahrávek, sám. To přineslo mnoho potíží při odstraňování chyb v~samotném modelu. Síť jsem prvně trénoval a ladil na CPU svého notebooku, takže probíhalo velmi pomalu (v~řádu desítek hodin i při nízké velikosti modelu), a některé chyby se objevily až v~průběhu trénování nebo dokonce na jeho konci. Situaci razantně zlepšil přechod na Google Colab, kde jsem síť trénoval na poskytovaných GPU a trénování tak zabralo \todo{"pouze" (opravit uvozovky)} několik hodin, takže se případná chyba objevila dříve, ale i přesto mi lazení sítě zabralo mnoho času. Pro další usnadnění samotné implementace jsem vytvořil několik skriptů, které mi usnadnily spouštění a lazení sítě.
+%Implementace samotného modelu ve frameworku PyTorch nebyla náročná. Vzhledem k~netriviálnímu úkolu jsem musel implementovat některé části, jako třeba segmentace nahrávek, sám. To přineslo mnoho potíží při odstraňování chyb v~samotném modelu. Síť jsem prvně trénoval a ladil na CPU svého notebooku, takže probíhalo velmi pomalu (v~řádu desítek hodin i při nízké velikosti modelu), a některé chyby se objevily až v~průběhu trénování nebo dokonce na jeho konci. Situaci razantně zlepšil přechod na Google Colab, kde jsem síť trénoval na poskytovaných GPU a trénování tak zabralo \todo{"pouze" (opravit uvozovky)} několik hodin, takže se případná chyba objevila dříve, ale i přesto mi lazení sítě zabralo mnoho času. Pro další usnadnění samotné implementace jsem vytvořil několik skriptů, které mi usnadnily spouštění a lazení sítě.
 
 
 
@@ -902,7 +904,7 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 \todo{zahrnout do podkapitol, nebo udelat samostatnou podkapitolu o SDR a pohlavi}
 \todo{jedna podkapitola o rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr mensi loss}
 \todo{z TasNet shrnout jejich vysledky jako jedna z poslednich podkapitol}
-
+\todo{podkapitola Inference -- ukazat separovane inferovane nahravky oproti referencni nahravce}
 
 \todo{miniÚvod}
 Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ \todo{mozna ref}.  
