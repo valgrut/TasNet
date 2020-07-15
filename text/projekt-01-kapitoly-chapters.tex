@@ -280,7 +280,7 @@ Diskrétní konvoluce je definována jako
 kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je konvoluční jádro a $f_i$ a $g_i$ jsou hodnoty funkce na indexu $i$.
 
 
-Účelem CNN je v~prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. Pro 2--D vstup to mohou být úsečky v~různých úhlech nebo části křivek a pro 1--D tóny o~různé frekvenci. V~pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v~konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V~některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrogram}) a lze s~ním pracovat stejně, jako při zpracování obrazu. 
+Účelem CNN je v~prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. V~pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v~konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V~některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrogram}) a lze s~ním pracovat stejně, jako při zpracování obrazu. 
 
 
 \begin{figure}[H]
@@ -308,7 +308,7 @@ Konvoluční operace je definována jako
 kde $x$ jsou vstupní data obvykle ve formě multidimenzionílního pole (tenzoru) a funkce $w$ je konvoluční jádro. Výstupem operace je mapa příznaků. Konvoluční operaci lze definovat i pro vyšší dimenze. Máme--li například 2--D vstupní obrázek, pak i konvoluční jádro bude dvourozměrné. Přestože v~mnoha knihovnách lze nalézt implementovanou operaci konvoluce, často se jedná o~cross--korelaci.
 
 
-Průběh a chování konvoluce lze řídit hyperparametry \textit{stride}, \textit{padding} a \textit{dilation}. Hodnota stride modifikuje velikost kroku konvolučního jádra. Výchozí hodnota kroku je $1$. Chování při různých hodnotách lze vidět na obrázku~\ref{fig:conv_stride}. 
+Průběh a chování konvoluce lze řídit hyperparametry \textit{stride}, \textit{padding} a \textit{dilation}. Hodnota stride modifikuje velikost kroku konvolučního jádra. Chování při různých hodnotách lze vidět na obrázku~\ref{fig:conv_stride}. 
 
 Hodnota padding určuje, o~kolik se mají rozšířit vstupní data. V~případě malého rozměru konvolučního jádra může dojít k~nechtěné změně rozměrů vstupních dat a proto se tato data po stranách rozšíří na takový rozměr, aby po konvoluci byl výsledný tvar v~požadovaném rozměru. Vyplnění ukazuje obrázek~\ref{fig:conv_padding}.
 
@@ -494,18 +494,17 @@ Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezáporno
 
 
 \subsection{Enkódování směsi}
-\todo{spravit znak pro konvolucni operator v~math env}
 Každý segment směsi o~délce $L$, $x_k \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $w \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
-%w = ReLU(x \textcircled{\star} U)
 \begin{equation}
-  	w = ReLU(x \star U)
+  	w = ReLU(x \circledast U)
 \end{equation}
-kde $U \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace \textcircled{$\star$} značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v~podkapitole \ref{relu}.
+kde $U \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace $\circledast$ značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v~podkapitole \ref{relu}.
 
 
 \subsection{Dekódování extrahovaných mluvčích}
 Pro převod z~reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $x$ jako $x \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
 \begin{equation}
+\label{equ:decoder}
   \hat{x} = wV
 \end{equation}
 kde každý řádek v~matici $V \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s~délkou $L$.
@@ -519,12 +518,9 @@ Separace je pro každý zdroj provedena vynásobením odpovídající masky $m_i
 \begin{equation}
 	d_i = w \odot m_i
 \end{equation}
-kde $d_i \in \mathbb{R}^{1 \times N}$ je reprezentace každého ze zdrojů a operace $\odot$ je \todo{not sure} vektorový součin. 
+kde $d_i \in \mathbb{R}^{1 \times N}$ je reprezentace každého ze zdrojů a operace $\odot$ je součin po složkách. 
 
-Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahrávky zdrojů $\hat{s}_i, i = 1, \dots, C$ pomocí dekodéru jako
-\begin{equation}
-  \hat{s}_i = d_iV
-\end{equation}
+Nakonec jsou reprezentace $d_i$ rekonstruovány zpět na korespondující nahrávky zdrojů $\hat{s}_i, i = 1, \dots, C$ pomocí dekodéru, jak je znázorněno v~\ref{equ:decoder}.
 
 
 \begin{figure}[H]
@@ -533,12 +529,11 @@ Nakonec jsou preprezentace $d_i$ rekonstruovány zpět na korespondující nahr�
     \caption{\label{fig:tasnet-autoenkoder}Schéma kompletního separačního modulu, jehož vstupem je nezáporná reprezentace směsi mluvčích}
 \end{figure}
 
-\todo{obrazky mozna nektere zcuknout k~sobe nebo vedle sebe}
 
-Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. 
+Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. Jak zapadá separační modul do schématu je zobrazeno na obrázku~\ref{fig:tasnet-autoenkoder}.
 
 \subsection{Temporal Convolutional Network}
-Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje bloky se zvyšující se časovou dilatací, která se zvyšuje exponenciálně v~závislosti na parametru $X$, který udává počet konvolučních bloků \todo{v~jedné vrstvě} a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
+Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje $X$ konvolučních bloků se zvyšující se časovou dilatací, která se zvyšuje exponenciálně podle počtu bloků a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
 
 Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$ konvoluční vrstvě, která má $N \times C$ filtrů a nakonec aktivační funkci softmax k~odhadu $C$ vektorů masek pro každého z~$C$ cílových mluvčích.
 
@@ -564,11 +559,11 @@ Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 
 \textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s~velikostí konvolučního jádra 1:
 
 \begin{equation}
-	D-conv(Y, K) = concat(y_j conv k_j), j = 1, \dots, N
+	D-conv(Y, K) = concat(y_j \circledast k_j), j = 1, \dots, N
 \end{equation}
 
 \begin{equation}
-	S-conv(Y, K, L) = D-conv(Y, K) conv L
+	S-conv(Y, K, L) = D-conv(Y, K) \circledast L
 \end{equation}
 
 kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $y_j \in \mathbb{R}^{1 \times M}$ a $k_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $Y$ a $K$. $L \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
@@ -585,31 +580,15 @@ V~každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv násled
 \todo{zvýraznit na obrázku konvolučního bloku residuální spojení a hodit tam sipku nebo neco ze to je to spojeni}
 
 
-\todo{Kam uvozovky, kam bold, kam italic ZEPTAT SE}
 \section{Normalizace}
-Při trénování neuronových sítí může docházet k~fenoménu jménem \todo{uvozovky} vnitřní kovariantní posuv \textit{internal covariate shift}, kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch},~\cite{ba2016layer}.
+Při trénování neuronových sítí může docházet k~fenoménu \todo{uvozovky} vnitřní kovariantní posuv (\textit{internal covariate shift}), kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch},~\cite{ba2016layer}.
 
-Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s~channel--wise layer normalization (cLN)~\todo{cite}, global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}.
+Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s~channel--wise layer normalization (cLN)~\todo{cite}, global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}, kterou jsem se rozhodl použít v mé implementaci.
 
 Metoda cLN je aplikována na vstup separačního modulu pro zajištění invariance při změně měřítka vstupních dat. Tato metoda je vhodná pro použití v~kauzální i nekauzální konfiguraci, je--li použita v~konvolučních blocích. Normalizace cLN je aplikována na každý segment $y_k$. 
 
 Metoda gLN je aplikována globálně na každý příznak na rozměry kanálu i času. Tuto normalizaci lze použít pouze při nekauzální konfiguraci, protože výpočet probíhá na základě celého vstupu.
 Při kauzální konfiguraci může být použita také metoda BN.
-
-Normalizace BN je počítána následovně:
-\begin{equation}
-	y = \frac{x - E[x]}{Var[x] + \varepsilon} * \gamma + \beta
-\end{equation}
-
-\begin{equation}
-	E[x] = \frac{1}{NT} \sum_{NT}Y
-\end{equation}
-
-\begin{equation}
-	Var(Y) = \frac{1}{NT} \sum_{NT}(Y - E[Y])^2
-\end{equation}
-
-\todo{Asi jeste popsat jednotlive promenne ve vzorcich}
 
 \bigskip
 
