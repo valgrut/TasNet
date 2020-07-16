@@ -180,7 +180,7 @@ Struktura neuronové sítě je organizována do vrstev, které se skládají z~n
 
 
 \section{Umělý neuron}
-Základní stavební jednotka neuronových sítí je umělý neuron (\textit{artificial neuron}) (viz obrázek \ref{fig:neuron}). Tento model je založen na principu reálných neuronů, které se nacházejí v~organizmech. Umělý neuron obsahuje libovolně mnoho vstupních propojení, přes které se mu předávají data v~podobě vstupního vektoru $\textbf{\overrightarrow{x}} \in \mathbb{R}^N$, kde $\textbf{\overrightarrow{x}} = [x_1, x_2, \dots, x_n]$. Sám neuron obsahuje hodnotu bias $b \in \mathbb{R}$ a vektor vah $\textbf{\overrightarrow{w}} \in \mathbb{R}^N$, kde $\textbf{\overrightarrow{w}} = [w_1, w_2, \dots, w_n]$, jenž je upravován během trénování neuronu.
+Základní stavební jednotka neuronových sítí je umělý neuron (\textit{artificial neuron}) (viz obrázek \ref{fig:neuron}). Tento model je založen na principu reálných neuronů, které se nacházejí v~organizmech. Umělý neuron obsahuje libovolně mnoho vstupních propojení, přes které se mu předávají data v~podobě vstupního vektoru $\textbf{\overrightarrow{x}} \in \mathbb{R}^N$, kde $\textbf{\overrightarrow{x}} = [x_1, x_2, \dots, x_n], n \in N$. Sám neuron obsahuje hodnotu bias $b \in \mathbb{R}$ a vektor vah $\textbf{\overrightarrow{w}} \in \mathbb{R}^N$, kde $\textbf{\overrightarrow{w}} = [w_1, w_2, \dots, w_n], n \in N$, jenž je upravován během trénování neuronu.
 
 Výstupní hodnota závisí na vstupních datech, aktuálním vnitřním stavu (hodnoty vah a biasu) a na zvolené aktivační funkci. Vstupní hodnoty jsou váhovány, což znamená, že každá vstupní hodnota je vynásobena s~váhou na daném vstupním spojení. S~použitím definovaných vektorů lze napsat, že vstupní vektor je vynásoben s~vektorem vah.
 
@@ -418,7 +418,8 @@ Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je pře
 
 
 \subsection{Objektivní funkce}
-Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v~závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s~touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce, protože její výstupní hodnota nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z~datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s~opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
+Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v~závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s~touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce. Výstupní hodnota loss funkce nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z~datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s~opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
+
 
 V~rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V~takovém případě bude dobře sloužit pro účely trénování. V~případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě~ \cite{mitdeeplearning}. 
 
@@ -430,7 +431,8 @@ Mean squared error loss (MSE) je nejčastěji používaná objektivní funkce p�
 \begin{equation}
   MSE = \frac{1}{N}\sum_{i=1}^N(y_i - \hat{y_i})^2
 \end{equation}
-kde $N$ je počet trénovacích dat v~datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k~druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$, jak lze vidět na obrázku \ref{fig:mseloss}. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví. Funkce dosahuje L2 regularizace.
+kde $N$ je počet trénovacích dat v~datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k~druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$, jak lze vidět na obrázku \ref{fig:mseloss}. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví. 
+%Funkce dosahuje L2 regularizace.
 
 \begin{figure}[H]
     \centering
@@ -445,7 +447,9 @@ Mean absolute error loss (MAE) je velmi podobná objektivní funkce jako MSE, al
   MAE = \frac{1}{N}\sum_{j=1}^N|y_j - \hat{y_j}|
 \end{equation}
 
-Výhodnou MAE je její lineární průběh, takže se větší chyby projeví úměrně více než chyby menší, oproti MSE, kde je závislost kvadratická. Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $x=0$, což může mít negativní následky pro výpočet gradientu.
+Výhodnou MAE je její lineární průběh, takže se, vzhledem k lineární závislosti, chyba projeví úměrně, oproti MSE, kde je závislost kvadratická a i menší chyba se projeví více.
+
+Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $x=0$, což může mít negativní následky pro výpočet gradientu.
 
 \begin{figure}[H]
     \centering
@@ -478,8 +482,9 @@ Gradient descent je iterativní optimalizační algoritmus, definující pravidl
 
 
 \subsection{Underfitting a generalizace}
-Generalizace, neboli \textit{test error}, je vlastnost modelu, která udává, jak dobře model pracuje s~dříve neviděnými daty, tedy s~daty, které nebyly použity pro jeho učení. Během učení vzniká učící chyba, která je trénováním postupně minimalizována, ale kvalita modelu je pak měřena na testovacích datech. 
-Testovací chyba by ideálně měla být co nejblíže chybě na trénovací sadě. Z~rozdílu mezi těmito chybovými hodnotami se dají diagnostikovat problémy s~naučením sítě -- podučení (\textit{underfitting}) a přeučení(\textit{overfitting}). 
+Generalizace je vlastnost modelu udávající, jak dobře model pracuje s~dříve neviděnými daty, tedy s~daty, které nebyly použity pro jeho učení. Měří se pomocí testovací chyby. Během učení vzniká učící chyba, která je trénováním postupně minimalizována, ale kvalita modelu je pak měřena na testovacích datech. 
+
+Testovací chyba by ideálně měla být co nejblíže chybě na trénovací sadě. Z~rozdílu mezi těmito chybovými hodnotami se dají diagnostikovat problémy s~naučením sítě -- podučení (\textit{underfitting}) a přeučení(\textit{overfitting}).
 
 \textit{Underfitting} nastane v~případě, že model již nedokáže v~důsledku jeho kapacity zmenšit dostatečně jeho chybovou hodnotu na trénovacím datasetu.
 
@@ -536,7 +541,7 @@ Tato kapitola vychází z~referenční studie \textbf{TasNet: Surpassing Ideal T
 
 Přestože metody pro zpracování řeči v~takovém akustickém prostředí, ve kterém se současně prolíná mnoho řečových signálů, v~poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u~těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v~aplikacích, které by mohly zpracovávat řeč v~reálném čase.
 
-Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time Fourier transformation (STFT)~\cite{speechseparationoverview}. Tento převod ale měl pro využití v~reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
+Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time Fourier transform (STFT), ale tato reprezentace není optimální pro separaci mluvčích~\cite{speechseparationoverview}.
 
 Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~temporal convolutional network (TCN)~\cite{lea2016temporal},~\cite{bai2018empirical}. TCN je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
 
