@@ -44,14 +44,14 @@ Non-negative matrix factorization (NMF) patří mezi daty řízené metody a je 
 Pro NMF platí
 
 \begin{equation}
-  Y = \sum{s}W_sH_s
+  Y = \sum{s}\textbf{W}_s\textbf{H}_s
 \end{equation}
 
-kde každý zdroj $s$ je modelován aproximací nízkého řádu nezápornými maticemi $W_s$, která reprezentuje slovník a $H_s$, která reprezentuje aktivační funkci. Ty jsou sečteny a dohromady tvoří výslednou směs $Y$.
+kde každý zdroj $s$ je modelován aproximací nízkého řádu nezápornými maticemi $\textbf{W}_s$, která reprezentuje slovník a $\textbf{H}_s$, která reprezentuje aktivační funkci. Ty jsou sečteny a dohromady tvoří výslednou směs $Y$.
 
 Metoda prochází trénovací a testovací fází.
-V~trénovací fázi je každý zdroj dekomponován a mapován na množinu bází a aktivací a tím je zformován slovník $W$ pro tento zdroj.
-V~testovací fázi jsou naučené slovníky jednotlivých zdrojů $s$ spojeny do jednoho, který dále není upravován. Následuje optimalizace aktivační matice $H$ pro každý zdroj. Každý zdroj je následně ze směsi rekonstruován s~použitím výsledných bází a aktivací.
+V~trénovací fázi je každý zdroj dekomponován a mapován na množinu bází a aktivací a tím je zformován slovník $\textbf{W}$ pro tento zdroj.
+V~testovací fázi jsou naučené slovníky jednotlivých zdrojů $s$ spojeny do jednoho, který dále není upravován. Následuje optimalizace aktivační matice $\textbf{H}$ pro každý zdroj. Každý zdroj je následně ze směsi rekonstruován s~použitím výsledných bází a aktivací.
 
 \begin{figure}[H]
     \centering
@@ -150,27 +150,27 @@ Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pom
 \label{neuronovky}
 V~dnešní době zažívají neuronové sítě díky výkonosti počítačů velký rozmach. Jejich využití prostupuje skrze mnohé vědní obory a dokáží řešit celou řadu problémů, ve kterých dosahují výborných výsledků, které zdaleka předčily dosavadní postupy. 
 
-Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model, který je inspirovaný strukturou lidského mozku, ve kterém je obrovské množství propojených a komunikujících neuronů. Ty se skládají ze vstupních dendridů, výstupních axonů a samotného těla neuronu. Na základě vnitřního potenciálu a vstupních hodnot je po přesažení prahové hodnoty neuron vybuzen a je vyslán signál na výstupní axon. Signál je nakonec předán dalším neuronům skrze jejich vstupní dendridy~\cite[p.~65--66]{mitdeeplearning_small}.
+Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model, který je inspirovaný strukturou lidského mozku, ve kterém je obrovské množství propojených a komunikujících neuronů. Ty se skládají ze vstupních dendridů, výstupních axonů a samotného těla neuronu. Na základě vnitřního potenciálu a vstupních hodnot je po přesažení prahové hodnoty neuron vybuzen a je vyslán signál na výstupní axon. Signál je nakonec předán dalším neuronům skrze jejich vstupní dendridy~\cite{mitdeeplearning_small}.
 
 Účelem neuronové sítě je naučit se plnit zadanou úlohu. Rozdíl oproti běžným algoritmům je ale ten, že způsob, jakým síť má problém řešit, není explicitně naprogramován, ale je postupně naučen. Základní způsoby učení jsou s~učitelem (\textit{supervised}) a bez učitele (\textit{unsupervised}). 
 
-\textbf{Učení s~učitelem}, pod které spadá i tato práce, spočívá v~mapování vstupních dat na data výstupní na základě vzorových příkladů dvojic vstup--výstup. Množině takových dvojic se říká trénovací dataset. Další vlastností trénovacích dat určených pro učení s~učitelem, je jejich označení (\textit{label}).
+\textbf{Učení s~učitelem}, pod které spadá i tato práce, spočívá v~mapování vstupních dat na data výstupní na základě vzorových příkladů dvojic vstup--výstup. Množině takových dvojic se říká trénovací dataset.
 
-Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. Některé z~problémů lze řešit sítí, která se skládá z~jednotek neuronů, zatímco složitější problémy vyžadují mnohem větší kapacitu sítě a ta pak může obsahovat i tisíce neuronů.
+Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. Problém separace mluvčích, který spadá do zpracování řeči, se dá klasifikovat jako mnoho--třídový regresní problém.
 
 Upravovat samotnou strukturu a chování neuronové sítě lze pomocí jejích hyperparametrů, což jsou parametry určující nastavení neuronové sítě a trénovacího algoritmu. Tyto parametry musí být určeny před začátkem trénování a většinu nelze později měnit. Mohou určovat kapacitu modelu, velikost záběrného pole, velikost filtrů, ale i regulovat samotný proces učení nastavením počtu epoch, po které se model má učit, nebo také počet dat předaný v~jedné dávce (tzv. \textit{minibatches}) během učení sítě.
 
 
-\section{Organizace feedforward sítí}
-Feed forward neuronové sítě (\textit{Multi Layer Perceptron -- MLP}) jsou typ umělých neuronových sítí, kde se nevyskytují cykly ve výpočetním grafu, tedy zpětná propojení vrstev, takže informace se pohybuje pouze jedním směrem, od vstupní vrstvy přes skryté vrstvy až po vrstvu výstupní. Sítě, které obsahují cykly, se nazývají rekurentní. Rozdíl znázorňuje obrázek \ref{fig:netcomparison}.
+\section{Organizace dopředných sítí}
+Dopředné neuronové sítě (feed forward networks, či multi layer perceptron -- MLP) jsou typ umělých neuronových sítí, kde se nevyskytují cykly ve výpočetním grafu, tedy zpětná propojení vrstev, takže informace se pohybuje pouze jedním směrem, od vstupní vrstvy přes skryté vrstvy až po vrstvu výstupní. Sítě, které obsahují cykly, se nazývají rekurentní. Rozdíl znázorňuje obrázek \ref{fig:netcomparison}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{obrazky-figures/feedforward_vs_recurrent.png}
-    \caption{\label{fig:netcomparison}Příklad grafu feed forward sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~feed forward sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu~\cite{FFandRecNN}.}
+    \caption{\label{fig:netcomparison}Příklad grafu dopředné sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~dopředné sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu~\cite{FFandRecNN}.}
 \end{figure}
 
-Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Feedforward síť je tvořena třemi typy vrstev (viz obrázky \ref{fig:netcomparison} a \ref{fig:mlp}). Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Ta má obvykle méně neuronů než předešlé vrstvy a hodnoty na výstupu mohou představovat třídy, do kterých má být klasifikován vstup v~případě klasifikátorů, nebo predikce hodnot na základě vstupních dat v~případě regrese. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
+Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Dopředná síť je tvořena třemi typy vrstev (viz obrázky \ref{fig:netcomparison} a \ref{fig:mlp}). Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Hodnoty na jejím výstupu mohou představovat třídy, do kterých má být klasifikován vstup v~případě klasifikátorů, nebo predikce hodnot na základě vstupních dat v~případě regrese. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
 
 \begin{figure}[H]
     \centering
@@ -180,7 +180,7 @@ Struktura neuronové sítě je organizována do vrstev, které se skládají z~n
 
 
 \section{Umělý neuron}
-Základní stavební jednotka neuronových sítí je umělý neuron (\textit{artificial neuron}) (viz obrázek \ref{fig:neuron}). Tento model je založen na principu reálných neuronů, které se nacházejí v~organizmech. Umělý neuron obsahuje libovolně mnoho vstupních propojení, přes které se mu předávají data v~podobě vstupního vektoru $\overrightarrow{x} = [x_1, x_2, \dots, x_n], x_n \in \mathbb{R}$. Sám neuron obsahuje hodnotu bias $b \in \mathbb{R}$ a vektor vah $\overrightarrow{w} = [w_1, w_2, \dots, w_n], w_n \in \mathbb{R}$, jenž je upravován během trénování neuronu.
+Základní stavební jednotka neuronových sítí je umělý neuron (\textit{artificial neuron}) (viz obrázek \ref{fig:neuron}). Tento model je založen na principu reálných neuronů, které se nacházejí v~organizmech. Umělý neuron obsahuje libovolně mnoho vstupních propojení, přes které se mu předávají data v~podobě vstupního vektoru $\textbf{\overrightarrow{x}} \in \mathbb{R}^N$, kde $\textbf{\overrightarrow{x}} = [x_1, x_2, \dots, x_n]$. Sám neuron obsahuje hodnotu bias $b \in \mathbb{R}$ a vektor vah $\textbf{\overrightarrow{w}} \in \mathbb{R}^N$, kde $\textbf{\overrightarrow{w}} = [w_1, w_2, \dots, w_n]$, jenž je upravován během trénování neuronu.
 
 Výstupní hodnota závisí na vstupních datech, aktuálním vnitřním stavu (hodnoty vah a biasu) a na zvolené aktivační funkci. Vstupní hodnoty jsou váhovány, což znamená, že každá vstupní hodnota je vynásobena s~váhou na daném vstupním spojení. S~použitím definovaných vektorů lze napsat, že vstupní vektor je vynásoben s~vektorem vah.
 
@@ -298,7 +298,7 @@ V případě, že je hodnota parametru $\alpha=0$, pak se jedná o ReLU. Je--li 
 
 
 \section{Konvoluční vrstvy}
-Konvoluční neuronová síť (CNN)~\cite{6795724} je typ feed forward neuronových sítí, která obsahuje jednu či více konvolučních vrstev. CNN jsou vhodné pro zpracování dat v~mřížkovitém uspořádání. To může být ve 2--D obrázek ve formě pole pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v~čase v~1--D. Konvoluční vrstvy používají místo běžného násobení matic speciální typ lineární operace -- konvoluci.
+Konvoluční neuronová síť (CNN)~\cite{6795724} je typ dopředných neuronových sítí, která obsahuje jednu či více konvolučních vrstev. CNN jsou vhodné pro zpracování dat v~mřížkovitém uspořádání. To může být ve 2--D obrázek ve formě pole pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v~čase v~1--D. Konvoluční vrstvy používají místo běžného násobení matic speciální typ lineární operace -- konvoluci.
 
 Diskrétní konvoluce je definována jako
 \begin{equation}
@@ -414,7 +414,7 @@ Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišen�
 \section{Učení neuronových sítí}
 Cílem trénování je naučit neuronovou síť vykonávat nějaký úkol. Trénování založené na metodě učení s~učitelem vyžaduje dostatečně velký dataset obsahující dvojice vstup--výstup a obnáší volbu objektivní funkce, kterou se během trénování snažíme minimalizovat. 
 
-Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je předána vstupní hodnota $x$, pro kterou síť definuje mapování na výstupní hodnotu jako $y = f(x; \theta)$, kde $\theta$ je parametr, který se síť učí tak, aby dosáhla nejlepší aproximace funkce~\cite[p.~163]{mitdeeplearning}.
+Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je předána vstupní hodnota $x$, pro kterou síť definuje mapování na výstupní hodnotu jako $y = f(x; \theta)$, kde $\theta$ je parametr, který se síť učí tak, aby dosáhla nejlepší aproximace funkce~\cite{mitdeeplearning}.
 
 
 \subsection{Objektivní funkce}
@@ -485,16 +485,18 @@ Testovací chyba by ideálně měla být co nejblíže chybě na trénovací sad
 
 \textit{Overfitting} nastane, když rozdíl mezi trénovací chybou a testovací chybou je příliš velký.
 
-Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. V~případě nízké kapacity se model nedokáže naučit všechny příznaky z~trénovacích dat a v~případě vysoké kapacity se mohou přeučit zapamatováním si jejich příznaků a tím sice dosáhnou nízké trénovací chyby, ale špatných výsledků během testování~\cite[p107]{mitdeeplearning}.
+Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. V~případě nízké kapacity se model nedokáže naučit všechny příznaky z~trénovacích dat a v~případě vysoké kapacity se mohou přeučit zapamatováním si jejich příznaků a tím sice dosáhnou nízké trénovací chyby, ale špatných výsledků během testování~\cite{mitdeeplearning}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.3]{obrazky-figures/capacity_vs_error.jpg}
     \caption{\label{fig:gradientdescent}Vliv kapacity modelu trénovací a testovací chybu. Obrázek inspirován podle~\cite{trainingvstesterror}}
 \end{figure}
 
+%str 107
 
-Regularizace je souhrn postupů, které říkají, jak modifikovat učící algoritmus tak, aby se zredukovala chyba generalizace, zatímco testovací chyba zůstane stejná~\cite[p117]{mitdeeplearning}.
+Regularizace je souhrn postupů, které říkají, jak modifikovat učící algoritmus tak, aby se zredukovala chyba generalizace, zatímco testovací chyba zůstane stejná~\cite{mitdeeplearning}.
 
+%str 117
 
 \subsection{Reziduální spojení}
 Velmi hluboké neuronové sítě přinesly v~mnoha aplikacích velmi dobré výsledky. S~přibývající hloubkou se ale stává její trénování složitější. Jeden z~problémů, který se při učení projevoval, byl explodující a mizející gradient~\cite{279181}. Tento problém byl adresován zavedením normalizačních vrstev~\cite{ioffe2015batch} a počáteční optimalizované inicializace, což dovolilo sítím konvergovat s~využitím \textit{stochastic gradient descent} se zpětnou propagací (\textit{back--propagation})~ \cite{6795724}. Poté se objevil problém degradace, který nebyl zapříčiněn přetrénováním, a způsobil, že s~přibývající hloubkou sítě její přesnost náhle prudce klesla, což indikovalo, že systémy nelze optimalizovat stejným způsobem a přidání dalších vrstev pouze zvýšilo trénovací chybu. Problém degradace lze řešit zakomponováním reziduálních spojení, které je zobrazeno na obrázku \ref{fig:residualconnection}~\cite{he2015deep}.
@@ -545,8 +547,6 @@ Pro překonání nedostatků předešlých metod byla navržena architektura ful
 \end{figure}
 
 
-\todo{sem mozna tabulka hyperparametrů a jejich pojmenovani X, R, N, L, P, ...}
-
 \section{Konvoluční auto--enkodér}
 Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z~reprezentace na původní nahrávku, jak ukazuje obrázek \ref{fig:tasnet-autoenkoder}.
 \begin{figure}[H]
@@ -557,33 +557,33 @@ Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezáporno
 
 
 \subsection{Enkódování směsi}
-Každý segment směsi o~délce $L$, $x_k \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $w \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
+Každý segment směsi o~délce $L$, $\textbf{x_k} \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $\textbf{w} \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
 \begin{equation}
-  	w = ReLU(x \circledast U)
+  	\textbf{w} = ReLU(x \circledast \textbf{U})
 \end{equation}
-kde $U \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace $\circledast$ značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v~podkapitole \ref{relu}.
+kde $\textbf{U} \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace $\circledast$ značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v~podkapitole~\ref{relu}.
 
 
 \subsection{Dekódování extrahovaných mluvčích}
-Pro převod z~reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $x$ jako $x \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
+Pro převod z~reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $\textbf{x}$ jako $\textbf{x} \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
 \begin{equation}
 \label{equ:decoder}
-  \hat{x} = wV
+  \textbf{\hat{x}} = \textbf{w}\textbf{V}
 \end{equation}
-kde každý řádek v~matici $V \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s~délkou $L$.
+kde každý řádek v~matici $\textbf{V} \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s~délkou $L$.
 
 %-------------------------------
 
 \section{Separační modul}
-Cílem separačního modulu je najít váhovanou funkci, neboli masku, pro každého zdrojového mluvčího pro každý výstup enkodéru v~každém časovém kroku. Formálně lze zapsat, že cílem je odhadnout $C$ masek $m_i \in \mathbb{R}^{1 \times N}, i = 1, \dots, C$, kde $C$ představuje počet mluvčích ve směsi. Vektory masek $m_i$ mají takové omezení, že $\sum_{i=0}^{C}m_i=1$, kde $1$ je jednotkový vektor v~$\mathbb{R}^{1 \times N}$. Toto omezení garantuje, že rekonstruované zdroje po sečtení zformují původní směs $\hat{x} = \sum_{i=1}^{C}\hat{s}_i$.
+Cílem separačního modulu je najít váhovanou funkci, neboli masku, pro každého zdrojového mluvčího pro každý výstup enkodéru v~každém časovém kroku. Formálně lze zapsat, že cílem je odhadnout $C$ masek $\textbf{m}_i \in \mathbb{R}^{1 \times N}, i = 1, \dots, C$, kde $C$ představuje počet mluvčích ve směsi. Vektory masek $\textbf{m}_i$ mají takové omezení, že $\sum_{i=0}^{C}\textbf{m}_i=1$, kde $1$ je jednotkový vektor v~$\mathbb{R}^{1 \times N}$. Toto omezení garantuje, že rekonstruované zdroje po sečtení zformují původní směs $\textbf{\hat{x}} = \sum_{i=1}^{C}\textbf{\hat{s}}_i$.
 
-Separace je pro každý zdroj provedena vynásobením odpovídající masky $m_i$ s~nezápornou reprezentací (výstupem enkodéru) $w$, jako
+Separace je pro každý zdroj provedena vynásobením odpovídající masky $\textbf{m}_i$ s~nezápornou reprezentací (výstupem enkodéru) $w$, jako
 \begin{equation}
-	d_i = w \odot m_i
+	\textbf{d_i} = \textbf{w} \odot \textbf{m}_i
 \end{equation}
-kde $d_i \in \mathbb{R}^{1 \times N}$ je reprezentace každého ze zdrojů a operace $\odot$ je součin po složkách. 
+kde $\textbf{d_i} \in \mathbb{R}^{1 \times N}$ je reprezentace každého ze zdrojů a operace $\odot$ je součin po složkách. 
 
-Nakonec jsou reprezentace $d_i$ rekonstruovány zpět na korespondující nahrávky zdrojů $\hat{s}_i, i = 1, \dots, C$ pomocí dekodéru, jak je znázorněno v~\ref{equ:decoder}.
+Nakonec jsou reprezentace $\textbf{d_i}$ rekonstruovány zpět na korespondující nahrávky zdrojů $\textbf{\hat{s}}_i, i = 1, \dots, C$ pomocí dekodéru, jak je znázorněno v~\ref{equ:decoder}.
 
 
 \begin{figure}[H]
@@ -615,14 +615,14 @@ Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 
 \textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s~velikostí konvolučního jádra 1:
 
 \begin{equation}
-	D\texttt{-}conv(Y, K) = concat(y_j \circledast k_j), j = 1, \dots, N
+	D\texttt{-}conv(\textbf{Y}, \textbf{K}) = concat(\textbf{y}_j \circledast \textbf{k}_j), j = 1, \dots, N
 \end{equation}
 
 \begin{equation}
-	S\texttt{-}conv(Y, K, L) = D\texttt{-}conv(Y, K) \circledast L
+	S\texttt{-}conv(\textbf{Y}, \textbf{K}, \textbf{L}) = D\texttt{-}conv(\textbf{Y}, \textbf{K}) \circledast \textbf{L}
 \end{equation}
 
-kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $y_j \in \mathbb{R}^{1 \times M}$ a $k_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $Y$ a $K$. $L \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
+kde $\textbf{Y} \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $\textbf{K} \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $\textbf{y}_j \in \mathbb{R}^{1 \times M}$ a $\textbf{k}_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $\textbf{Y}$ a $\textbf{K}$. $\textbf{L} \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
 
 \begin{figure}[H]
     \centering
@@ -939,7 +939,7 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 \todo{jedna podkapitola o rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr mensi loss}
 \todo{z TasNet shrnout jejich vysledky jako jedna z poslednich podkapitol}
 \todo{podkapitola Inference -- ukazat separovane inferovane nahravky oproti referencni nahravce}
-
+\todo{sem mozna tabulka hyperparametrů a jejich pojmenovani X, R, N, L, P, ...}
 \todo{miniÚvod}
 Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ \todo{mozna ref}.  
 
