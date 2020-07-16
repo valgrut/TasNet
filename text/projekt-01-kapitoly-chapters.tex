@@ -282,16 +282,16 @@ Předpis funkce PReLU je definován jako
 V případě, že je hodnota parametru $\alpha=0$, pak se jedná o ReLU. Je--li parametr $\alpha = c$, kde $c\in\mathbb{R}$ je malá konstanta (například $c = 0.03$), jedná se o Leaky ReLU (LReLU) a motivací pro její zavedení bylo vyhnout se nulovému gradientu.
 
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{obrazky-figures/ReLU.png} % first figure itself
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/ReLU.png}
         \caption{\label{fig:relu}Graf aktivační funkce ReLU}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{obrazky-figures/prelu.jpg} % second figure itself
+        \includegraphics[width=0.8\textwidth]{obrazky-figures/prelu.jpg}
         \caption{\label{fig:prelu}Graf aktivační funkce PReLU}
     \end{minipage}
 \end{figure}
@@ -307,7 +307,7 @@ Diskrétní konvoluce je definována jako
 kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je konvoluční jádro a $f_i$ a $g_i$ jsou hodnoty funkce na indexu $i$.
 
 
-Účelem CNN je v~prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. V~pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v~konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V~některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrogram}) a lze s~ním pracovat stejně, jako při zpracování obrazu. 
+Účelem CNN je v~prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. V~pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v~konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V~některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrum}) a lze s~ním pracovat stejně, jako při zpracování obrazu.
 
 
 %\begin{figure}[H]
@@ -376,19 +376,33 @@ Hodnota padding určuje, o~kolik se mají rozšířit vstupní data. V~případ�
     \caption{\label{fig:conv_stride}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.7]{obrazky-figures/padding.png}
-    \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o~danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.7]{obrazky-figures/padding.png}
+%    \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o~danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
+%\end{figure}
 
 Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišení nebo pokrytí dat konvolučním jádrem během konvoluční operace (viz obrázek~\ref{fig:conv_dilation} a~\ref{fig:dilation_factor}). Zatímco pole působnosti roste exponenciálně, počet parametrů roste pouze lineárně. Této vlastnosti se využívá například v~temporal convolutional networks (TCN), kde dilatační faktor nabývá hodnot $1, 2, 4, 8, \dots$.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1.0]{obrazky-figures/cnndilation.png}
-    \caption{\label{fig:conv_dilation}Vizualizace hodnoty dilatace upravující pole působnosti}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.4\textwidth]{obrazky-figures/padding.png}
+        \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o~danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.4\textwidth]{obrazky-figures/cnndilation.png}
+        \caption{\label{fig:conv_dilation}Vizualizace hodnoty dilatace upravující pole působnosti}
+    \end{minipage}
 \end{figure}
+
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=1.0]{obrazky-figures/cnndilation.png}
+%    \caption{\label{fig:conv_dilation}Vizualizace hodnoty dilatace upravující pole působnosti}
+%\end{figure}
 
 \begin{figure}[H]
     \centering
@@ -582,7 +596,7 @@ Nakonec jsou reprezentace $d_i$ rekonstruovány zpět na korespondující nahrá
 Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. Jak zapadá separační modul do schématu je zobrazeno na obrázku~\ref{fig:tasnet-autoenkoder}.
 
 \subsection{Temporal Convolutional Network}
-Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje $X$ konvolučních bloků se zvyšující se časovou dilatací, která se zvyšuje exponenciálně podle počtu bloků a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek \ref{fig:tasnet-causal-dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
+Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje $X$ konvolučních bloků se zvyšující se časovou dilatací, která se zvyšuje exponenciálně podle počtu bloků a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek \ref{fig:causal_dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
 
 Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$ konvoluční vrstvě, která má $N \times C$ filtrů a nakonec aktivační funkci softmax k~odhadu $C$ vektorů masek pro každého z~$C$ cílových mluvčích.
 
@@ -833,20 +847,6 @@ Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění tr�
 - grafy trenovani loss a vysledkuu.
 - pametova narocnost modelu
 
-
-\begin{figure}
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.4\textwidth]{obrazky-figures/prelu.jpg} % first figure itself
-        \caption{\label{fig:img1}first figure}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.4\textwidth]{obrazky-figures/prelu.jpg} % second figure itself
-        \caption{\label{fig:img2}second figure}
-    \end{minipage}
-\end{figure}
 
 
 Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Je proto podstatné, na jakém stroji je síť učena a od toho se odvíjí čas trénování.
