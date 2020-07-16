@@ -15,10 +15,17 @@ Text je rozdělen na několik kapitol, které postupně pokrývají různé logi
 Živočichové mají vrozenou schopnost zaměřit se na jeden konkrétní zvuk, zatímco všechny ostatní dokážou potlačit (efekt selektivní pozornosti)~\cite{GETZMANN20171}. Naučit ale této dovednosti počítač se ukázalo jako obtížný úkol, který je překážkou automatic speech recognition (ASR) systémům v~rozsáhlejším nasazení do běžného života. Tento problém se nazývá separace mluvčích. Vyřešení tohoto problému, tedy separování zdrojů, umožňuje širokou aplikaci v~oblasti zpracování řeči, jako přepis konverzací na text, ovládání počítače hlasem, používání hlasových asistentů či identifikace konkrétního mluvčího v~prostředí s~mnoha současně mluvícími lidmi.
 
 
-\section{Koktejl párty efekt}
-Tento problém se nejlépe dá popsat jako schopnost soustředit se na jeden konkrétní zdroj zvuku z~mnoha souběžných zdrojů jako hudba, konkrétní hudební nástroj, řeč dalších lidí či okolní zvuky, a přepínat mezi nimi dynamicky pozornost. 
+\section{Problém separace mluvčích}
+V běžném prostředí se přes sebe prolínají různé zvuky, jako je hudba, směs mnoha mluvčích či další akustické jevy. Problém separace mluvčích, neboli koktejl párty problém, si dává za úkol separovat tuto směs zvukových signálů. To umožní se soustředit na jednotlivé signály bez přítomnosti ostatních a využít je tak na další analýzu, jako třeba identifikace řečníka a vlastností jeho hlasu či přepis promluvy na text. Ostatní signály jsou na separované nahrávce potlačeny~\cite{cocktailparty}.
 
-\todo{vzniklo pro jeho vyreseni hafo altofirmu, ktere dosahovaly nejakych vysledku. jeho vyresenim by se mohlo pouzivat asr na prepis reci an text a pod. Nejlepsich vysledku dosahly hluboke neuronove site.}
+Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odhad $C$ zdrojů mluvčích $s_1(t), \dots, s_c(t) \in \mathbb{R}^{1 \times T}$ na diskrétním signálu směsi $x(t)\in \mathbb{R}^{1 \times T}$, kde $T$ je délka nahrávky a kde
+\begin{equation}
+  x(t) = \sum_{i=1}^C s_i(t)
+  \label{equ:definiceseparace}
+\end{equation}
+Cílem je odhadnout $s_i(t), i = 1, \dots, C$ ze signálu směsi $x(t)$.
+
+Pro vyřešení problému je potřeba se zaměřit na dvě oblasti. Na separaci mluvčího ze signálu směsi mluvčích, což je suma všech jednotlivých mluvčích a zvuků a na zaměření a udržení pozornosti na konkrétního mluvčího, a možnost přepínat mezi jednotlivými zdroji pozornost. Úspěšnost v jedné oblasti zvyšuje úspěšnost oblasti druhé~\cite{cocktailparty}. Algoritmy pro separaci mluvčích berou v potaz obě oblasti s cílem dosáhnout co nejlepších výsledků. Kvalita separace se hodnotí pomocí metrik, které jsou popsány později. 
 
 
 \section{Metody pro separaci jednokanálových nahrávek}
@@ -29,7 +36,6 @@ Pro separaci zdrojových signálů z~nahrávek směsí existuje mnoho algoritmů
 Metoda computational auditory scene analysis (CASA) je založena na procesu v~lidském mozku, který separuje zdroje ze směsi mluvčích a simuluje vysokoúrovňové chování lidského sluchu. Pro separaci jsou většinou manuálně navrhnuta segmentační pravidla pro operování nad nízkoúrovňovými příznaky k~odhadu časově frekvenční (T--F) masky, která izoluje komponenty signálu jednotlivých mluvčích a následně je použita pro rekonstrukci všech zdrojů.
 
 Přestože tato metoda byla i nadále rozvíjena, tak má mnoho nevýhod jako špatnou generalizaci v~důsledku manuálního vytváření pravidel, nemožnost automatického učení z~dat nebo nemožnost použití na separaci jiných zdrojů než je lidská řeč, které značně omezují její použití v~mnoha reálných případech.
-
 
 
 \subsection{Non--negative matrix factorization}
@@ -57,17 +63,24 @@ Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použ
 
 
 
-\subsection{Hluboké neuronové sítě}
-Nejlépe si při řešení problému koktejl párty vedou postupy založené na hlubokém učení a neuronových sítích.
-Metody převáděly směs do časově--frekvenční reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short time fourier transform (STFT).
 
-\todo{rozepsat}
+\subsection{Hluboké neuronové sítě}
+Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou--li definovány jako problémy učení s učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat zdroj signálu z motofónního signálu. Monofónní signál je signál nahraný jedním mikrofonem a má jeden kanál.
+
+Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short--time Fourier transform (STFT) $Y(t,f)$ pro rekonstrukci každého zdroje $X_s(t,f)$ v T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z trénovacího datasetu a odstranit tak nemožné kombinace~\cite{cocktailparty}.
+
+Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme--li vstupní příznak $Y(t,f)$ směsi mluvčích, model se bude učit predikovat individuální tok příznaků $X_s(t,f)$ pomocí vhodného trénovacího datasetu. Později se ukázalo, že se lepších výsledků dosáhne, bude--li model odhadovat množinu masek $M_s(t,f)$ pro každý ze zdrojů, místo přímého odhadu spektra $X_s(t,f)$ a ty pak použít k rekonstrukci spektra $X_s(t,f)$ jako $X_s = M_s \circ Y$, kde $\circ$ je násobení po prvcích. Masky jsou invariantní vůči proměnným vlastnostem vstupních dat a jejich správný odhad je důležitým faktorem pro kvalitu separace~\cite{cocktailparty}.
+
+% https://link-springer-com.ezproxy.lib.vutbr.cz/content/pdf/10.1631/FITEE.1700814.pdf
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{obrazky-figures/spektrum.png}
-    \caption{\label{fig:spektrum}Časově--frekvenční reprezentace řeči, neboli spektrum}
+    \includegraphics[scale=1.0]{obrazky-figures/spektrum.png}
+    \caption{\label{fig:spektrum}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa y) z~nahrávky řeči v~čase (osa x). Zvuk se na spektrogram (T--F reprezentaci) převádí pomocí operace short--time Fourier transform (STFT)}
 \end{figure}
+
+
+Vzniklo mnoho dalších přístupů založených na hlubokém učení. Jeden z nich ukázal, že pro separaci mluvčích není T--F doména optimální. Architektura TasNet~\cite{luo2018convtasnet}, na kterou se tato práce zaměřuje a je popsána v kapitole~\ref{tasnet}, převádí vstupní směs na nezápornou reprezentaci a separaci provádí v časové doméně s velmi dobrými výsledky.
 
 
 
@@ -119,7 +132,7 @@ Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamen�
 
 
 \subsection{Short--time objective intelligibility}
-Short--time objective intelligibility (STOI)~\cite{taal-stoi} je metrika založená na hodnotě korelačního koeficientu mezi časově--frekvenčním spektrem referenčního a odhadnutého signálu řeči v krátkých překrývajících se segmentech~\cite{5713237}. Spektrum čisté a separované nahrávky je získáno pomocí short--time fourier transform (STFT).
+Short--time objective intelligibility (STOI)~\cite{taal-stoi} je metrika založená na hodnotě korelačního koeficientu mezi časově--frekvenčním spektrem referenčního a odhadnutého signálu řeči v krátkých překrývajících se segmentech~\cite{5713237}. Spektrum čisté a separované nahrávky je získáno pomocí short--time Fourier transform (STFT).
 
 Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pomocí STFT, následně segmentovány na krátké úseky s $50\%$ překrytím, normalizovány, klipnuty a nakonec porovnány průměry hodnot korelačních koeficientů~\cite{taal-stoi}. Hodnota STOI se pohybuje v rozmezí $0$ a $1$, korespondující s procentuální úspěšností.
 
@@ -235,22 +248,21 @@ Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstup
 
 \subsection*{Rectified Linear Unit}
 \label{relu}
-Rectified Linear Unit (ReLU) je nejčastěji používaná aktivační funkce a stojí za nedávnými úspěchy v oblasti neuronových sítí~\cite{NIPS2012_4824}. Vyžaduje-li síť nějakou nelinearitu, je ReLU pro většinu případů ideální. Její použití zrychluje konvergenci trénovacího procesu a vede k lepším výsledkům, než u jednotek používající konvenční sigmoidní aktivační funkce~\cite{40811}. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$, jak udává rovnice 
+Rectified Linear Unit (ReLU) je nejčastěji používaná aktivační funkce a stojí za nedávnými úspěchy v oblasti neuronových sítí~\cite{NIPS2012_4824}. Vyžaduje-li síť nějakou nelinearitu, je ReLU pro většinu případů ideální. Její použití zrychluje konvergenci trénovacího procesu a vede k lepším výsledkům, než u jednotek používající konvenční sigmoidní aktivační funkce~\cite{40811}. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$, jak jde vidět na grafu~\ref{fig:relu}. ReLU je definována jako 
 \begin{equation}
    f(x)=max(0,x)
 \end{equation}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.2]{obrazky-figures/ReLU.png}
-    \caption{\label{fig:relu}Graf aktivační funkce ReLU}
-\end{figure}
-
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.2]{obrazky-figures/ReLU.png}
+%    \caption{\label{fig:relu}Graf aktivační funkce ReLU}
+%\end{figure}
 
 
 
 \subsection*{Parametric Rectified Linear Unit}
-Parametrizovaná ReLU (PReLU)~\cite{he2015delving} je nelineární aktivační funkce a je to generi4t2j39 varianta funkce ReLU. Používá se v~případě, že chceme produkovat na výstup malý nenulový gradient i v~případě záporné vstupní hodnoty $x$, kdy je vynásobena parametrem $\alpha$. Parametr $\alpha$ reguluje klesání záporné části grafu a adaptivně se učí společně s~ostatními váhami během trénovacího procesu.
+Parametrizovaná ReLU (PReLU)~\cite{he2015delving}, jejíž graf je na obrázku~\ref{fig:prelu}, je nelineární aktivační funkce a je to generičtější varianta funkce ReLU. Používá se v~případě, že chceme produkovat na výstup malý nenulový gradient i v~případě záporné vstupní hodnoty $x$, kdy je vynásobena parametrem $\alpha$. Parametr $\alpha$ reguluje klesání záporné části grafu a adaptivně se učí společně s~ostatními váhami během trénovacího procesu.
 
 Předpis funkce PReLU je definován jako
 \begin{equation}
@@ -261,13 +273,28 @@ Předpis funkce PReLU je definován jako
   \end{cases}
 \end{equation}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=1.4]{obrazky-figures/prelu.jpg}
-    \caption{\label{fig:prelu}Graf aktivační funkce PReLU}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=1.4]{obrazky-figures/prelu.jpg}
+%    \caption{\label{fig:prelu}Graf aktivační funkce PReLU}
+%\end{figure}
 
 V případě, že je hodnota parametru $\alpha=0$, pak se jedná o ReLU. Je--li parametr $\alpha = c$, kde $c\in\mathbb{R}$ je malá konstanta (například $c = 0.03$), jedná se o Leaky ReLU (LReLU) a motivací pro její zavedení bylo vyhnout se nulovému gradientu.
+
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/ReLU.png} % first figure itself
+        \caption{\label{fig:relu}Graf aktivační funkce ReLU}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{obrazky-figures/prelu.jpg} % second figure itself
+        \caption{\label{fig:prelu}Graf aktivační funkce PReLU}
+    \end{minipage}
+\end{figure}
 
 
 \section{Konvoluční vrstvy}
@@ -283,22 +310,51 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
 Účelem CNN je v~prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. V~pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nesformují v~konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V~některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrogram}) a lze s~ním pracovat stejně, jako při zpracování obrazu. 
 
 
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=1.0]{obrazky-figures/TODO.png}
+%    \caption{\label{fig:TODO}TODO}
+%\end{figure}
+
+
+% ==Dvojtej obrazek==
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.35]{obrazky-figures/cnnfeatures.png}
+%    \caption{\label{fig:conv_nn_image_feature}Obrázek vlevo zobrazuje, jak probíhá konvoluování jádra se vstupními 2--D daty a mapování lokálních příznaků na prostor příznaků (feature space), což je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup. Obrázek napravo zobrazuje, jak mohou vypadat lokální příznaky.}
+%\end{figure}
+
+% ==Dva jednotlive obrazky vedle sebe==
+%\begin{figure}
+%    \centering
+%    \begin{minipage}{0.7\textwidth}
+%        \centering
+%        \includegraphics[width=0.3\textwidth]{obrazky-figures/convmapping.png}
+%        \caption{\label{fig:convmapping}Průběh konvoluování jádra se vstupními daty a mapování lokálních příznaků na prostor příznaků (feature space), který je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup}
+%    \end{minipage}\hfill
+%    \begin{minipage}{0.45\textwidth}
+%        \centering
+%        \includegraphics[width=0.4\textwidth]{obrazky-figures/features.png}
+%        \caption{\label{fig:features}Obrázek zobrazující, jak mohou vypadat lokální příznaky}
+%    \end{minipage}
+%\end{figure}
+
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1.0]{obrazky-figures/spektrum.png}
-    \caption{\label{fig:spektrogram}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa y) z~nahrávky řeči v~čase (osa x). Zvuk se na spektrogram převádí pomocí operace short time fourier transform (STFT)}
+    \includegraphics[scale=0.35]{obrazky-figures/convmapping.png}
+    \caption{\label{fig:convmapping}Průběh konvoluování jádra se vstupními daty a mapování lokálních příznaků na prostor příznaků (feature space), který je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/cnnfeatures.png}
-    \caption{\label{fig:conv_nn_image_feature}Obrázek vlevo zobrazuje, jak probíhá konvoluování jádra se vstupními 2--D daty a mapování lokálních příznaků na prostor příznaků (feature space), což je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup. Obrázek napravo zobrazuje, jak mohou vypadat lokální příznaky.}
+    \includegraphics[scale=0.35]{obrazky-figures/features.png}
+    \caption{\label{fig:features}Obrázek zobrazující, jak mohou vypadat lokální příznaky}
 \end{figure}
 
 
 Konvoluování jádra přes nějaký vstup (například obrázek či zvuk) je ekvivalentní s~detektorem, který detekuje nějaký lokální příznak. Při aplikaci takového detektoru přes nějaký vstup zaznamenává všechny pozice, kde se příznak nacházel~\cite{mitdeeplearning_small}.
 
-Během trénování CNN jsou učeny váhy sítě (filtry) k~detekci různých úrovní komplexnosti příznaků. Aby síť dokázala detekovat příznak nezávisle na jeho transformaci (pootočení, převrácení, posuvu), měla by být invariantní. Toho lze docílit tak, že nneurony budou sdílet některé váhy (filtry).
+Během trénování CNN jsou učeny váhy sítě (filtry) k~detekci různých úrovní komplexnosti příznaků. Aby síť dokázala detekovat příznak nezávisle na jeho transformaci (pootočení, převrácení, posuvu), měla by být invariantní. Toho lze docílit tak, že neurony budou sdílet některé váhy (filtry).
 
 
 Konvoluční operace je definována jako
@@ -326,18 +382,19 @@ Hodnota padding určuje, o~kolik se mají rozšířit vstupní data. V~případ�
     \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o~danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
 \end{figure}
 
-Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišení nebo pokrytí dat konvolučním jádrem během konvoluční operace (viz obrázek \ref{fig:conv_dilation}). Zatímco pole působnosti roste exponenciálně, počet parametrů roste pouze lineárně. Této vlastnosti se využívá například v~temporal convolutional networks (TCN), kde dilation faktor nabývá hodnot $1, 2, 4, 8, \dots$. 
+Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišení nebo pokrytí dat konvolučním jádrem během konvoluční operace (viz obrázek~\ref{fig:conv_dilation} a~\ref{fig:dilation_factor}). Zatímco pole působnosti roste exponenciálně, počet parametrů roste pouze lineárně. Této vlastnosti se využívá například v~temporal convolutional networks (TCN), kde dilatační faktor nabývá hodnot $1, 2, 4, 8, \dots$.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/cnndilation.png}
-    \caption{\label{fig:conv_dilation}Vizualizace hodnoty dilation upravující pole působnosti}
+    \caption{\label{fig:conv_dilation}Vizualizace hodnoty dilatace upravující pole působnosti}
 \end{figure}
 
-
-
-\subsection{Bottle--neck vrstva}
-\todo{Mozna, kdyz bude cas}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{obrazky-figures/causal_dilation.png}
+    \caption{\label{fig:dilation_factor}Vizualizace časové dilatace na vstupním signálu}
+\end{figure}
 
 
 \section{Učení neuronových sítí}
@@ -434,8 +491,7 @@ Velmi hluboké neuronové sítě přinesly v~mnoha aplikacích velmi dobré výs
     \caption{\label{fig:residualconnection}Reziduální spojení mezi vstupem a výstupem stavebního bloku sítě~\cite{he2015deep}}
 \end{figure}
 
-\todo{prepsat F na to specialni}
-Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z~předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $F(x) + x$, kde $F(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s~výstupem $F(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost~\cite{he2015deep},~\cite{zaeemzadeh2018normpreservation}.
+Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z~předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $\mathcal{F}(x) + x$, kde $\mathcal{F}(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s~výstupem $\mathcal{F}(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost~\cite{he2015deep},~\cite{zaeemzadeh2018normpreservation}.
 
 
 
@@ -464,7 +520,7 @@ Tato kapitola vychází z~referenční studie \textbf{TasNet: Surpassing Ideal T
 
 Přestože metody pro zpracování řeči v~takovém akustickém prostředí, ve kterém se současně prolíná mnoho řečových signálů, v~poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u~těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v~aplikacích, které by mohly zpracovávat řeč v~reálném čase.
 
-Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time fourier transformation (STFT)~\cite{speechseparationoverview}. Tento převod ale měl pro využití v~reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
+Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time Fourier transformation (STFT)~\cite{speechseparationoverview}. Tento převod ale měl pro využití v~reálném čase příliš vysokou odezvu a navíc T--F reprezentace nebyla optimální pro separaci mluvčích.
 
 Pro překonání nedostatků předešlých metod byla navržena architektura fully--convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~temporal convolutional network (TCN)~\cite{lea2016temporal},~\cite{bai2018empirical}. TCN je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
 
@@ -474,13 +530,6 @@ Pro překonání nedostatků předešlých metod byla navržena architektura ful
     \caption{\label{fig:tasnet-pipe}Zjednodušený model architektury TasNet}
 \end{figure}
 
-Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odhad $C$ zdrojů mluvčích $s_1(t), \dots, s_c(t) \in \mathbb{R}^{1 \times T}$ na diskrétním signálu směsi $x(t)\in \mathbb{R}^{1 \times T}$, kde $T$ je délka nahrávky a kde
-\begin{equation}
-  x(t) = \sum_{i=1}^C s_i(t)
-\end{equation}
-Cílem je odhadnout $s_i(t), i = 1, \dots, C$ ze signálu směsi $x(t)$.
-
-\todo{info: je to zde protoze dale text pracuje s nekterymi promennymi, takze zde jsou aspon uvedeny}
 
 \todo{sem mozna tabulka hyperparametrů a jejich pojmenovani X, R, N, L, P, ...}
 
@@ -544,30 +593,22 @@ Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$
     \caption{\label{fig:tasnet-stacked-resblocks}Jádro separačního modulu -- naskládané konvoluční bloky s~časovou dilatací odhadující masky na základě nezáporné reprezentace\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.5]{obrazky-figures/causal_dilation.png}
-    \caption{\label{fig:tasnet-causal-dilation}Vizualizace časové dilatace}
-\end{figure}
 
 
-
-\subsection{Konvoluční bloky - mozna ne jako podkapitolu}
-\todo{Pozn: vrstvy bloku a residualni spojeni}
+\subsection{Konvoluční bloky}
 Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 1$ konvolučních bloků za \textit{depthwise separable convolution} (S--conv), která pomáhá snížit počet parametrů a ukázala se jako efektivní ve zpracováni obrazu\todo{citace 26 27}.
 
 \textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s~velikostí konvolučního jádra 1:
 
 \begin{equation}
-	D-conv(Y, K) = concat(y_j \circledast k_j), j = 1, \dots, N
+	D\texttt{-}conv(Y, K) = concat(y_j \circledast k_j), j = 1, \dots, N
 \end{equation}
 
 \begin{equation}
-	S-conv(Y, K, L) = D-conv(Y, K) \circledast L
+	S\texttt{-}conv(Y, K, L) = D\texttt{-}conv(Y, K) \circledast L
 \end{equation}
 
 kde $Y \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $K \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $y_j \in \mathbb{R}^{1 \times M}$ a $k_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $Y$ a $K$. $L \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
-
 
 \begin{figure}[H]
     \centering
@@ -793,12 +834,26 @@ Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění tr�
 - pametova narocnost modelu
 
 
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.4\textwidth]{obrazky-figures/prelu.jpg} % first figure itself
+        \caption{\label{fig:img1}first figure}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.4\textwidth]{obrazky-figures/prelu.jpg} % second figure itself
+        \caption{\label{fig:img2}second figure}
+    \end{minipage}
+\end{figure}
+
+
 Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Je proto podstatné, na jakém stroji je síť učena a od toho se odvíjí čas trénování.
 
 Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry, které určují například počet vrstev sítě, velikost segmentace a další vlastnosti.
 
 Cílem experimentů je zjistit, které z~hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace mluvčích. Tato kvalita je měřena primárně metrikami STOI, SI--SNR a PESQ, které byly popsány v~kapitole \ref{separace}.
-\todo{ref na zdroje u~metrik}
 
 
 \section{Dataset}
