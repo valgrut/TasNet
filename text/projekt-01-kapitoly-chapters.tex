@@ -16,7 +16,7 @@ Text je rozdělen na několik kapitol, které postupně pokrývají různé logi
 
 
 \section{Problém separace mluvčích}
-V běžném prostředí se přes sebe prolínají různé zvuky, jako je hudba, směs mnoha mluvčích či další akustické jevy. Problém separace mluvčích, neboli koktejl párty problém, si dává za úkol separovat tuto směs zvukových signálů. To umožní se soustředit na jednotlivé signály bez přítomnosti ostatních a využít je tak na další analýzu, jako třeba identifikace řečníka a vlastností jeho hlasu či přepis promluvy na text. Ostatní signály jsou na separované nahrávce potlačeny~\cite{cocktailparty}.
+V~běžném prostředí se přes sebe prolínají různé zvuky, jako je hudba, směs mnoha mluvčích či další akustické jevy. Problém separace mluvčích, neboli koktejl párty problém, si dává za úkol separovat tuto směs zvukových signálů. To umožní se soustředit na jednotlivé signály bez přítomnosti ostatních a využít je tak na další analýzu, jako třeba identifikace řečníka a vlastností jeho hlasu či přepis promluvy na text. Ostatní signály jsou na separované nahrávce potlačeny~\cite{cocktailparty}.
 
 Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odhad $C$ zdrojů mluvčích $s_1(t), \dots, s_c(t) \in \mathbb{R}^{1 \times T}$ na diskrétním signálu směsi $x(t)\in \mathbb{R}^{1 \times T}$, kde $T$ je délka nahrávky a kde
 \begin{equation}
@@ -25,7 +25,7 @@ Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odh
 \end{equation}
 Cílem je odhadnout $s_i(t), i = 1, \dots, C$ ze signálu směsi $x(t)$.
 
-Pro vyřešení problému je potřeba se zaměřit na dvě oblasti. Na separaci mluvčího ze signálu směsi mluvčích, což je suma všech jednotlivých mluvčích a zvuků a na zaměření a udržení pozornosti na konkrétního mluvčího, a možnost přepínat mezi jednotlivými zdroji pozornost. Úspěšnost v jedné oblasti zvyšuje úspěšnost oblasti druhé~\cite{cocktailparty}. Algoritmy pro separaci mluvčích berou v potaz obě oblasti s cílem dosáhnout co nejlepších výsledků. Kvalita separace se hodnotí pomocí metrik, které jsou popsány později. 
+Pro vyřešení problému je potřeba se zaměřit na dvě oblasti. Na separaci mluvčího ze signálu směsi mluvčích, což je suma všech jednotlivých mluvčích a zvuků a na zaměření a udržení pozornosti na konkrétního mluvčího, a možnost přepínat mezi jednotlivými zdroji pozornost. Úspěšnost v~jedné oblasti zvyšuje úspěšnost oblasti druhé~\cite{cocktailparty}. Algoritmy pro separaci mluvčích berou v~potaz obě oblasti s~cílem dosáhnout co nejlepších výsledků. Kvalita separace se hodnotí pomocí metrik, které jsou popsány později. 
 
 
 \section{Metody pro separaci jednokanálových nahrávek}
@@ -65,11 +65,11 @@ Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použ
 
 
 \subsection{Hluboké neuronové sítě}
-Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou--li definovány jako problémy učení s učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat zdroj signálu z motofónního signálu. Monofónní signál je signál nahraný jedním mikrofonem a má jeden kanál.
+Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou--li definovány jako problémy učení s~učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat zdroj signálu z~motofónního signálu. Monofónní signál je signál nahraný jedním mikrofonem a má jeden kanál.
 
-Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short--time Fourier transform (STFT) $Y(t,f)$ pro rekonstrukci každého zdroje $X_s(t,f)$ v T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z trénovacího datasetu a odstranit tak nemožné kombinace~\cite{cocktailparty}.
+Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short--time Fourier transform (STFT) $Y(t,f)$ pro rekonstrukci každého zdroje $X_s(t,f)$ v~T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k~nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z~trénovacího datasetu a odstranit tak nemožné kombinace~\cite{cocktailparty}.
 
-Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme--li vstupní příznak $Y(t,f)$ směsi mluvčích, model se bude učit predikovat individuální tok příznaků $X_s(t,f)$ pomocí vhodného trénovacího datasetu. Později se ukázalo, že se lepších výsledků dosáhne, bude--li model odhadovat množinu masek $M_s(t,f)$ pro každý ze zdrojů, místo přímého odhadu spektra $X_s(t,f)$ a ty pak použít k rekonstrukci spektra $X_s(t,f)$ jako $X_s = M_s \circ Y$, kde $\circ$ je násobení po prvcích. Masky jsou invariantní vůči proměnným vlastnostem vstupních dat a jejich správný odhad je důležitým faktorem pro kvalitu separace~\cite{cocktailparty}.
+Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme--li vstupní příznak $Y(t,f)$ směsi mluvčích, model se bude učit predikovat individuální tok příznaků $X_s(t,f)$ pomocí vhodného trénovacího datasetu. Později se ukázalo, že se lepších výsledků dosáhne, bude--li model odhadovat množinu masek $M_s(t,f)$ pro každý ze zdrojů, místo přímého odhadu spektra $X_s(t,f)$ a ty pak použít k~rekonstrukci spektra $X_s(t,f)$ jako $X_s = M_s \circ Y$, kde $\circ$ je násobení po prvcích. Masky jsou invariantní vůči proměnným vlastnostem vstupních dat a jejich správný odhad je důležitým faktorem pro kvalitu separace~\cite{cocktailparty}.
 
 % https://link-springer-com.ezproxy.lib.vutbr.cz/content/pdf/10.1631/FITEE.1700814.pdf
 
@@ -80,7 +80,7 @@ Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme
 \end{figure}
 
 
-Vzniklo mnoho dalších přístupů založených na hlubokém učení. Jeden z nich ukázal, že pro separaci mluvčích není T--F doména optimální. Architektura TasNet~\cite{luo2018convtasnet}, na kterou se tato práce zaměřuje a je popsána v kapitole~\ref{tasnet}, převádí vstupní směs na nezápornou reprezentaci a separaci provádí v časové doméně s velmi dobrými výsledky.
+Vzniklo mnoho dalších přístupů založených na hlubokém učení. Jeden z~nich ukázal, že pro separaci mluvčích není T--F doména optimální. Architektura TasNet~\cite{luo2018convtasnet}, na kterou se tato práce zaměřuje a je popsána v~kapitole~\ref{tasnet}, převádí vstupní směs na nezápornou reprezentaci a separaci provádí v~časové doméně s~velmi dobrými výsledky.
 
 
 
@@ -89,7 +89,7 @@ Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba 
 
 
 \subsection{Source to distortion ratio}
-SDR~\cite{vincent-inria-00544230} je jedna z~nejznámějších metrik pro měření kvality separace mluvčích. Hodnota je udávána v decibelech (dB). Na výstupu separačního algoritmu se může nacházet rušení, které lze kategorizovat jako inference a artefakty. 
+SDR~\cite{vincent-inria-00544230} je jedna z~nejznámějších metrik pro měření kvality separace mluvčích. Hodnota je udávána v~decibelech (dB). Na výstupu separačního algoritmu se může nacházet rušení, které lze kategorizovat jako inference a artefakty. 
 
 Inference odkazuje na přetrvávající podíl druhého zdroje na separované nahrávce prvního zdroje. SIR je tedy metrika zachycující schopnost algoritmu odstranit ostatní zdroje a zachovat pouze ten požadovaný.
 
@@ -113,13 +113,11 @@ Hodnota SDR se vypočítá jako
 
 
 \subsection{Perceptual evaluation of speech qualit}
-Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná objektivní metoda pro vyhodnocování kvality řeči na end--to--end síti. PESQ byla vyvinuta pro předpověď subjektivního skóre \textit{mean opinion score} (MOS), kde posluchač hodnotil kvalitu připojení (řeči) jednou z pěti možností ("bad", "poor", "fair", "good", "excellent"). Těmto možnostem odpovídaly číselné hodnoty $1$ až $5$, které pak byly zprůměrovány, což nakonec byla finální hodnota MOS.
+Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná objektivní metoda pro vyhodnocování kvality řeči na end--to--end síti. PESQ byla vyvinuta pro předpověď subjektivního skóre \textit{mean opinion score} (MOS), kde posluchač hodnotil kvalitu připojení (řeči) jednou z~pěti možností (\uv{bad}, \uv{poor}, \uv{fair}, \uv{good}, \uv{excellent}). Těmto možnostem odpovídaly číselné hodnoty $1$ až $5$, které pak byly zprůměrovány, což nakonec byla finální hodnota MOS.
 
-Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{sdr-pesq-optimization}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Lze ho ale aplikovat i pro vyhodnocení separace mluvčích, kde referenční nahrávka je porovnána s nahrávkou, která byla vyprodukována neuronovou sítí.
+Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{sdr-pesq-optimization}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Lze ho ale aplikovat i pro vyhodnocení separace mluvčích, kde referenční nahrávka je porovnána s~nahrávkou, která byla vyprodukována neuronovou sítí.
 %http://wireless.feld.cvut.cz/mesaqin2002/full09.pdf
 
-\todo{popsat vic nebo ne.. treba to ze je tam nejake alignment, input filter, FFT viz odkaz}
-\todo{fix uvozovky ASI}
 % http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.5.9136&rep=rep1&type=pdf
 %nebo 
 % https://arxiv.org/abs/1901.09146
@@ -132,9 +130,9 @@ Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamen�
 
 
 \subsection{Short--time objective intelligibility}
-Short--time objective intelligibility (STOI)~\cite{taal-stoi} je metrika založená na hodnotě korelačního koeficientu mezi časově--frekvenčním spektrem referenčního a odhadnutého signálu řeči v krátkých překrývajících se segmentech~\cite{5713237}. Spektrum čisté a separované nahrávky je získáno pomocí short--time Fourier transform (STFT).
+Short--time objective intelligibility (STOI)~\cite{taal-stoi} je metrika založená na hodnotě korelačního koeficientu mezi časově--frekvenčním spektrem referenčního a odhadnutého signálu řeči v~krátkých překrývajících se segmentech~\cite{5713237}. Spektrum čisté a separované nahrávky je získáno pomocí short--time Fourier transform (STFT).
 
-Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pomocí STFT, následně segmentovány na krátké úseky s $50\%$ překrytím, normalizovány, klipnuty a nakonec porovnány průměry hodnot korelačních koeficientů~\cite{taal-stoi}. Hodnota STOI se pohybuje v rozmezí $0$ a $1$, korespondující s procentuální úspěšností.
+Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pomocí STFT, následně segmentovány na krátké úseky s~$50\%$ překrytím, normalizovány, klipnuty a nakonec porovnány průměry hodnot korelačních koeficientů~\cite{taal-stoi}. Hodnota STOI se pohybuje v~rozmezí $0$ a $1$, korespondující s~procentuální úspěšností.
 
 % Kniha: https://books.google.cz/books?id=ib9ODwAAQBAJ&pg=PA215&lpg=PA215&dq=what+gives+value+of+stoi+in+good+speech&source=bl&ots=14SyU3Hc95&sig=ACfU3U3kMNnhD5fqdunpK2VJ3QRPNHrWTA&hl=en&sa=X&ved=2ahUKEwiQ2ML5gsPqAhUrRBUIHQfOB2wQ6AEwA3oECAgQAQ#v=onepage&q=what%20gives%20value%20of%20stoi%20in%20good%20speech&f=false
 % http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.696.995&rep=rep1&type=pdf
@@ -170,7 +168,7 @@ Dopředné neuronové sítě (feed forward networks, či multi layer perceptron 
     \caption{\label{fig:netcomparison}Příklad grafu dopředné sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~dopředné sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu~\cite{FFandRecNN}.}
 \end{figure}
 
-Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Dopředná síť je tvořena třemi typy vrstev (viz obrázky \ref{fig:netcomparison} a \ref{fig:mlp}). Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Hodnoty na jejím výstupu mohou představovat třídy, do kterých má být klasifikován vstup v~případě klasifikátorů, nebo predikce hodnot na základě vstupních dat v~případě regrese. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \todo{uvozovky lepe} "hluboká neuronová síť" označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
+Struktura neuronové sítě je organizována do vrstev, které se skládají z~neuronů. Dopředná síť je tvořena třemi typy vrstev (viz obrázky \ref{fig:netcomparison} a \ref{fig:mlp}). Vstupní vrstva slouží k~předání hodnot do sítě, ale nijak tyto hodnoty nemodifikuje. Nezměněné jsou zkopírovány do první skryté vrstvy. Následují skryté vrstvy, z~nichž poslední je napojena na výstupní vrstvu. Hodnoty na jejím výstupu mohou představovat třídy, do kterých má být klasifikován vstup v~případě klasifikátorů, nebo predikce hodnot na základě vstupních dat v~případě regrese. S~počtem jednotlivých vrstev souvisí pojem hloubka sítě, která je rovna počtu všech vrstev neuronové sítě od vstupní až po výstupní vrstvu. Pojem \uv{hluboká neuronová síť} označuje takovou síť, která má dvě nebo více skrytých vrstev. Existuje mnoho typů vrstev, například plně propojené, pooling, s~přeskočením nebo vrstvy konvoluční.
 
 \begin{figure}[H]
     \centering
@@ -216,11 +214,11 @@ Z~pohledu učení je také důležité, aby aktivační funkce byla diferencovat
 
 
 \subsection*{Logická sigmoida}
-Logická sigmoida je nelineární aktivační funkce používaná v hlubokém učení, nejčastějí v dopředných neuronových sítích. Graf funkce má hladký průběh, jak lze vidět na obrázku~\ref{fig:sigmoid}. Je to omezená diferencovatelná funkce, definovaná jako
+Logická sigmoida je nelineární aktivační funkce používaná v~hlubokém učení, nejčastějí v~dopředných neuronových sítích. Graf funkce má hladký průběh, jak lze vidět na obrázku~\ref{fig:sigmoid}. Je to omezená diferencovatelná funkce, definovaná jako
 \begin{equation}
   f(x) = \frac{1}{1+\exp(-x)}
 \end{equation}
-Používá se na výstupních vrstvách pro predikci výstupu na základě pravděpodobnosti, čehož se využívá při řešení logistických regresních problémů, u binárních klasifikátorů a dalších oblastí neuronových sítí. Podle~\cite{NEAL199271} je nejčastěji používána v sítích s menším počtem vrstev (tzv. shallow networks). Mezi hlavní nevýhody patří ostrý gradient během zpětné propagace, saturace gradientu a pomalá konvergence~\cite{nwankpa2018activation}.
+Používá se na výstupních vrstvách pro predikci výstupu na základě pravděpodobnosti, čehož se využívá při řešení logistických regresních problémů, u~binárních klasifikátorů a dalších oblastí neuronových sítí. Podle~\cite{NEAL199271} je nejčastěji používána v~sítích s~menším počtem vrstev (tzv. shallow networks). Mezi hlavní nevýhody patří ostrý gradient během zpětné propagace, saturace gradientu a pomalá konvergence~\cite{nwankpa2018activation}.
 
 \begin{figure}[H]
     \centering
@@ -231,7 +229,7 @@ Používá se na výstupních vrstvách pro predikci výstupu na základě pravd
 
 
 \subsection*{Softmax}
-Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z vektoru reálných čísel. Výstupem je hodnota v rozmezí $0$ až $1$, jak zobrazuje graf~\ref{fig:softmax}. V klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
+Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z~vektoru reálných čísel. Výstupem je hodnota v~rozmezí $0$ až $1$, jak zobrazuje graf~\ref{fig:softmax}. V~klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s~tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
 
 \begin{equation}
   f(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
@@ -241,14 +239,14 @@ Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstup
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{obrazky-figures/softmax.png}
-    \caption{\label{fig:softmax}Graf aktivační funkce softmax\todo{lepsi graf udelat}}
+    \caption{\label{fig:softmax}Graf aktivační funkce softmax}
 \end{figure}
 
 
 
 \subsection*{Rectified Linear Unit}
 \label{relu}
-Rectified Linear Unit (ReLU) je nejčastěji používaná aktivační funkce a stojí za nedávnými úspěchy v oblasti neuronových sítí~\cite{NIPS2012_4824}. Vyžaduje-li síť nějakou nelinearitu, je ReLU pro většinu případů ideální. Její použití zrychluje konvergenci trénovacího procesu a vede k lepším výsledkům, než u jednotek používající konvenční sigmoidní aktivační funkce~\cite{40811}. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$, jak jde vidět na grafu~\ref{fig:relu}. ReLU je definována jako 
+Rectified Linear Unit (ReLU) je nejčastěji používaná aktivační funkce a stojí za nedávnými úspěchy v~oblasti neuronových sítí~\cite{NIPS2012_4824}. Vyžaduje-li síť nějakou nelinearitu, je ReLU pro většinu případů ideální. Její použití zrychluje konvergenci trénovacího procesu a vede k~lepším výsledkům, než u~jednotek používající konvenční sigmoidní aktivační funkce~\cite{40811}. Pro každou zápornou hodnotu $x$ vrací $0$ a pro kladnou hodnotu $x$ vrací tutéž hodnotu $x$, jak jde vidět na grafu~\ref{fig:relu}. ReLU je definována jako 
 \begin{equation}
    f(x)=max(0,x)
 \end{equation}
@@ -279,7 +277,7 @@ Předpis funkce PReLU je definován jako
 %    \caption{\label{fig:prelu}Graf aktivační funkce PReLU}
 %\end{figure}
 
-V případě, že je hodnota parametru $\alpha=0$, pak se jedná o ReLU. Je--li parametr $\alpha = c$, kde $c\in\mathbb{R}$ je malá konstanta (například $c = 0.03$), jedná se o Leaky ReLU (LReLU) a motivací pro její zavedení bylo vyhnout se nulovému gradientu.
+V~případě, že je hodnota parametru $\alpha=0$, pak se jedná o~ReLU. Je--li parametr $\alpha = c$, kde $c\in\mathbb{R}$ je malá konstanta (například $c = 0.03$), jedná se o~Leaky ReLU (LReLU) a motivací pro její zavedení bylo vyhnout se nulovému gradientu.
 
 
 \begin{figure}[H]
@@ -418,7 +416,7 @@ Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je pře
 
 
 \subsection{Objektivní funkce}
-Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v~závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \todo{spravit uvozovky} "cenu", která je asociována s~touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce. Výstupní hodnota loss funkce nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z~datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s~opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
+Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v~závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \uv{cenu}, která je asociována s~touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce. Výstupní hodnota loss funkce nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z~datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s~opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
 
 
 V~rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V~takovém případě bude dobře sloužit pro účely trénování. V~případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě~ \cite{mitdeeplearning}. 
@@ -447,7 +445,7 @@ Mean absolute error loss (MAE) je velmi podobná objektivní funkce jako MSE, al
   MAE = \frac{1}{N}\sum_{j=1}^N|y_j - \hat{y_j}|
 \end{equation}
 
-Výhodnou MAE je její lineární průběh, takže se, vzhledem k lineární závislosti, chyba projeví úměrně, oproti MSE, kde je závislost kvadratická a i menší chyba se projeví více.
+Výhodnou MAE je její lineární průběh, takže se, vzhledem k~lineární závislosti, chyba projeví úměrně, oproti MSE, kde je závislost kvadratická a i menší chyba se projeví více.
 
 Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $x=0$, což může mít negativní následky pro výpočet gradientu.
 
@@ -459,9 +457,9 @@ Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $
 
 
 \subsection{Algoritmus zpětné propagace}
-Algoritmus zpětné propagace (backpropagation algorithm) je adaptační algoritmus pro učení neuronových sítí metodou učení s~učitelem. Algoritmus pozpátku prochází neuronovou síťí a na základě skalární hodnoty loss, která je výstupem objektivní funkce $J(\theta)$, počítá její gradient s ohledem ke všem váhám v~síti na základě toho, jak moc každá váha přispívá k~celkové chybě. Cílem je minimalizovat hodnotu loss. Algoritmus je nejčastěji používán během trénování neuronových sítí, ale obecně ho lze použít pro výpočet jakékoli derivace~\cite{mitdeeplearning_small},~\cite{mitdeeplearning}.
+Algoritmus zpětné propagace (backpropagation algorithm) je adaptační algoritmus pro učení neuronových sítí metodou učení s~učitelem. Algoritmus pozpátku prochází neuronovou síťí a na základě skalární hodnoty loss, která je výstupem objektivní funkce $J(\theta)$, počítá její gradient s~ohledem ke všem váhám v~síti na základě toho, jak moc každá váha přispívá k~celkové chybě. Cílem je minimalizovat hodnotu loss. Algoritmus je nejčastěji používán během trénování neuronových sítí, ale obecně ho lze použít pro výpočet jakékoli derivace~\cite{mitdeeplearning_small},~\cite{mitdeeplearning}.
 
-Proces začíná na výstupní vrstvě sítě. Algoritmus zde pro každý neuron spočítá chybový gradient $\delta$ reprezentující citlivost chyby sítě na změnu váhovaného součtu daného neuronu. Tyto gradienty jsou iterativně zpětně propagovány do předchozích vrstev, na základě nichž jsou počítány gradienty neuronů v předchozích vrstvách, až po vrstvu vstupní. Pro úpravu vah na základě vypočítaných chybových gradientů se obvykle používá algoritmus gradient descent~\cite{mitdeeplearning_small}.
+Proces začíná na výstupní vrstvě sítě. Algoritmus zde pro každý neuron spočítá chybový gradient $\delta$ reprezentující citlivost chyby sítě na změnu váhovaného součtu daného neuronu. Tyto gradienty jsou iterativně zpětně propagovány do předchozích vrstev, na základě nichž jsou počítány gradienty neuronů v~předchozích vrstvách, až po vrstvu vstupní. Pro úpravu vah na základě vypočítaných chybových gradientů se obvykle používá algoritmus gradient descent~\cite{mitdeeplearning_small}.
 
 
 %\cite{web-brilliant}
@@ -469,7 +467,7 @@ Proces začíná na výstupní vrstvě sítě. Algoritmus zde pro každý neuron
 
 
 \subsection*{Gradient descent}
-Gradient descent je iterativní optimalizační algoritmus, definující pravidla pro samotnou úpravu vah v síti. Je určený pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu. Hledání lokálního minima probíhá úpravou parametrů modelu v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
+Gradient descent je iterativní optimalizační algoritmus, definující pravidla pro samotnou úpravu vah v~síti. Je určený pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu. Hledání lokálního minima probíhá úpravou parametrů modelu v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{obrazky-figures/gradientdescent.png}
@@ -640,9 +638,9 @@ V~každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv násled
 
 
 \section{Normalizace}
-Při trénování neuronových sítí může docházet k~fenoménu \todo{uvozovky} vnitřní kovariantní posuv (\textit{internal covariate shift}), kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch},~\cite{ba2016layer}.
+Při trénování neuronových sítí může docházet k~fenoménu \uv{vnitřní kovariantní posuv} (\textit{internal covariate shift}), kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch},~\cite{ba2016layer}.
 
-Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s~channel--wise layer normalization (cLN)~\todo{cite}, global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}, kterou jsem se rozhodl použít v mé implementaci.
+Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s~channel--wise layer normalization (cLN), global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}, kterou jsem se rozhodl použít v~mé implementaci.
 
 Metoda cLN je aplikována na vstup separačního modulu pro zajištění invariance při změně měřítka vstupních dat. Tato metoda je vhodná pro použití v~kauzální i nekauzální konfiguraci, je--li použita v~konvolučních blocích. Normalizace cLN je aplikována na každý segment $y_k$. 
 
@@ -713,23 +711,23 @@ Pro vyhodnocování výkonu sítě byly použity metriky SDR, PESQ a STOI. Pro v
 
 
 \section{Implementace tříd a modelu}
-Model neuronové sítě byl logicky rozdělen na několik dílčích částí, z nichž každá je reprezentována jednou třídou. Jednotlivé třídy obsahují metody pro nahrávání a transformaci dat, segmentaci nahrávek a další jsou přímo stavebním blokem neuronové sítě. Některé parametry předané třídám při jejich instanciaci jsou hyperparametry, jejichž hodnoty byly určeny parametry z příkazové řádky při volání programu. Každá z tříd bude popsána dále v textu.
+Model neuronové sítě byl logicky rozdělen na několik dílčích částí, z~nichž každá je reprezentována jednou třídou. Jednotlivé třídy obsahují metody pro nahrávání a transformaci dat, segmentaci nahrávek a další jsou přímo stavebním blokem neuronové sítě. Některé parametry předané třídám při jejich instanciaci jsou hyperparametry, jejichž hodnoty byly určeny parametry z~příkazové řádky při volání programu. Každá z~tříd bude popsána dále v~textu.
 
 
 \subsection*{Třídy SegmentDataset a AudioDataset}
-Třídy \textbf{SegmentDataset} a \textbf{AudioDataset} slouží pro načítání korespondujících trojic nahrávek směs--zdroj1--zdroj2 z adresáře, kde je uložen dataset. Nahrávky jsou ve formátu wav a vzorkovány na 8KHz. Třídy tato data dále transformují na tenzory a normalizují na jednotkovou varianci a zero--mean. 
+Třídy \textbf{SegmentDataset} a \textbf{AudioDataset} slouží pro načítání korespondujících trojic nahrávek směs--zdroj1--zdroj2 z~adresáře, kde je uložen dataset. Nahrávky jsou ve formátu wav a vzorkovány na 8KHz. Třídy tato data dále transformují na tenzory a normalizují na jednotkovou varianci a zero--mean. 
 
-Tyto třídy používají některé pomocné funkce definované v souboru \textbf{tools.py} pro dorovnání nedostatečně velkých nahrávek ve zpracovávaném mini--batchi nulami na velikost nejdelší z nich, protože data obsažená v mini--batchi musejí mít stejnou velikost.
+Tyto třídy používají některé pomocné funkce definované v~souboru \textbf{tools.py} pro dorovnání nedostatečně velkých nahrávek ve zpracovávaném mini--batchi nulami na velikost nejdelší z~nich, protože data obsažená v~mini--batchi musejí mít stejnou velikost.
 
-Při spuštění programu jsou nahrány názvy wav souborů do polí, které jsou poté buď náhodně či sekvenčně procházeny a postupně dochází k načítání trojic nahrávek na aktuálním indexu. 
+Při spuštění programu jsou nahrány názvy wav souborů do polí, které jsou poté buď náhodně či sekvenčně procházeny a postupně dochází k~načítání trojic nahrávek na aktuálním indexu. 
 
-Obě třídy jsou periodicky volány instancí třídy Dataloader\footnote{\url{https://pytorch.org/docs/stable/data.html\#torch.utils.data.DataLoader}}, která v cyklu posílá požadavky na data ke zpracování. Rozdíl mezi třídami je ten, že třída AudioDataset předává trojice nahrávek v původním stavu a délka epochy tak trvá tolik iterací, kolik je nahrávek ve zpracovávaném datasetu a je kvůli tomu používána během testování sítě, kde chceme vyhodnocovat celé nahrávky. Třída SegmentDataset je použita pro trénovací a validační dataset, kde jsou nahrávky rozdělovány na segmenty o parametrem dané délce a až poté jsou poskytnuty ven. Segmentace je detailně popsána v~podkapitole~\ref{sec:segmentace}.
+Obě třídy jsou periodicky volány instancí třídy Dataloader\footnote{\url{https://pytorch.org/docs/stable/data.html\#torch.utils.data.DataLoader}}, která v~cyklu posílá požadavky na data ke zpracování. Rozdíl mezi třídami je ten, že třída AudioDataset předává trojice nahrávek v~původním stavu a délka epochy tak trvá tolik iterací, kolik je nahrávek ve zpracovávaném datasetu a je kvůli tomu používána během testování sítě, kde chceme vyhodnocovat celé nahrávky. Třída SegmentDataset je použita pro trénovací a validační dataset, kde jsou nahrávky rozdělovány na segmenty o~parametrem dané délce a až poté jsou poskytnuty ven. Segmentace je detailně popsána v~podkapitole~\ref{sec:segmentace}.
 
-Po vyčerpání datasetu obě třídy vyvolají vyjímku \textbf{StopIteration}, která je detekována Dataloaderem a ten ukončí cyklus, ve kterém se dataset zpracovával. Tím v případě trénování končí učení sítě a začíná validace, v případě validace končí jedna epocha a v případě testování končí vyhodnocování sítě.
+Po vyčerpání datasetu obě třídy vyvolají vyjímku \textbf{StopIteration}, která je detekována Dataloaderem a ten ukončí cyklus, ve kterém se dataset zpracovával. Tím v~případě trénování končí učení sítě a začíná validace, v~případě validace končí jedna epocha a v~případě testování končí vyhodnocování sítě.
 
 
 \subsection*{Třída Tasnet}
-Třída Tasnet.py reprezentuje model neuronové sítě. Atributy třídy představují jednotlivé vrstvy neuronové sítě. Síť obsahuje konvoluční vrstvy, enkodér, dekodér a \textit{temporal convolutionan network}, která je tvořena sekvencí konvolučních bloků, které jsou rozebrány později. Konvolučním vrstvám jsou nastaveny hodnoty \textit{padding} a \textit{stride}, které ovlivňují chování konvolučních vrstev. V~této třídě jsou také inicializovány váhy (filtry) konvolučních vrstev algoritmem Xavier~\cite{pmlr-v9-glorot10a}. Ve funkci $forward()$, která je volána, když jsou instanci sítě předána data ke zpracování, jsou sekvenčně volány jednotlivé vrstvy. Během zpracování předaných dat je v~této sekvenci vypočítána maska a aplikována na zpracovávanou směs. Tím vzniknou dvě separované nahrávky, které jsou předány na výstup v podobě tensoru. 
+Třída Tasnet.py reprezentuje model neuronové sítě. Atributy třídy představují jednotlivé vrstvy neuronové sítě. Síť obsahuje konvoluční vrstvy, enkodér, dekodér a \textit{temporal convolutionan network}, která je tvořena sekvencí konvolučních bloků, které jsou rozebrány později. Konvolučním vrstvám jsou nastaveny hodnoty \textit{padding} a \textit{stride}, které ovlivňují chování konvolučních vrstev. V~této třídě jsou také inicializovány váhy (filtry) konvolučních vrstev algoritmem Xavier~\cite{pmlr-v9-glorot10a}. Ve funkci $forward()$, která je volána, když jsou instanci sítě předána data ke zpracování, jsou sekvenčně volány jednotlivé vrstvy. Během zpracování předaných dat je v~této sekvenci vypočítána maska a aplikována na zpracovávanou směs. Tím vzniknou dvě separované nahrávky, které jsou předány na výstup v~podobě tensoru. 
 
 
 \subsection*{Třída ResBlock}
@@ -934,14 +932,14 @@ Bylo natrénováno několik, různě velkých modelů, které se lišily velikos
 %------------------------------------------------------------------------------
 
 \section{Experimenty s~modely}
-\todo{grafy v experimentech -- trenovani a loss 1 mozna 1 az 2 grafy}
-\todo{kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r, jakoze v podkapitole Vliv X budou grafy takove, ze pro kazdou metriku bude graf jeden, kde se meni X a je tam videt jak se jednotlive hodnoty metriky lisi pro ruzna X}
+\todo{grafy v~experimentech -- trenovani a loss 1 mozna 1 az 2 grafy}
+\todo{kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r, jakoze v~podkapitole Vliv X budou grafy takove, ze pro kazdou metriku bude graf jeden, kde se meni X a je tam videt jak se jednotlive hodnoty metriky lisi pro ruzna X}
 \todo{rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
 experimenty:
 sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat.}
-\todo{zahrnout do podkapitol, nebo udelat samostatnou podkapitolu o SDR a pohlavi}
-\todo{jedna podkapitola o rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr mensi loss}
-\todo{z TasNet shrnout jejich vysledky jako jedna z poslednich podkapitol}
+\todo{zahrnout do podkapitol, nebo udelat samostatnou podkapitolu o~SDR a pohlavi}
+\todo{jedna podkapitola o~rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr mensi loss}
+\todo{z~TasNet shrnout jejich vysledky jako jedna z~poslednich podkapitol}
 \todo{podkapitola Inference -- ukazat separovane inferovane nahravky oproti referencni nahravce}
 \todo{sem mozna tabulka hyperparametrů a jejich pojmenovani X, R, N, L, P, ...}
 \todo{miniÚvod}
@@ -949,7 +947,7 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr v
 
 
 \subsection{Výsledky referenčního modelu TasNet}
-\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v~tech vecech ktere tu merim a vyhodnocuji ja. Pozn: dat to na konec experimentu, muj nej a srovnat s tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.} 
+\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v~tech vecech ktere tu merim a vyhodnocuji ja. Pozn: dat to na konec experimentu, muj nej a srovnat s~tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.} 
 
 
 \subsection{Vliv hyper--parametru X}
@@ -960,16 +958,16 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr v
 
 \subsection{Vliv hyper--parametru délka--segmentu}
 \todo{zmensovani a zvetsovani SL, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, obrazky, grafy}
-\todo{toto bude pouze pro posledni sit s velikosti X 8 R 4, kterou mam natrenovanou dvakrat, s ruznymi seg len}
+\todo{toto bude pouze pro posledni sit s~velikosti X 8 R 4, kterou mam natrenovanou dvakrat, s~ruznymi seg len}
 
 \subsection{Vyhodnocení a porovnání modelů}
-\todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z pohledu vysledku evaluace.}
+\todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace.}
 
-histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz, atd, v nahrakach je ID, a podle toho to zkusit zmapovat. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.
+histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz, atd, v~nahrakach je ID, a podle toho to zkusit zmapovat. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.
 
 
 \section{Možná rozšíření a navrhnutá vylepšení}
-\todo{k poslednimu bodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat. toto Podsekce na konci experimentu.}
+\todo{k~poslednimu bodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o~zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat. toto Podsekce na konci experimentu.}
 
 - variabilnější dataset, mikrofony, šum a bordel prostředí
 - separace více mluvčích
