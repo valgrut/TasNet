@@ -180,7 +180,7 @@ Struktura neuronové sítě je organizována do vrstev, které se skládají z~n
 
 
 \section{Umělý neuron}
-Základní stavební jednotka neuronových sítí je umělý neuron (\textit{artificial neuron}) (viz obrázek \ref{fig:neuron}). Tento model je založen na principu reálných neuronů, které se nacházejí v~organizmech. Umělý neuron obsahuje libovolně mnoho vstupních propojení, přes které se mu předávají data v~podobě vstupního vektoru $\textbf{\overrightarrow{x}} \in \mathbb{R}^N$, kde $\textbf{\overrightarrow{x}} = [x_1, x_2, \dots, x_n], n \in N$. Sám neuron obsahuje hodnotu bias $b \in \mathbb{R}$ a vektor vah $\textbf{\overrightarrow{w}} \in \mathbb{R}^N$, kde $\textbf{\overrightarrow{w}} = [w_1, w_2, \dots, w_n], n \in N$, jenž je upravován během trénování neuronu.
+Základní stavební jednotka neuronových sítí je umělý neuron (\textit{artificial neuron}) (viz obrázek \ref{fig:neuron}). Tento model je založen na principu reálných neuronů, které se nacházejí v~organizmech. Umělý neuron obsahuje libovolně mnoho vstupních propojení, přes které se mu předávají data v~podobě vstupního vektoru $\boldsymbol{\overrightarrow{x}} \in \mathbb{R}^N$, kde $\boldsymbol{\overrightarrow{x}} = [x_1, x_2, \dots, x_n], n \in N$. Sám neuron obsahuje hodnotu bias $b \in \mathbb{R}$ a vektor vah $\boldsymbol{\overrightarrow{w}} \in \mathbb{R}^N$, kde $\boldsymbol{\overrightarrow{w}} = [w_1, w_2, \dots, w_n], n \in N$, jenž je upravován během trénování neuronu.
 
 Výstupní hodnota závisí na vstupních datech, aktuálním vnitřním stavu (hodnoty vah a biasu) a na zvolené aktivační funkci. Vstupní hodnoty jsou váhovány, což znamená, že každá vstupní hodnota je vynásobena s~váhou na daném vstupním spojení. S~použitím definovaných vektorů lze napsat, že vstupní vektor je vynásoben s~vektorem vah.
 
@@ -458,7 +458,6 @@ Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $
 \end{figure}
 
 
-
 \subsection{Algoritmus zpětné propagace}
 Algoritmus zpětné propagace (backpropagation algorithm) je adaptační algoritmus pro učení neuronových sítí metodou učení s~učitelem. Algoritmus pozpátku prochází neuronovou síťí a na základě skalární hodnoty loss, která je výstupem objektivní funkce $J(\theta)$, počítá její gradient s ohledem ke všem váhám v~síti na základě toho, jak moc každá váha přispívá k~celkové chybě. Cílem je minimalizovat hodnotu loss. Algoritmus je nejčastěji používán během trénování neuronových sítí, ale obecně ho lze použít pro výpočet jakékoli derivace~\cite{mitdeeplearning_small},~\cite{mitdeeplearning}.
 
@@ -562,33 +561,33 @@ Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezáporno
 
 
 \subsection{Enkódování směsi}
-Každý segment směsi o~délce $L$, $\textbf{x_k} \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $\textbf{w} \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
+Každý segment směsi o~délce $L$, $\boldsymbol{x_k} \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $\boldsymbol{w} \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
 \begin{equation}
-  	\textbf{w} = ReLU(x \circledast \textbf{U})
+  	\boldsymbol{w} = ReLU(\boldsymbol{x} \circledast \boldsymbol{U})
 \end{equation}
-kde $\textbf{U} \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace $\circledast$ značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v~podkapitole~\ref{relu}.
+kde $\boldsymbol{U} \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý délky $L$, které reprezentují bázové funkce enkodéru. Operace $\circledast$ značí konvoluční operaci. ReLU je nelineární aktivační funkce, která byla blíže popsána v~podkapitole~\ref{relu}.
 
 
 \subsection{Dekódování extrahovaných mluvčích}
-Pro převod z~reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $\textbf{x}$ jako $\textbf{x} \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
+Pro převod z~reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $\boldsymbol{x}$ jako $\boldsymbol{x} \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
 \begin{equation}
 \label{equ:decoder}
-  \textbf{\hat{x}} = \textbf{w}\textbf{V}
+  \boldsymbol{\hat{x}} = \boldsymbol{w}\boldsymbol{V}
 \end{equation}
-kde každý řádek v~matici $\textbf{V} \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s~délkou $L$.
+kde každý řádek v~matici $\boldsymbol{V} \in \mathbb{R}^{N \times L}$ představuje jednu bázovou funkci dekodéru s~délkou $L$.
 
 %-------------------------------
 
 \section{Separační modul}
-Cílem separačního modulu je najít váhovanou funkci, neboli masku, pro každého zdrojového mluvčího pro každý výstup enkodéru v~každém časovém kroku. Formálně lze zapsat, že cílem je odhadnout $C$ masek $\textbf{m}_i \in \mathbb{R}^{1 \times N}, i = 1, \dots, C$, kde $C$ představuje počet mluvčích ve směsi. Vektory masek $\textbf{m}_i$ mají takové omezení, že $\sum_{i=0}^{C}\textbf{m}_i=1$, kde $1$ je jednotkový vektor v~$\mathbb{R}^{1 \times N}$. Toto omezení garantuje, že rekonstruované zdroje po sečtení zformují původní směs $\textbf{\hat{x}} = \sum_{i=1}^{C}\textbf{\hat{s}}_i$.
+Cílem separačního modulu je najít váhovanou funkci, neboli masku, pro každého zdrojového mluvčího pro každý výstup enkodéru v~každém časovém kroku. Formálně lze zapsat, že cílem je odhadnout $C$ masek $\boldsymbol{m}_i \in \mathbb{R}^{1 \times N}, i = 1, \dots, C$, kde $C$ představuje počet mluvčích ve směsi. Vektory masek $\boldsymbol{m}_i$ mají takové omezení, že $\sum_{i=0}^{C}\boldsymbol{m}_i=1$, kde $1$ je jednotkový vektor v~$\mathbb{R}^{1 \times N}$. Toto omezení garantuje, že rekonstruované zdroje po sečtení zformují původní směs $\boldsymbol{\hat{x}} = \sum_{i=1}^{C}\boldsymbol{\hat{s}}_i$.
 
 Separace je pro každý zdroj provedena vynásobením odpovídající masky $\textbf{m}_i$ s~nezápornou reprezentací (výstupem enkodéru) $w$, jako
 \begin{equation}
-	\textbf{d_i} = \textbf{w} \odot \textbf{m}_i
+	\boldsymbol{d_i} = \boldsymbol{w} \odot \boldsymbol{m}_i
 \end{equation}
-kde $\textbf{d_i} \in \mathbb{R}^{1 \times N}$ je reprezentace každého ze zdrojů a operace $\odot$ je součin po složkách. 
+kde $\boldsymbol{d_i} \in \mathbb{R}^{1 \times N}$ je reprezentace každého ze zdrojů a operace $\odot$ je součin po složkách. 
 
-Nakonec jsou reprezentace $\textbf{d_i}$ rekonstruovány zpět na korespondující nahrávky zdrojů $\textbf{\hat{s}}_i, i = 1, \dots, C$ pomocí dekodéru, jak je znázorněno v~\ref{equ:decoder}.
+Nakonec jsou reprezentace $\boldsymbol{d_i}$ rekonstruovány zpět na korespondující nahrávky zdrojů $\boldsymbol{\hat{s}}_i, i = 1, \dots, C$ pomocí dekodéru, jak je znázorněno v~\ref{equ:decoder}.
 
 
 \begin{figure}[H]
@@ -620,14 +619,14 @@ Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 
 \textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s~velikostí konvolučního jádra 1:
 
 \begin{equation}
-	D\texttt{-}conv(\textbf{Y}, \textbf{K}) = concat(\textbf{y}_j \circledast \textbf{k}_j), j = 1, \dots, N
+	D\texttt{-}conv(\boldsymbol{Y}, \boldsymbol{K}) = concat(\boldsymbol{y}_j \circledast \boldsymbol{k}_j), j = 1, \dots, N
 \end{equation}
 
 \begin{equation}
-	S\texttt{-}conv(\textbf{Y}, \textbf{K}, \textbf{L}) = D\texttt{-}conv(\textbf{Y}, \textbf{K}) \circledast \textbf{L}
+	S\texttt{-}conv(\boldsymbol{Y}, \boldsymbol{K}, \boldsymbol{L}) = D\texttt{-}conv(\boldsymbol{Y}, \boldsymbol{K}) \circledast \boldsymbol{L}
 \end{equation}
 
-kde $\textbf{Y} \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $\textbf{K} \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $\textbf{y}_j \in \mathbb{R}^{1 \times M}$ a $\textbf{k}_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $\textbf{Y}$ a $\textbf{K}$. $\textbf{L} \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
+kde $\boldsymbol{Y} \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $\boldsymbol{K} \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $\boldsymbol{y}_j \in \mathbb{R}^{1 \times M}$ a $\boldsymbol{k}_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $\boldsymbol{Y}$ a $\boldsymbol{K}$. $\boldsymbol{L} \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
 
 \begin{figure}[H]
     \centering
