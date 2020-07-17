@@ -600,7 +600,7 @@ Nakonec jsou reprezentace $\boldsymbol{d_i}$ rekonstruovány zpět na korespondu
 Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. Jak zapadá separační modul do schématu je zobrazeno na obrázku~\ref{fig:tasnet-autoenkoder}.
 
 \subsection{Temporal Convolutional Network}
-Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku \ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje $X$ konvolučních bloků se zvyšující se časovou dilatací, která se zvyšuje exponenciálně podle počtu bloků a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek \ref{fig:causal_dilation} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
+Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku~\ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje $X$ konvolučních bloků se zvyšující se časovou dilatací, která se zvyšuje exponenciálně podle počtu bloků a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajištujě dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek~\ref{fig:dilation_factor} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
 
 Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$ konvoluční vrstvě, která má $N \times C$ filtrů a nakonec aktivační funkci softmax k~odhadu $C$ vektorů masek pro každého z~$C$ cílových mluvčích.
 
@@ -614,7 +614,7 @@ Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$
 
 
 \subsection{Konvoluční bloky}
-Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 1$ konvolučních bloků za \textit{depthwise separable convolution} (S--conv), která pomáhá snížit počet parametrů a ukázala se jako efektivní ve zpracováni obrazu\todo{citace 26 27}.
+Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 1$ konvolučních bloků za \textit{depthwise separable convolution} (S--conv), která pomáhá snížit počet parametrů a ukázala se jako efektivní ve zpracováni obrazu~\cite{Chollet_2017_CVPR},~\cite{MobileNets}.
 
 \textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s~velikostí konvolučního jádra 1:
 
