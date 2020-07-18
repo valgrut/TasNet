@@ -191,7 +191,10 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - TODO:
     - [] ukazat komentar prevzateho kodu - jestli to staci.
     - [DONE] do nazvu podkapitol nedavat zkratku, jen ten angl nazev - relu ...
-    - [] feedforward -> dopredna
-    - []bottleneck dat do TasNet, pokud to tam vubec dam nakonec
-    - [] v rovnicich vektory a matice jsou tucne.
-
+    - [DONE] feedforward -> dopredna
+    - [DONE] v rovnicich vektory a matice jsou tucne.
+    - v pondeli a utery napsat experimenty, pres zbytek tydne doupravit text podle poznamek vedouci a dalsi pondeli odevzdat.
+    - ! upravit italic a bold text
+    - ! upravit algoritmy
+    - ! dopsat validacni dataset v trenovani
+    - ! texttt pro zdrojove veci 
