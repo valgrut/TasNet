@@ -676,6 +676,7 @@ Pro vyhodnocování výkonu sítě byly použity metriky SDR, PESQ a STOI. Pro v
 
 \bigskip
 
+\todo{Jeste mozna doplnit pocty konvolucnich vrstev atd viz TasNet tabulka (X, R, N, L, P, ...)}
 \todo{zamyslet se co tu chci ukazat v~tom algu, pripadne vypustit parsovani, instanciaci atd}
 Neco.
 
@@ -847,33 +848,17 @@ Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění tr�
 
 \chapter{Experimenty a vyhodnocení}
 \label{experimenty}
-- trenovani s~ruznymi hyperparametry, uspesnost a tabulky s~hyper parametry a dosazenymi vysledky a hodnotami sisnr, sdr atd.
-- model size comparison.
-- porovnani s~vysledky ze studie
-- obrazky separovanych mluvcich - signalu.
-- spektra
-- grafy trenovani loss a vysledkuu.
-- pametova narocnost modelu
-
-
-
-Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Je proto podstatné, na jakém stroji je síť učena a od toho se odvíjí čas trénování.
+Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Proto je podstatný výkon stroje, na jakém je síť učena. Je--li k dispozici výkonný stroj, dá se doba trénování výrazně snížit.
 
 Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry, které určují například počet vrstev sítě, velikost segmentace a další vlastnosti.
 
-Cílem experimentů je zjistit, které z~hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace mluvčích. Tato kvalita je měřena primárně metrikami STOI, SI--SNR a PESQ, které byly popsány v~kapitole \ref{separace}.
+Cílem experimentů je zjistit, které z~hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace mluvčích. Tato kvalita je měřena metrikami STOI, SDR a PESQ, které byly popsány v~kapitole~\ref{separace}.
 
 
 \section{Dataset}
-Dataset je množina dat, na kterých je síť učena a testována. Dataset se dá rozdělit na 3 podmnožiny, které jsou navzájem exkluzivní. Trénovací dataset je určen k~trénování sítě a bývá největší. Validační dataset se prochází po zpracování trénovacího datasetu v~průběhu trénování a slouží pro ověření, že hodnota loss na dosud neviděných datech stále klesá a nedochází tak k~přetrénování. Při zpracování tohoto datasetu je síti zabráněno v~učení. Poslední je testovací dataset, na kterém probíhá vyhodnocení sítě, tedy výpočet hodnot jednotlivých metrik. 
+Dataset je množina dat, na kterých je síť učena a testována. Dataset se dá rozdělit na tři podmnožiny, které jsou navzájem exkluzivní. Trénovací dataset je určen k~trénování sítě a bývá největší. Validační dataset se prochází po zpracování trénovacího datasetu v~průběhu trénování a slouží pro ověření, že hodnota loss na dosud neviděných datech stále klesá a nedochází tak k~přetrénování. Při zpracování tohoto datasetu je síti zabráněno v~učení. Poslední je testovací dataset, na kterém probíhá vyhodnocení sítě, tedy výpočet hodnot jednotlivých metrik. 
 
-Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0) a vytvořením směsi mluvčích z~těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes 10 hodin a přes 6 hodin validačních dat. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na zero means a jednotkovou varianci \todo{[studie str 5 Dataset][49 - ze studie odkaz na script na generovani a popis na netu]}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.35]{obrazky-figures/dataset-mix.png}
-    \caption{\label{fig:ref-mixture}Ukázka nahrávky směsi dvou mluvčích}
-\end{figure}
+Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0)~\cite{DBLP-dataset} a vytvořením směsi mluvčích z~těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes $10$ hodin a přes $6$ hodin validačních dat. Testovací data jsou vygenerována z 16ti, doposud neviděných, mluvčích. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na \uv{zero means} a \uv{jednotkovou varianci}. Skript pro generování datasetu lze nalézt v~\footnote{https://www.merl.com/demos/deep-clustering}.
 
 \begin{figure}[H]
     \centering
@@ -887,100 +872,201 @@ Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahr
     \caption{\label{fig:ref-s2}Druhý mluvčí ze směsi}
 \end{figure}
 
-Lze si všimnout, že sečtením signálů separovaných mluvčích na obrázku \ref{fig:ref-s1} a \ref{fig:ref-s2} dostaneme přesně signál směsi, což lze vyjádřit vztahem
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.35]{obrazky-figures/dataset-mix.png}
+    \caption{\label{fig:ref-mixture}Ukázka směsi dvou mluvčích}
+\end{figure}
 
-\begin{equation}
-  x[t] = \sum_{i=1}^C s_i[t]
-\end{equation}
-, kde $x[t] \in \mathbb{R}^{1 \times T}$ je diskrétní signál směsi a $s_i[t] \in \mathbb{R}^{1 \times T}$, kde $i = 1,\ldots,C$, je jeden z~$C$ zdrojů[cite studie str3 vlevo]. 
-
-\todo{doplnit info o~zero means a jendotkove varianci}
+Lze si všimnout, že sečtením signálů jednotlivých mluvčích na obrázku~\ref{fig:ref-s1} a~\ref{fig:ref-s2} dostaneme signál původní směsi~\ref{fig:ref-mixture}.
 
 
 %------------------------------------------------------------------------------
 
 
 \section{Průběh trénování}
-\todo{miniÚvod - konkretni hyperparams, vykon a cas trenovani, seg--len, bylo natrenovano nekolik modelu ... konkretni hyperparams, vykon a cas trenovani, seg--len}.
-Bylo natrénováno několik, různě velkých modelů, které se lišily velikostí jejich hyper--parametrů, konkrétně počtem konvolučních bloků, počtem jejich opakování a velikostí segmentů zpracovávaných nahrávek z~datasetu. 
+Bylo natrénováno $10$ modelů s různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:trenovani},~\ref{} a~\ref{} dále. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence bloků a hodnota \uv{segment length} představuje počet vzorků v jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s hodnotou $learning rate = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:somelossTODO} a~\ref{graf:somelossTODO2}.
 
-\todo{https://www.tablesgenerator.com/}.
+\todo{Pridat Grafy trenovani. Popis: Dat validni grafy a udelat druhy graf kde zkombinovat validacni a trenovaci loss do jednoho. Vydelit hlavne hodnoty na ose x poctem segmentu v jedne epose a ose y vydelit velikosti minibatche a poctem mluvcich ve smesi (2)}.
 
-\begin{table}[hbt]
-\centering
-\caption{Hodnoty hyperparametrů trénovaných sítí a jejich přesnost}
-\label{hodnoty}
-\begin{tabular}{|l|c|c|c|}
-\hline
- & X & R & segment length  \\
- &  &  & sisnr  \\ \hline
-2 & 2 & 4 & 8.3 \\ \hline
-3 & 2 & 4& 9.45 \\ \hline
-4 & 3 & 4 & 10.2 \\ \hline
-8 & 4 & 2 & 13.6 \\ \hline
-\end{tabular}
-\end{table}
+%\todo{https://www.tablesgenerator.com/}.
+
+
+%\begin{table}[hbt]
+%\centering
+%\caption{Hodnoty hyperparametrů trénovaných sítí}
+%\label{hodnoty}
+%\begin{tabular}{|l|c|c|c|}
+%\hline
+% & X & R & segment length  \\
+% &  &  & sisnr  \\ \hline
+%2 & 2 & 4 & 8.3 \\ \hline
+%3 & 2 & 4& 9.45 \\ \hline
+%4 & 3 & 4 & 10.2 \\ \hline
+%8 & 4 & 2 & 13.6 \\ \hline
+%\end{tabular}
+%\end{table}
+
+
+%\begin{table}[hbt]
+%\centering
+%\caption{Hodnoty hyper--parametrů trénovaných modelů}
+%\label{tab:trenovani}
+%\begin{tabular}{|l|l|l|}
+%\hline
+%\textbf{X} & \textbf{R} & \textbf{Segment length} \\ \hline
+%4          & 2          & 32000                   \\ \hline
+%4          & 3          & 32000                   \\ \hline
+%4          & 4          & 32000                   \\ \hline
+%6          & 2          & 32000                   \\ \hline
+%6          & 3          & 32000                   \\ \hline
+%6          & 4          & 32000                   \\ \hline
+%8          & 2          & 32000                   \\ \hline
+%8          & 3          & 32000                   \\ \hline
+%8          & 4          & 32000                   \\ \hline
+%8          & 4          & 16000                   \\ \hline
+%\end{tabular}
+%\end{table}
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{obrazky-figures/some-loss.png}
-    \caption{\label{fig:somelossTODO}Příklad grafu loss hodnoty během učení}
+    \caption{\label{graf:somelossTODO}Vykreslené grafy}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{obrazky-figures/loss_triple.png}
-    \caption{\label{fig:somelossTODO2}Hodnota loss při trénování modelů s~různou velikostí hyperparametrů}
+    \caption{\label{graf:somelossTODO2}Hodnota loss při trénování modelů s~různou velikostí hyperparametrů}
 \end{figure}
 
 
 %------------------------------------------------------------------------------
 
 \section{Experimenty s~modely}
-\todo{grafy v~experimentech -- trenovani a loss 1 mozna 1 az 2 grafy}
-\todo{kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r, jakoze v~podkapitole Vliv X budou grafy takove, ze pro kazdou metriku bude graf jeden, kde se meni X a je tam videt jak se jednotlive hodnoty metriky lisi pro ruzna X}
-\todo{rozdelit tabulku podle HP a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
+Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ \todo{mozna ref}.  
+
+\todo{miniÚvod, co bude zkoumano a vyhodnocovano.}
+
+\todo{Ucelene: referovat tabulku s Hyper parametry nahore.
+Kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r, jakoze v~podkapitole Vliv X budou grafy takove, ze pro kazdou metriku bude graf jeden, kde se meni X a je tam videt jak se jednotlive hodnoty metriky lisi pro ruzna X.
+}
+
+
+
+\todo{rozdelit tabulku podle HzperParam a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
 experimenty:
 sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat.}
+
 \todo{zahrnout do podkapitol, nebo udelat samostatnou podkapitolu o~SDR a pohlavi}
-\todo{jedna podkapitola o~rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr mensi loss}
-\todo{z~TasNet shrnout jejich vysledky jako jedna z~poslednich podkapitol}
+
 \todo{podkapitola Inference -- ukazat separovane inferovane nahravky oproti referencni nahravce}
-\todo{sem mozna tabulka hyperparametrů a jejich pojmenovani X, R, N, L, P, ...}
-\todo{miniÚvod}
-Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ \todo{mozna ref}.  
+
+
+- trenovani s~ruznymi hyperparametry, uspesnost a tabulky s~hyper parametry a dosazenymi vysledky a hodnotami sisnr, sdr atd.
+- model size comparison.
+- porovnani s~vysledky ze studie
+- obrazky separovanych mluvcich - signalu.
+- spektra
+- grafy trenovani loss a vysledkuu.
+- pametova narocnost modelu
+
+
 
 
 \subsection{Výsledky referenčního modelu TasNet}
-\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v~tech vecech ktere tu merim a vyhodnocuji ja. Pozn: dat to na konec experimentu, muj nej a srovnat s~tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.} 
+\todo{z~TasNet shrnout jejich vysledky jako jedna z~poslednich podkapitol}
+\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v~tech vecech ktere tu merim a vyhodnocuji ja. Pozn: dat to na konec experimentu, muj nej a srovnat s~tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.}
 
 
-\subsection{Vliv hyper--parametru X}
-\todo{zmensovani a zvetsovani X, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy}
+%---------------------------------------------------------------------------------------------
 
+\todo{Mozna sjednotit X a R podkapitoly - vysledky by byly stejne, jen v jinem poradi v tabulkach}
+\todo{Pro obe podkapitoly X a R: zmensovani a zvetsovani X, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy, pohlavi histogramy}
+
+\subsection{Vliv hyper--parametru X a R}
+
+\begin{table}[hbt]
+\centering
+\caption{Tabulka zobrazující vliv počtu konvolučních bloků X na výsledky testování}
+\label{tab:vliv-X}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+8 & 4 & 32000 & 12.00 & 0.00 & 2.00 \\ \hline
+8 & 4 & 32000 & 12.00 & 0.00 & 2.00 \\ \hline
+\end{tabular}
+\end{table}
+
+
+%---------------------------------------------------------------------------------------------
 \subsection{Vliv hyper--parametru R}
-\todo{zmensovani a zvetsovani Y, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi Y, obrazky, grafy}
 
-\subsection{Vliv hyper--parametru délka--segmentu}
-\todo{zmensovani a zvetsovani SL, vysledky testovani, loss pripadne nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, obrazky, grafy}
-\todo{toto bude pouze pro posledni sit s~velikosti X 8 R 4, kterou mam natrenovanou dvakrat, s~ruznymi seg len}
 
+\begin{table}[hbt]
+\centering
+\caption{Tabulka zobrazující vliv počtu opakování pro $X=8$ konvolučních bloků na výsledky testování}
+\label{tab:vliv-R-X8}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+8 & 2 & 32000 & 12.711 & 0.935 & 2.710 \\ \hline
+8 & 3 & 32000 & 0.0000 & 0.000 & 0.000 \\ \hline
+8 & 4 & 32000 & 12.452 & 0.934 & 2.693 \\ \hline
+\end{tabular}
+\end{table}
+
+
+\begin{table}[hbt]
+\centering
+\caption{Tabulka zobrazující vliv počtu opakování sekvence konvolučních bloků na výsledky testování}
+\label{tab:vliv-R-X6}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+6 & 2 & 32000 & 0.0000 & 0.000 & 0.000 \\ \hline
+6 & 3 & 32000 & 10.779 & 0.921 & 2.518 \\ \hline
+6 & 4 & 32000 & 10.687 & 0.921 & 2.516 \\ \hline
+\end{tabular}
+\end{table}
+
+
+
+%---------------------------------------------------------------------------------------------
+\subsection{Vliv délky segmentů}
+\todo{zmensovani a zvetsovani SL, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, obrazky, grafy, histogramy pohlavi}
+
+\begin{table}[hbt]
+\centering
+\caption{Tabulka zobrazující vliv délky segmentů na výsledky testování}
+\label{tab:vliv-segment-length}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+8 & 4 & 32000 & 12.452 & 0.934 & 2.693 \\ \hline
+8 & 4 & 16000 & 12.494 & 0.934 & 2.697 \\ \hline
+\end{tabular}
+\end{table}
+
+
+%---------------------------------------------------------------------------------------------
+%\subsection{MOZNA Vliv hodnoty learning rate}
+%\todo{MOZNA ZASE SMAZAT. podkapitola o~rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr -- mensi loss}
+
+
+%---------------------------------------------------------------------------------------------
 \subsection{Vyhodnocení a porovnání modelů}
-\todo{shrnuti a porovnani jednotlivych zmen mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace.}
+\todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace.}
 
-histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz, atd, v~nahrakach je ID, a podle toho to zkusit zmapovat. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.
+histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.
+
+%---------------------------------------------------------------------------------------------
 
 
 \section{Možná rozšíření a navrhnutá vylepšení}
 \todo{k~poslednimu bodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o~zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat. toto Podsekce na konci experimentu.}
-
-- variabilnější dataset, mikrofony, šum a bordel prostředí
-- separace více mluvčích
-- hlučné prostředí
-- identifikace konkrétního řečníka
-- realtime separace
-poznamka viz backpropagation.
+\todo{Variabilnejsi dataset, separace vice mluvcich, hlucne prostredi, identifikace recnika, realtime separace}
 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
