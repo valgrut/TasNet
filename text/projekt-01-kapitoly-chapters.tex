@@ -531,7 +531,7 @@ Po každém zpracování trénovací sady následuje validační sada, po jejím
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\chapter{TasNet - Time--Domain Audio Separation Network}
+\chapter{Time--Domain Audio Separation Network}
 \label{tasnet}
 
 Tato kapitola vychází z~referenční studie \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet} a popisuje její navrhnuté řešení pro separaci mluvčích v~časové doméně.
@@ -834,7 +834,7 @@ Skript \textbf{\textit{gupload.sh}} pro odesílání zdrojových souborů na \te
 Skript \textbf{\textit{gdownload.sh}} je určený pro snadné stahování dat z~Google Drive. Stejně jako předchozí skript, používá operace poskytované nástrojem rsync. Při zavolání stáhne adresář obsahující data z~posledního trénování, nebo adresář, jehož název je předán jako argument skriptu v~přikazové řádce.   
 Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot $[zpracováno_nahrávek, loss]$, které lze jednoduše vykreslit do grafu, a nakonec soubor s~výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
 
-Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s~různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k~adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}.
+Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s~různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k~adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}. Skript \textbf{\textit{nninference.sh}} přijímá na svém vstupu směs mluvčích a vyžaduje checkpoint s naučenou sítí. Jeho výstupem jsou separované nahrávky mluvčích ze vstupní směsi.
 
 
 \bigskip
@@ -885,9 +885,9 @@ Lze si všimnout, že sečtením signálů jednotlivých mluvčích na obrázku~
 
 
 \section{Průběh trénování}
-Bylo natrénováno $10$ modelů s různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:trenovani},~\ref{} a~\ref{} dále. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence bloků a hodnota \uv{segment length} představuje počet vzorků v jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s hodnotou $learning rate = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:somelossTODO} a~\ref{graf:somelossTODO2}.
+Bylo natrénováno $10$ modelů s různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:vliv-X4},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X8}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s hodnotou $learning rate = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:somelossTODO} a~\ref{graf:somelossTODO2}.
 
-\todo{Pridat Grafy trenovani. Popis: Dat validni grafy a udelat druhy graf kde zkombinovat validacni a trenovaci loss do jednoho. Vydelit hlavne hodnoty na ose x poctem segmentu v jedne epose a ose y vydelit velikosti minibatche a poctem mluvcich ve smesi (2)}.
+\todo{Pridat Grafy trenovani. Popis: Dát validni grafy a udelat druhy graf kde zkombinovat validacni a trenovaci loss do jednoho. Vydelit hlavne hodnoty na ose x poctem segmentu v jedne epose a ose y vydelit velikosti minibatche a poctem mluvcich ve smesi (2)}.
 
 %\todo{https://www.tablesgenerator.com/}.
 
@@ -945,69 +945,33 @@ Bylo natrénováno $10$ modelů s různými hodnotami zkoumaných hyper--paramet
 %------------------------------------------------------------------------------
 
 \section{Experimenty s~modely}
-Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky si--snr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ \todo{mozna ref}.  
+Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky sdr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ.
 
 \todo{miniÚvod, co bude zkoumano a vyhodnocovano.}
 
 \todo{Ucelene: referovat tabulku s Hyper parametry nahore.
 Kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r, jakoze v~podkapitole Vliv X budou grafy takove, ze pro kazdou metriku bude graf jeden, kde se meni X a je tam videt jak se jednotlive hodnoty metriky lisi pro ruzna X.
 }
-
-
+\todo{Mozna: Pametova narocnost modelu. Spektrum nahravek.}
 
 \todo{rozdelit tabulku podle HzperParam a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
 experimenty:
 sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat.}
 
-\todo{zahrnout do podkapitol, nebo udelat samostatnou podkapitolu o~SDR a pohlavi}
 
-\todo{podkapitola Inference -- ukazat separovane inferovane nahravky oproti referencni nahravce}
-
-
-- trenovani s~ruznymi hyperparametry, uspesnost a tabulky s~hyper parametry a dosazenymi vysledky a hodnotami sisnr, sdr atd.
-- model size comparison.
-- porovnani s~vysledky ze studie
-- obrazky separovanych mluvcich - signalu.
-- spektra
-- grafy trenovani loss a vysledkuu.
-- pametova narocnost modelu
-
-
-
-
-\subsection{Výsledky referenčního modelu TasNet}
-\todo{z~TasNet shrnout jejich vysledky jako jedna z~poslednich podkapitol}
-\todo{sem nebo do TasNet kapitoly? Jen lehce bych to shrnul ceho dosahli v~tech vecech ktere tu merim a vyhodnocuji ja. Pozn: dat to na konec experimentu, muj nej a srovnat s~tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.}
 
 
 %---------------------------------------------------------------------------------------------
 
-\todo{Mozna sjednotit X a R podkapitoly - vysledky by byly stejne, jen v jinem poradi v tabulkach}
+
+\subsection{Vliv hyper--parametrů X a R}
 \todo{Pro obe podkapitoly X a R: zmensovani a zvetsovani X, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy, pohlavi histogramy}
-
-\subsection{Vliv hyper--parametru X a R}
-
-\begin{table}[hbt]
-\centering
-\caption{Tabulka zobrazující vliv počtu konvolučních bloků X na výsledky testování}
-\label{tab:vliv-X}
-\begin{tabular}{|l|l|l|l|l|l|}
-\hline
-\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
-8 & 4 & 32000 & 12.00 & 0.00 & 2.00 \\ \hline
-8 & 4 & 32000 & 12.00 & 0.00 & 2.00 \\ \hline
-\end{tabular}
-\end{table}
-
-
-%---------------------------------------------------------------------------------------------
-\subsection{Vliv hyper--parametru R}
 
 
 \begin{table}[hbt]
 \centering
 \caption{Tabulka zobrazující vliv počtu opakování pro $X=8$ konvolučních bloků na výsledky testování}
-\label{tab:vliv-R-X8}
+\label{tab:vliv-X8}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
 \textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
@@ -1021,7 +985,7 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 \begin{table}[hbt]
 \centering
 \caption{Tabulka zobrazující vliv počtu opakování sekvence konvolučních bloků na výsledky testování}
-\label{tab:vliv-R-X6}
+\label{tab:vliv-X6}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
 \textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
@@ -1032,10 +996,23 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 \end{table}
 
 
+\begin{table}[hbt]
+\centering
+\caption{Tabulka zobrazující vliv počtu opakování sekvence konvolučních bloků na výsledky testování}
+\label{tab:vliv-X4}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+4 & 2 & 32000 & 0.0000 & 0.000 & 0.000 \\ \hline
+4 & 3 & 32000 & 10.779 & 0.921 & 2.518 \\ \hline
+4 & 4 & 32000 & 10.687 & 0.921 & 2.516 \\ \hline
+\end{tabular}
+\end{table}
+
 
 %---------------------------------------------------------------------------------------------
 \subsection{Vliv délky segmentů}
-\todo{zmensovani a zvetsovani SL, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, obrazky, grafy, histogramy pohlavi}
+\todo{zmensovani a zvetsovani SL, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, grafy, histogramy pohlavi}
 
 \begin{table}[hbt]
 \centering
@@ -1050,9 +1027,49 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 \end{table}
 
 
+
+%---------------------------------------------------------------------------------------------
+\subsection{Úspěšnost modelů s ohledem na pohlaví mluvčích}
+\todo{nebo zahrnout do podkapitol.}
+
+
+
 %---------------------------------------------------------------------------------------------
 %\subsection{MOZNA Vliv hodnoty learning rate}
 %\todo{MOZNA ZASE SMAZAT. podkapitola o~rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr -- mensi loss}
+
+
+
+%---------------------------------------------------------------------------------------------
+%\subsection{Výsledek inference}
+%\todo{podkapitola Inference -- ukazat separovane inferovane nahravky oproti referencni nahravce}
+
+
+
+
+%---------------------------------------------------------------------------------------------
+\subsection{Výsledky referenčního modelu TasNet}
+\todo{Shrnout jejich vysledky. Muj nej a srovnat s~tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.}
+
+V referenční studii~\cite{luo2018convtasnet} byly modely trénovány $100$ epoch s různými hyper--parametry. Já se zaměřím na takové, se kterými experimentuji v rámci mých modelů. Modely jsou v nekauzální konfiguraci a používají batch normalizaci (BN).
+
+Nejlepší model TasNet s hodnotami parametrů $X=8$ a $R=4$ dosahuje hodnoty $SDR = 14.7 dB$ při délce filtrů $L = 20$ vzorků. Hodnoty $SDR = 13.0 dB$ dosahuje při hodnotě parametru $X = 7$ a délce filtrů $L = 40$ vzorků. Po zvětšení velikosti filtrů a zmenšení počtu konvolučních bloků (což zmenšuje také hodnotu dilatace) je patrný pokles hodnoty SDR. Při dalším zmenšování modelu dále klesá hodnota SDR, jak zobrazuje tabulka~\ref{tab:tasnet}.
+
+\begin{table}[hbt]
+\centering
+\caption{Tabulka ukazující výsledky testovaní referenčních modelů TasNet v závislosti na konfiguraci}
+\label{tab:tasnet}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\textbf{L {[}samples{]}} & \textbf{X} & \textbf{R} & \textbf{Normalizace} & \textbf{SDR {[}dB{]}} & \textbf{Receptive field {[}s{]}} \\ \hline
+40 & 7 & 4 & BN & 13.0 & 2.55 \\ \hline
+40 & 8 & 2 & BN & 12.6 & 2.56 \\ \hline
+40 & 6 & 4 & BN & 12.1 & 1.27 \\ \hline
+40 & 7 & 2 & BN & 11.7 & 1.28 \\ \hline
+\end{tabular}
+\end{table}
+
+Příčinou rozdílných výsledků testování mohou být implementační rozdíly, použítá hodnota learning rate nebo také rozdílný počet epoch, po které byly modely trénovány.
 
 
 %---------------------------------------------------------------------------------------------
