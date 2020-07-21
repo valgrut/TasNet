@@ -185,16 +185,18 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - Prokonzultovat SDR, STOI, PESQ vysledky testovani
         - impl PESQ vypocet - min, nebo aktualni max?
     - natrenovane modely info
-    - zkratky a anglicke nazvy metod... kdy bold, kdy italic 
+    - zkratky a anglicke nazvy metod... kdy bold, kdy italic
     - tucnym setrit, jen kdyz neco hodne zvyraznit, ale moc nepouzivat.
     - kurziva taky zridka. proste podle citu
-    - TODO:
-    - [] ukazat komentar prevzateho kodu - jestli to staci.
+    - [todo] ukazat komentar prevzateho kodu - jestli to staci.
     - [DONE] do nazvu podkapitol nedavat zkratku, jen ten angl nazev - relu ...
     - [DONE] feedforward -> dopredna
     - [DONE] v rovnicich vektory a matice jsou tucne.
-    - v pondeli a utery napsat experimenty, pres zbytek tydne doupravit text podle poznamek vedouci a dalsi pondeli odevzdat.
+    - !!! v pondeli a utery napsat experimenty, pres zbytek tydne doupravit text podle poznamek vedouci a dalsi pondeli odevzdat.
     - ! upravit italic a bold text
-    - ! upravit algoritmy
     - ! dopsat validacni dataset v trenovani
-    - ! texttt pro zdrojove veci 
+    - [DONE] texttt pro zdrojove veci
+    - uprava algoritmuuu
+        - najit si konvence a upravit podle toho
+        - udelat komentare treba kurzivou, zbytek jinak
+

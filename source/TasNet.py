@@ -4,11 +4,14 @@ import torch.nn.functional as fc
 
 from ResBlock import ResBlock
 
+
+
 class Net(nn.Module):
     def __init__(self, X, R, nn_stride, padd, batch_size, DEBUG):
         super(Net, self).__init__()
         self.DEBUG=DEBUG
         self.batch_size = batch_size
+        # treti hodnota (20) predstavuje hyperparametr L ze studie. 
         self.conv1 = nn.Conv1d(1, 256, 20, bias=False, stride=nn_stride, padding=padd)
         self.deconv = nn.ConvTranspose1d(512, 2, 20, padding=padd, bias=False, stride=nn_stride, groups=2)
 

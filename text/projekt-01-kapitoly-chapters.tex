@@ -164,7 +164,7 @@ Dopředné neuronové sítě (feed forward networks, či multi layer perceptron 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/feedforward_vs_recurrent.png}
+    \includegraphics[scale=0.8]{obrazky-figures/feedforward_vs_recurrent.png}
     \caption{\label{fig:netcomparison}Příklad grafu dopředné sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~dopředné sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu~\cite{FFandRecNN}.}
 \end{figure}
 
@@ -172,7 +172,7 @@ Struktura neuronové sítě je organizována do vrstev, které se skládají z~n
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1.3]{obrazky-figures/mlp.png}
+    \includegraphics[scale=0.75]{obrazky-figures/mlp.png}
     \caption{\label{fig:mlp}Schéma neuronové sítě, která má 2 skryté vrstvy}
 \end{figure}
 
@@ -184,7 +184,7 @@ Výstupní hodnota závisí na vstupních datech, aktuálním vnitřním stavu (
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/perceptron.png}
+    \includegraphics[scale=0.85]{obrazky-figures/perceptron.png}
     \caption{\label{fig:neuron}Schéma umělého neuronu}
 \end{figure}
 
@@ -339,7 +339,7 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/convmapping.png}
+    \includegraphics[scale=0.8]{obrazky-figures/convmapping.png}
     \caption{\label{fig:convmapping}Průběh konvoluování jádra se vstupními daty a mapování lokálních příznaků na prostor příznaků (feature space), který je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup}
 \end{figure}
 
@@ -348,7 +348,6 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
     \includegraphics[scale=0.35]{obrazky-figures/features.png}
     \caption{\label{fig:features}Obrázek zobrazující, jak mohou vypadat lokální příznaky}
 \end{figure}
-
 
 Konvoluování jádra přes nějaký vstup (například obrázek či zvuk) je ekvivalentní s~detektorem, který detekuje nějaký lokální příznak. Při aplikaci takového detektoru přes nějaký vstup zaznamenává všechny pozice, kde se příznak nacházel~\cite{mitdeeplearning_small}.
 
@@ -362,23 +361,37 @@ Konvoluční operace je definována jako
 kde $x$ jsou vstupní data obvykle ve formě multidimenzionílního pole (tenzoru) a funkce $w$ je konvoluční jádro. Výstupem operace je mapa příznaků. Konvoluční operaci lze definovat i pro vyšší dimenze. Máme--li například 2--D vstupní obrázek, pak i konvoluční jádro bude dvourozměrné. Přestože v~mnoha knihovnách lze nalézt implementovanou operaci konvoluce, často se jedná o~cross--korelaci.
 
 
-Průběh a chování konvoluce lze řídit hyperparametry \textit{stride}, \textit{padding} a \textit{dilation}. Hodnota stride modifikuje velikost kroku konvolučního jádra. Chování při různých hodnotách lze vidět na obrázku~\ref{fig:conv_stride}. 
+Průběh a chování konvoluce lze řídit hyperparametry \textit{stride}, \textit{padding} a \textit{dilation}. Hodnota stride modifikuje velikost kroku konvolučního jádra. Chování při různých hodnotách lze vidět na obrázku~\ref{fig:conv_stride1} a~\ref{fig:conv_stride2}. 
 
 Hodnota padding určuje, o~kolik se mají rozšířit vstupní data. V~případě malého rozměru konvolučního jádra může dojít k~nechtěné změně rozměrů vstupních dat a proto se tato data po stranách rozšíří na takový rozměr, aby po konvoluci byl výsledný tvar v~požadovaném rozměru. Vyplnění ukazuje obrázek~\ref{fig:conv_padding}.
 
 
-\todo{Tyto tri obrazky stylove sjednotit a dat je vedle sebe mozna}
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.5]{obrazky-figures/stride.png}
-    \caption{\label{fig:conv_stride}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
-\end{figure}
-
 %\begin{figure}[H]
 %    \centering
-%    \includegraphics[scale=0.7]{obrazky-figures/padding.png}
-%    \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o~danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
+%    \includegraphics[scale=0.5]{obrazky-figures/stride1.png}
+%    \caption{\label{fig:conv_stride1}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
 %\end{figure}
+%
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.5]{obrazky-figures/stride2.png}
+%    \caption{\label{fig:conv_stride2}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
+%\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/stride1.png}
+        \caption{\label{fig:conv_stride1}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/stride2.png}
+        \caption{\label{fig:conv_stride2}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
+    \end{minipage}
+\end{figure}
+
 
 Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišení nebo pokrytí dat konvolučním jádrem během konvoluční operace (viz obrázek~\ref{fig:conv_dilation} a~\ref{fig:dilation_factor}). Zatímco pole působnosti roste exponenciálně, počet parametrů roste pouze lineárně. Této vlastnosti se využívá například v~temporal convolutional networks (TCN), kde dilatační faktor nabývá hodnot $1, 2, 4, 8, \dots$.
 
@@ -386,12 +399,12 @@ Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišen�
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.4\textwidth]{obrazky-figures/padding.png}
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/padding.png}
         \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o~danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.4\textwidth]{obrazky-figures/cnndilation.png}
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/cnndilation.png}
         \caption{\label{fig:conv_dilation}Vizualizace hodnoty dilatace upravující pole působnosti}
     \end{minipage}
 \end{figure}
@@ -832,7 +845,7 @@ Během implementace se vyskytla potřeba zjednodušit si některé repetetivní 
 Skript \textbf{\textit{gupload.sh}} pro odesílání zdrojových souborů na \textit{Google Drive}\footnote{\url{https://www.google.com/drive/}}, ze kterého \textit{Google Colab}\footnote{\url{https://colab.research.google.com/notebooks/intro.ipynb}} načítá data a kód, který lze následně po částech spouštět z~grafického rozhraní. K~interakci s~Google Drive jsem použil nástroj \textit{rclone}\footnote{\url{https://rclone.org/}}, který nabízí mnoho operací pro vzdálenou práci s~Google Drive z~terminálu. S~pomocí rclone lze stahovat či nahrávat data, vzdáleně měnit adresářovou strukturu, mazat, vytvářet a upravovat soubory a podobně. 
 
 Skript \textbf{\textit{gdownload.sh}} je určený pro snadné stahování dat z~Google Drive. Stejně jako předchozí skript, používá operace poskytované nástrojem rsync. Při zavolání stáhne adresář obsahující data z~posledního trénování, nebo adresář, jehož název je předán jako argument skriptu v~přikazové řádce.   
-Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot $[zpracováno_nahrávek, loss]$, které lze jednoduše vykreslit do grafu, a nakonec soubor s~výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
+Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot \texttt{[zpracováno\_nahrávek, loss]}, které lze jednoduše vykreslit do grafu, a nakonec soubor s~výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
 
 Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s~různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k~adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}. Skript \textbf{\textit{nninference.sh}} přijímá na svém vstupu směs mluvčích a vyžaduje checkpoint s naučenou sítí. Jeho výstupem jsou separované nahrávky mluvčích ze vstupní směsi.
 
@@ -1030,7 +1043,7 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 
 %---------------------------------------------------------------------------------------------
 \subsection{Úspěšnost modelů s ohledem na pohlaví mluvčích}
-\todo{nebo zahrnout do podkapitol.}
+\todo{nebo zahrnout do podkapitol. histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.}
 
 
 
@@ -1043,7 +1056,6 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 %---------------------------------------------------------------------------------------------
 %\subsection{Výsledek inference}
 %\todo{podkapitola Inference -- ukazat separovane inferovane nahravky oproti referencni nahravce}
-
 
 
 
@@ -1069,14 +1081,17 @@ Nejlepší model TasNet s hodnotami parametrů $X=8$ a $R=4$ dosahuje hodnoty $S
 \end{tabular}
 \end{table}
 
+
+\todo{dopsat rozdil oproti te me a pripadne co muze byt pricina.}
 Příčinou rozdílných výsledků testování mohou být implementační rozdíly, použítá hodnota learning rate nebo také rozdílný počet epoch, po které byly modely trénovány.
+
 
 
 %---------------------------------------------------------------------------------------------
 \subsection{Vyhodnocení a porovnání modelů}
-\todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace.}
+\todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace. okomentovat take pohlavi vysledky, prumery sdr, mean, a pod.}
+\todo{Zda se, ze parametr XYZ nema na SDR takovy vliv, jako parametr ABC...}
 
-histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.
 
 %---------------------------------------------------------------------------------------------
 
