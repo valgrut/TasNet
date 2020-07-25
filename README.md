@@ -200,3 +200,15 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         - najit si konvence a upravit podle toho
         - udelat komentare treba kurzivou, zbytek jinak
 
+### 22. 7. 2020
+    - sdr vypocet na str 8 - urcite okomentovat jednotlive casti, bud vypocet nebo okomentovat jak se to vypocita, a pridat referenci na mir eval.
+    - 2.3.2 quality v nadpisu
+    - prohnat spell checkerem.
+    - i u STOI napsat jestli je vetsi hodnota lepsi nebo mensi lepsi jako u PESQ
+    - kde udelat grafy: numpy nebo scipy
+    - obrazek priznaky - odnekd a referencovat resp citovat. mozna oddelat
+    - experimenty - staci dve desetine mista 0.00
+    - pohlavi - vysledky staci jednoho modelu, vysledky stejne budou podobne.
+    - tasnet exp - pridat do tabulky nejaky muj model, takovej co ma stejne param moje vysledky
+
+

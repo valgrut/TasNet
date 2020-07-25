@@ -55,7 +55,7 @@ V~testovací fázi jsou naučené slovníky jednotlivých zdrojů $s$ spojeny do
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{obrazky-figures/nmf.png}
+    \includegraphics[scale=0.9]{obrazky-figures/nmf.pdf}
     \caption{\label{fig:nmf}Znázornění trénovací a testovací fáze. Obrázek byl inspirován~\cite{speechseparation}}
 \end{figure}
 
@@ -75,7 +75,7 @@ Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1.0]{obrazky-figures/spektrum.png}
+    \includegraphics[scale=1.15]{obrazky-figures/spektrum.png}
     \caption{\label{fig:spektrum}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa y) z~nahrávky řeči v~čase (osa x). Zvuk se na spektrogram (T--F reprezentaci) převádí pomocí operace short--time Fourier transform (STFT)}
 \end{figure}
 
@@ -164,7 +164,7 @@ Dopředné neuronové sítě (feed forward networks, či multi layer perceptron 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{obrazky-figures/feedforward_vs_recurrent.png}
+    \includegraphics[scale=1.0]{obrazky-figures/feedforward_vs_recurrent.pdf}
     \caption{\label{fig:netcomparison}Příklad grafu dopředné sítě a rekurentní neuronové sítě. Lze si všimnout orientace šipek u~dopředné sítě, které směřují pouze jedním směrem, zatímco u~rekurentní sítě šipky směřují i k~předešlým uzlům grafu~\cite{FFandRecNN}.}
 \end{figure}
 
@@ -172,7 +172,7 @@ Struktura neuronové sítě je organizována do vrstev, které se skládají z~n
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.75]{obrazky-figures/mlp.png}
+    \includegraphics[scale=1.0]{obrazky-figures/mlp.pdf}
     \caption{\label{fig:mlp}Schéma neuronové sítě, která má 2 skryté vrstvy}
 \end{figure}
 
@@ -184,7 +184,7 @@ Výstupní hodnota závisí na vstupních datech, aktuálním vnitřním stavu (
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.85]{obrazky-figures/perceptron.png}
+    \includegraphics[scale=1.0]{obrazky-figures/perceptron.pdf}
     \caption{\label{fig:neuron}Schéma umělého neuronu}
 \end{figure}
 
@@ -339,7 +339,7 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{obrazky-figures/convmapping.png}
+    \includegraphics[scale=1.0]{obrazky-figures/convmapping.pdf}
     \caption{\label{fig:convmapping}Průběh konvoluování jádra se vstupními daty a mapování lokálních příznaků na prostor příznaků (feature space), který je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup}
 \end{figure}
 
@@ -382,12 +382,12 @@ Hodnota padding určuje, o~kolik se mají rozšířit vstupní data. V~případ�
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{obrazky-figures/stride1.png}
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/stride1.pdf}
         \caption{\label{fig:conv_stride1}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{obrazky-figures/stride2.png}
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/stride2.pdf}
         \caption{\label{fig:conv_stride2}Hodnota stride ovlivňuje konvoluční krok jádra nad zpracovávanými daty. Čím větší hodnota stride, tím menší je výstupní rozměr dat}
     \end{minipage}
 \end{figure}
@@ -399,12 +399,12 @@ Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišen�
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{obrazky-figures/padding.png}
+        \includegraphics[width=0.8\textwidth]{obrazky-figures/padding.pdf}
         \caption{\label{fig:conv_padding}Nastavením hodnoty padding se zpracovávaná data na okrajích rozšíří o~danou hodnotu a toto rozšíření bude vyplněno nulami či jakoukoli jinou hodnotou}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{obrazky-figures/cnndilation.png}
+        \includegraphics[width=0.7\textwidth]{obrazky-figures/cnndilation.pdf}
         \caption{\label{fig:conv_dilation}Vizualizace hodnoty dilatace upravující pole působnosti}
     \end{minipage}
 \end{figure}
@@ -417,7 +417,7 @@ Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišen�
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{obrazky-figures/causal_dilation.png}
+    \includegraphics[scale=1.1]{obrazky-figures/causal_dilation.pdf}
     \caption{\label{fig:dilation_factor}Vizualizace časové dilatace na vstupním signálu}
 \end{figure}
 
@@ -483,7 +483,7 @@ Proces začíná na výstupní vrstvě sítě. Algoritmus zde pro každý neuron
 Gradient descent je iterativní optimalizační algoritmus, definující pravidla pro samotnou úpravu vah v~síti. Je určený pro hledání lokálního minima diferencovatelné objektivní funkce $J(\theta)$, kde $\theta \in \mathbb{R}^d$ reprezentuje učené parametry modelu. Hledání lokálního minima probíhá úpravou parametrů modelu v~opačném směru, než je hodnota gradientu. Výpočet je prováděn postupným pohybem ve směru největšího klesání, které je určeno zápornou hodnotou gradientu. Rychlost pohybu závisí na velikosti kroku, což udává \textit{learning rate}. Správná volba \textit{learning rate} ovlivňuje rychlost, jakou je nalezeno minimum funkce. Při nízké hodnotě bude výsledek přesnější, ale nalezení minima bude výpočetně náročnější, protože v~každém kroku se počítá nová hodnota gradientu. Při větší hodnotě je riziko, že minimum bude přeskočeno~\cite{ruder2016overview}.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{obrazky-figures/gradientdescent.png}
+    \includegraphics[scale=1.0]{obrazky-figures/gradientdescent.pdf}
     \caption{\label{fig:gradientdescent}Ukázka algoritmu gradient descent při hledání minima dané funkce postupným přibližováním dle nastavené velikosti kroku}
 \end{figure}
 
@@ -503,7 +503,7 @@ Testovací chyba by ideálně měla být co nejblíže chybě na trénovací sad
 Kapacita je vlastnost modelu určující, kolik se toho dokáže model naučit. V~případě nízké kapacity se model nedokáže naučit všechny příznaky z~trénovacích dat a v~případě vysoké kapacity se mohou přeučit zapamatováním si jejich příznaků a tím sice dosáhnou nízké trénovací chyby, ale špatných výsledků během testování~\cite{mitdeeplearning}.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.3]{obrazky-figures/capacity_vs_error.jpg}
+    \includegraphics[scale=1.35]{obrazky-figures/capacity_vs_error.pdf}
     \caption{\label{fig:gradientdescent}Vliv kapacity modelu trénovací a testovací chybu. Obrázek inspirován podle~\cite{trainingvstesterror}}
 \end{figure}
 
@@ -518,7 +518,7 @@ Velmi hluboké neuronové sítě přinesly v~mnoha aplikacích velmi dobré výs
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/residual_connection.png}
+    \includegraphics[scale=1.15]{obrazky-figures/residual_connection.pdf}
     \caption{\label{fig:residualconnection}Reziduální spojení mezi vstupem a výstupem stavebního bloku sítě~\cite{he2015deep}}
 \end{figure}
 
@@ -557,7 +557,7 @@ Pro překonání nedostatků předešlých metod byla navržena architektura ful
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/tasnet-pipe.png}
+    \includegraphics[scale=0.8]{obrazky-figures/tasnet-pipe.pdf}
     \caption{\label{fig:tasnet-pipe}Zjednodušený model architektury TasNet}
 \end{figure}
 
@@ -566,7 +566,7 @@ Pro překonání nedostatků předešlých metod byla navržena architektura ful
 Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z~reprezentace na původní nahrávku, jak ukazuje obrázek \ref{fig:tasnet-autoenkoder}.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/autoenkoder.png}
+    \includegraphics[scale=0.9]{obrazky-figures/autoenkoder.pdf}
     \caption{\label{fig:tasnet-autoenkoder}Schéma konvolučního autoenkodéru}
 \end{figure}
 
@@ -603,7 +603,7 @@ Nakonec jsou reprezentace $\boldsymbol{d_i}$ rekonstruovány zpět na korespondu
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/separation_module_scheme.png}
+    \includegraphics[scale=1.0]{obrazky-figures/separation_module_scheme.pdf}
     \caption{\label{fig:tasnet-autoenkoder}Schéma kompletního separačního modulu, jehož vstupem je nezáporná reprezentace směsi mluvčích}
 \end{figure}
 
@@ -618,8 +618,8 @@ Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/stacked_resblocks.jpg}
-    \caption{\label{fig:tasnet-stacked-resblocks}Jádro separačního modulu -- naskládané konvoluční bloky s~časovou dilatací odhadující masky na základě nezáporné reprezentace\todo{pridat dilation factor 2 mocnina X minus 1 do obrazku stacked--resblocks jpg}}
+    \includegraphics[scale=0.9]{obrazky-figures/stacked_resblocks.pdf}
+    \caption{\label{fig:tasnet-stacked-resblocks}Jádro separačního modulu -- naskládané konvoluční bloky s~časovou dilatací odhadující masky na základě nezáporné reprezentace}
 \end{figure}
 
 
@@ -641,13 +641,11 @@ kde $\boldsymbol{Y} \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $\boldsymb
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{obrazky-figures/conv-res-block.png}
-    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok obsahující reziduální spojení mezi vstupem a výstupem\todo{graficky zde ukazat a zakrouzkovat co je sconv a co je dconv}}
+    \includegraphics[scale=1.0]{obrazky-figures/conv-res-block.pdf}
+    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok obsahující reziduální spojení mezi vstupem a výstupem}
 \end{figure}
 
 V~každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU~\cite{he2015delving}, která byla popsána v~kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení~\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
-
-\todo{zvýraznit na obrázku konvolučního bloku residuální spojení a hodit tam sipku nebo neco ze to je to spojeni}
 
 
 \section{Normalizace}
@@ -666,7 +664,7 @@ Jak vypadá kompletní schéma architektury po sestavení a propojení jednotliv
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{obrazky-figures/tasnet-architecture.png}
+    \includegraphics[scale=1.0]{obrazky-figures/tasnet-architecture.pdf}
     \caption{\label{fig:tasnet-modul}Schéma architektury TasNet}
 \end{figure}
 
@@ -760,13 +758,13 @@ Poslední segment by byl kratší, pokud by délka nahrávky byla kratší než 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.30]{obrazky-figures/minibatch_segmentace.jpg}
+    \includegraphics[scale=0.9]{obrazky-figures/minibatch_segmentace.pdf}
     \caption{\label{fig:minibatch_segmentace}Dělení nahrávky na segmenty o~délce \texttt{segment\_len} a jejich následné vkládání do minibatche. Lze si všimnout, že pokud poslední segment není dostatečně dlouhý, tak se vezme od konce nahrávky a jeho počáteční vzorky budou duplicitní s~posledními vzorky předešlého segmentu}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.30]{obrazky-figures/minibatch_segmentace_padding.jpg}
+    \includegraphics[scale=0.9]{obrazky-figures/minibatch_segmentace_padding.pdf}
     \caption{\label{fig:segmentace_padding}Je--li zpracovávána nahrávka, jejíž délka je kratší než je délka segmentu, je tento segment doplněn z~prava nulami do požadované délky}
 \end{figure}
 
@@ -809,7 +807,7 @@ Algoritmus~\ref{alg:segmentace_nahravek} a obrázek~\ref{fig:generovani_segmentu
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.30]{obrazky-figures/segmentation.jpg}
+    \includegraphics[scale=1.0]{obrazky-figures/segmentation.pdf}
     \caption{\label{fig:generovani_segmentu}Způsob segmentace nahrávek}
 \end{figure}
 
@@ -818,7 +816,7 @@ Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou přek
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.25]{obrazky-figures/segment_overlap.jpg}
+    \includegraphics[scale=1.0]{obrazky-figures/segment_overlap.pdf}
     \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím}
 \end{figure}
 
