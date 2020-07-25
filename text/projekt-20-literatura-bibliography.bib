@@ -68,21 +68,23 @@ abstract = {Verbal communication in a “cocktail-party situation” is a major 
 %
 %Citace:
 %Qian, Y., Weng, C., Chang, X. et al. Past review, current progress, and challenges ahead on the %cocktail party problem. Frontiers Inf Technol Electronic Eng 19, 40–63 (2018). https://doi-%org.ezproxy.lib.vutbr.cz/10.1631/FITEE.1700814
-@article{cocktailparty,
+%https://doi-org.ezproxy.lib.vutbr.cz/10.1631/FITEE.1700814
+@article{speechseparation,
   title={Past review, current progress, and challenges ahead on the cocktail party problem},
   author={Qian, Y., Weng, C., Chang, X. et al.},
-  journal={Frontiers Inf Technol Electronic Eng},
+  journal={Frontiers Inf Technol Electronic Eng 19},
   volume={19},
   number={1},
   pages={40--63},
   year={2018},
   month={Jan},
-  revised={17. 1. 2018},
+  revised={17 Jan 2018},
   issn={2095-9230},
   doi={10.1631/FITEE.1700814},
   url={https://doi.org/10.1631/FITEE.1700814},
   publisher={Springer Nature}
 }
+
 
 % CHECKED
 % CASA ze studie
@@ -149,7 +151,7 @@ url = {http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-facto
 % https://iopscience.iop.org/article/10.1088/1741-2560/13/2/026027/meta
 @article{Negro_2016,
 	doi = {10.1088/1741-2560/13/2/026027},
-	url = {https://doi.org/10.1088%2F1741-2560%2F13%2F2%2F026027},
+	url = {http://dx.doi.org/10.1088/1741-2560/13/2/026027},
 	year = 2016,
 	month = {Feb},
 	publisher = {{IOP} Publishing},
@@ -185,16 +187,21 @@ url = {http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-facto
 % MSE, MAE, 
 % https://towardsdatascience.com/understanding-the-3-most-common-loss-functions-for-machine-learning-regression-23e0ef3e14d3
 
+
+% CHECKED
 % Obrazek FeedForward NN vs Recurrent NN
 @article{FFandRecNN,
-	author = {Pekel, Engin and Kara, Selin},
-	year = {2017},
-	month = {Mar},
-	pages = {157-179},
-	title = {A COMPREHENSIVE REVIEW FOR ARTIFICAL NEURAL NETWORK APPLICATION TO PUBLIC TRANSPORTATION},
-	volume = {35},
-	journal = {Sigma Journal of Engineering and Natural Sciences}
+  title={A comprehensive review for artificial neural network application to public transportation.},
+  author={Pekel, Engin and Soner Kara, Selin},
+  journal={Sigma: Journal of Engineering \& Natural Sciences/M{\"u}hendislik ve Fen Bilimleri Dergisi},
+  volume={35},
+  number={1},
+  year={2017},
+  month = {Mar},
+  pages = {157-179},
 }
+%journal = {Sigma Journal of Engineering and Natural Sciences}
+
 
 % Relu article citation about success of ReLU
 @incollection{NIPS2012_4824,
@@ -343,7 +350,7 @@ abstract = {Connectionist learning procedures are presented for “sigmoid” an
 % https://ieeexplore.ieee.org/abstract/document/8659758
 @inproceedings{venkataramani2018performance,
   title={Performance based cost functions for end-to-end speech separation},
-  author=S. {Venkataramani} and R. {Higa} and P. {Smaragdis},
+  author={S. {Venkataramani} and R. {Higa} and P. {Smaragdis}},
   booktitle={2018 Asia-Pacific Signal and Information Processing Association Annual Summit and Conference (APSIPA ASC)},
   pages={350--355},
   year={2018},
@@ -536,7 +543,7 @@ url={https://arxiv.org/abs/1608.08242}
 %Residual connection from TasNet
 % https://arxiv.org/abs/1512.03385
 % https://ieeexplore.ieee.org/document/7780459
-@INPROCEEDINGS{he2016deep,
+@INPROCEEDINGS{he2015deep,
   author={K. {He} and X. {Zhang} and S. {Ren} and J. {Sun}},
   booktitle={2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, 
   title={Deep Residual Learning for Image Recognition}, 
@@ -571,7 +578,7 @@ url={https://arxiv.org/abs/1608.08242}
   url={https://arxiv.org/abs/1805.07477v5}
 }
 
-
+% CHECKED
 %Backpropagation Applied to Handwritten Zip Code Recognition (CNN)
 % https://ieeexplore.ieee.org/document/6795724
 @ARTICLE{6795724,
@@ -582,106 +589,117 @@ url={https://arxiv.org/abs/1608.08242}
   volume={1},
   number={4},
   pages={541-551},
+  abstract={The ability of learning networks to generalize can be greatly enhanced by providing constraints from the task domain. This paper demonstrates how such constraints can be integrated into a backpropagation network through the architecture of the network. This approach has been successfully applied to the recognition of handwritten zip code digits provided by the U.S. Postal Service. A single network learns the entire recognition operation, going from the normalized image of the character to the final classification.},
+  keywords={},
+  doi={10.1162/neco.1989.1.4.541},
+  ISSN={0899-7667},
+  month={Dec},
+  publisher = {MITP}
 }
 
+% CHECKED
 %Learning long-term dependencies with gradient descent is difficult
 % https://ieeexplore.ieee.org/document/279181
 @ARTICLE{279181,
-	author={Y. {Bengio} and P. {Simard} and P. {Frasconi}},  
-	journal={IEEE Transactions on Neural Networks},
-    title={Learning long-term dependencies with gradient descent is difficult},
-    year={1994},
-    volume={5},
-    number={2},
-    pages={157-166},
+  author={Y. {Bengio} and P. {Simard} and P. {Frasconi}},
+  journal={IEEE Transactions on Neural Networks}, 
+  title={Learning long-term dependencies with gradient descent is difficult}, 
+  year={1994},
+  volume={5},
+  number={2},
+  pages={157-166},
+  abstract={Recurrent neural networks can be used to map input sequences to output sequences, such as for recognition, production or prediction problems. However, practical difficulties have been reported in training recurrent neural networks to perform tasks in which the temporal contingencies present in the input/output sequences span long intervals. We show why gradient based learning algorithms face an increasingly difficult problem as the duration of the dependencies to be captured increases. These results expose a trade-off between efficient learning by gradient descent and latching on information for long periods. Based on an understanding of this problem, alternatives to standard gradient descent are considered.<>},
+  keywords={recurrent neural nets;learning (artificial intelligence);numerical analysis;long-term dependencies;gradient descent;recognition;production problems;prediction problems;recurrent neural network training;temporal contingencies;input/output sequence mapping;efficient learning;Recurrent neural networks;Production;Delay effects;Intelligent networks;Neural networks;Discrete transforms;Computer networks;Cost function;Neurofeedback;Displays},
+  doi={10.1109/72.279181},
+  ISSN={1941-0093},
+  month={Mar}
 }
 
 
+% CHECKED
 % Tlusta NN knizka z knihovny
 @BOOK{mitdeeplearning,
-	author =       "Ian Goodfellow, Yoshua Bengio, Aaron Courville",
-	title =        "{\it DEEP LEARNING}",
-	publisher =    "MIT Press",
-	year =         "2017",
+	author =       "Ian Goodfellow and Yoshua Bengio and Aaron Courville",
+	title =		   {Deep Learning},
+	publisher =    "The MIT Press",
+	year =         "2016",
 	isbn =         "9780262035613",
+	note={\url{http://www.deeplearningbook.org}},
 }
-    
+   
+% CHECKED 
 % Ta tenka knizka, ale ctivejsi o NN, CNN, atd z knihovny
-@BOOK{mitdeeplearning_small,
-	author =       "John D. Kelleher",
-	title =        "{\it DEEP LEARNING / John D. Kelleher}",
-	publisher =    "MIT Press",
-	year =         "2019",
-	isbn =         "9780262537551",
+@Book{mitdeeplearning_small,
+ author = {Kelleher, John},
+ title = {Deep learning / John D. Kelleher},
+ publisher = {The MIT Press},
+ year = {2019},
+ month = {Aug},
+ address = {Cambridge, Massachusetts, London, England},
+ isbn = {9780262537551},
+ series = {The MIT Press Essential Knowledge series}
+ }
+	
+% CHECKED
+% PESQ - itut
+% Rix, A. W., Beerends, J. G., Hollier, M. P., and Hekstra,A. P.  Perceptual evaluation of speech quality (pesq)-anew method for speech quality assessment of telephonenetworks and codecs.  InAcoustics, Speech, and SignalProcessing, 2001. Proceedings.(ICASSP’01). 2001 IEEEInternational Conference on,  volume  2,  pp.  749–752.IEEE, 2001"
+%
+% https://ieeexplore.ieee.org/document/941023
+% https://www.researchgate.net/publication/3908525_Perceptual_Evaluation_of_Speech_Quality_PESQ_A_New_Method_for_Speech_Quality_Assessment_of_Telephone_Networks_and_Codecs
+@inproceedings{pesq-itut,
+author = {Rix, Antony and Beerends, John and Hollier, Michael and Hekstra, Andries},
+year = {2001},
+month = {Feb},
+pages = {749-752 vol.2},
+title = {Perceptual Evaluation of Speech Quality (PESQ): A New Method for Speech Quality Assessment of Telephone Networks and Codecs},
+volume = {2},
+isbn = {0-7803-7041-4},
+journal = {ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing - Proceedings},
+doi = {10.1109/ICASSP.2001.941023}
 }
-	
-	
-% 
-@Article{speechseparation,
-	author = "Qian, Y., Weng, C., Chang, X. et al.",
-	year =   "2019",
-	month =  "02",
-	pages =  "40–63",
-	title =  "Past review, current progress, and challenges ahead on the cocktail party problem",
-	journal = "Frontiers Inf Technol Electronic Eng 19",
-	url = "https://doi-org.ezproxy.lib.vutbr.cz/10.1631/FITEE.1700814",	
-}
-	
+%@INPROCEEDINGS{pesq-itut,
+%  author={A. W. {Rix} and J. G. {Beerends} and M. P. {Hollier} and A. P. {Hekstra}},
+%  booktitle={2001 IEEE International Conference on Acoustics, Speech, and Signal Processing. Proceedings (Cat. No.01CH37221)}, 
+%  title={Perceptual evaluation of speech quality (PESQ)-a new method for speech quality assessment of telephone networks and codecs}, 
+%  year={2001},
+%  volume={2},
+%  number={},
+%  pages={749-752 vol.2},
+%  abstract={Previous objective speech quality assessment models, such as bark spectral distortion (BSD), the perceptual speech quality measure (PSQM), and measuring normalizing blocks (MNB), have been found to be suitable for assessing only a limited range of distortions. A new model has therefore been developed for use across a wider range of network conditions, including analogue connections, codecs, packet loss and variable delay. Known as perceptual evaluation of speech quality (PESQ), it is the result of integration of the perceptual analysis measurement system (PAMS) and PSQM99, an enhanced version of PSQM. PESQ is expected to become a new ITU-T recommendation P.862, replacing P.861 which specified PSQM and MNB.},
+%  keywords={speech intelligibility;speech codecs;telecommunication equipment testing;packet switching;delays;telephone networks;perceptual evaluation of speech quality;telephone networks;perceptual speech quality measure;measuring normalizing blocks;analogue connections;packet loss;variable delay;perceptual analysis measurement system;PAMS;PSQM99;ITU-T recommendation P.862;speech codecs;objective speech quality assessment models;Speech analysis;Quality assessment;Distortion measurement;Nonlinear distortion;Nonlinear filters;Telephony;Signal processing;Delay effects;Speech codecs;Degradation},
+%  doi={10.1109/ICASSP.2001.941023},
+%  ISSN={1520-6149},
+%  month={May},
+%}
 
-% 
-@article{pesq-itut,
-  author    = {Rix, A. W., Beerends, J. G., Hollier, M. P., and Hekstra,A. P.},
-  title     = {erceptual evaluation of speech quality (pesq)-anew method for speech quality assessment of telephonenetworks and codecs},
-  journal   = {Acoustics, Speech, and SignalProcessing},
-  volume    = {2},
-  year      = {2001},
-  pages =  "40–63",
-note="
-Rix, A. W., Beerends, J. G., Hollier, M. P., and Hekstra,A. P.  Perceptual evaluation of speech quality (pesq)-anew method for speech quality assessment of telephonenetworks and codecs.  InAcoustics, Speech, and SignalProcessing, 2001. Proceedings.(ICASSP’01). 2001 IEEEInternational Conference on,  volume  2,  pp.  749–752.IEEE, 2001"
-}
 
-% ze studie odkaz na trenovaci dataset Journal
+% CHECKED
+% ze studie odkaz [48] na trenovaci dataset Journal
 % Deep clustering: Discriminative embeddings for segmentation and separation
 % https://arxiv.org/abs/1508.04306
 % https://arxiv.org/pdf/1508.04306.pdf
-@article{DBLP-dataset,
-  author    = {John R. Hershey and
-               Zhuo Chen and
-               Jonathan Le Roux and
-               Shinji Watanabe},
-  title     = {Deep clustering: Discriminative embeddings for segmentation and separation},
-  journal   = {CoRR},
-  volume    = {abs/1508.04306},
-  year      = {2015},
-  url       = {http://arxiv.org/abs/1508.04306},
-  archivePrefix = {arXiv},
-  eprint    = {1508.04306},
-  timestamp = {Mon, 29 Jun 2020 12:03:43 +0200},
-  biburl    = {https://dblp.org/rec/journals/corr/HersheyCRW15.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+@inproceedings{DBLP-dataset,
+  title={Deep clustering: Discriminative embeddings for segmentation and separation},
+  author={Hershey, John R and Chen, Zhuo and Le Roux, Jonathan and Watanabe, Shinji},
+  booktitle={2016 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  pages={31--35},
+  year={2016},
+  organization={IEEE},
+  url = {http://arxiv.org/abs/1508.04306},
 }
 
-
-
-%	
-@misc{ruder2016overview,
+% CHECKED
+% An overview of gradient descent optimization algorithms
+% https://arxiv.org/abs/1609.04747
+@article{ruder2016overview,
     title={An overview of gradient descent optimization algorithms},
     author={Sebastian Ruder},
     year={2016},
     eprint={1609.04747},
     archivePrefix={arXiv},
-    primaryClass={cs.LG}
-}
-
-
-%
-@webpage{web-backpropagation,
-	author =       "John McGonagle, George Shaikouski, Christopher Williams, Andrew Hsu, Jimin Khim",
-	title =        "Backpropagation, \textit{Brilliant.org}",
-	howpublished = "online",
-	year =         "2019",
-	month =        3,
-	url =          "https://brilliant.org/wiki/backpropagation/",
-	cited =        "2019-04-10"
+    primaryClass={cs.LG},
+    journal={ArXiv},
+	volume={abs/1609.04747},
+	url = {http://arxiv.org/abs/1609.04747},
 }
 

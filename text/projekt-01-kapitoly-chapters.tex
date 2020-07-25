@@ -16,7 +16,7 @@ Text je rozdělen na několik kapitol, které postupně pokrývají různé logi
 
 
 \section{Problém separace mluvčích}
-V~běžném prostředí se přes sebe prolínají různé zvuky, jako je hudba, směs mnoha mluvčích či další akustické jevy. Problém separace mluvčích, neboli koktejl párty problém, si dává za úkol separovat tuto směs zvukových signálů. To umožní se soustředit na jednotlivé signály bez přítomnosti ostatních a využít je tak na další analýzu, jako třeba identifikace řečníka a vlastností jeho hlasu či přepis promluvy na text. Ostatní signály jsou na separované nahrávce potlačeny~\cite{cocktailparty}.
+V~běžném prostředí se přes sebe prolínají různé zvuky, jako je hudba, směs mnoha mluvčích či další akustické jevy. Problém separace mluvčích, neboli koktejl párty problém, si dává za úkol separovat tuto směs zvukových signálů. To umožní se soustředit na jednotlivé signály bez přítomnosti ostatních a využít je tak na další analýzu, jako třeba identifikace řečníka a vlastností jeho hlasu či přepis promluvy na text. Ostatní signály jsou na separované nahrávce potlačeny~\cite{speechseparation}.
 
 Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odhad $C$ zdrojů mluvčích $s_1(t), \dots, s_c(t) \in \mathbb{R}^{1 \times T}$ na diskrétním signálu směsi $x(t)\in \mathbb{R}^{1 \times T}$, kde $T$ je délka nahrávky a kde
 \begin{equation}
@@ -25,7 +25,7 @@ Problém separace mluvčích na jednokanálové nahrávce lze definovat jako odh
 \end{equation}
 Cílem je odhadnout $s_i(t), i = 1, \dots, C$ ze signálu směsi $x(t)$.
 
-Pro vyřešení problému je potřeba se zaměřit na dvě oblasti. Na separaci mluvčího ze signálu směsi mluvčích, což je suma všech jednotlivých mluvčích a zvuků a na zaměření a udržení pozornosti na konkrétního mluvčího, a možnost přepínat mezi jednotlivými zdroji pozornost. Úspěšnost v~jedné oblasti zvyšuje úspěšnost oblasti druhé~\cite{cocktailparty}. Algoritmy pro separaci mluvčích berou v~potaz obě oblasti s~cílem dosáhnout co nejlepších výsledků. Kvalita separace se hodnotí pomocí metrik, které jsou popsány později. 
+Pro vyřešení problému je potřeba se zaměřit na dvě oblasti. Na separaci mluvčího ze signálu směsi mluvčích, což je suma všech jednotlivých mluvčích a zvuků a na zaměření a udržení pozornosti na konkrétního mluvčího, a možnost přepínat mezi jednotlivými zdroji pozornost. Úspěšnost v~jedné oblasti zvyšuje úspěšnost oblasti druhé~\cite{speechseparation}. Algoritmy pro separaci mluvčích berou v~potaz obě oblasti s~cílem dosáhnout co nejlepších výsledků. Kvalita separace se hodnotí pomocí metrik, které jsou popsány později. 
 
 
 \section{Metody pro separaci jednokanálových nahrávek}
@@ -66,9 +66,9 @@ Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použ
 \subsection{Hluboké neuronové sítě}
 Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou--li definovány jako problémy učení s~učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat původní zdroj signálu.
 
-Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short--time Fourier transform (STFT). Tato reprezentace $Y(t,f)$ sloužila pro rekonstrukci každého zdroje $X_s(t,f)$ v~T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k~nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z~trénovacího datasetu a odstranit tak nemožné kombinace~\cite{cocktailparty}.
+Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short--time Fourier transform (STFT). Tato reprezentace $Y(t,f)$ sloužila pro rekonstrukci každého zdroje $X_s(t,f)$ v~T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k~nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z~trénovacího datasetu a odstranit tak nemožné kombinace~\cite{speechseparation}.
 
-Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme--li vstupní příznak $Y(t,f)$ směsi mluvčích, model se bude učit predikovat individuální tok příznaků $X_s(t,f)$ pomocí vhodného trénovacího datasetu. Později se ukázalo, že se lepších výsledků dosáhne, bude--li model odhadovat množinu masek $M_s(t,f)$ pro každý ze zdrojů, místo přímého odhadu spektra $X_s(t,f)$ a ty pak použít k~rekonstrukci spektra $X_s(t,f)$ jako $X_s = M_s \circ Y$, kde $\circ$ je násobení po prvcích. Masky jsou invariantní vůči proměnným vlastnostem vstupních dat a jejich správný odhad je důležitým faktorem pro kvalitu separace~\cite{cocktailparty}.
+Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme--li vstupní příznak $Y(t,f)$ směsi mluvčích, model se bude učit predikovat individuální tok příznaků $X_s(t,f)$ pomocí vhodného trénovacího datasetu. Později se ukázalo, že se lepších výsledků dosáhne, bude--li model odhadovat množinu masek $M_s(t,f)$ pro každý ze zdrojů, místo přímého odhadu spektra $X_s(t,f)$ a ty pak použít k~rekonstrukci spektra $X_s(t,f)$ jako $X_s = M_s \circ Y$, kde $\circ$ je násobení po prvcích. Masky jsou invariantní vůči proměnným vlastnostem vstupních dat a jejich správný odhad je důležitým faktorem pro kvalitu separace~\cite{speechseparation}.
 
 % https://link-springer-com.ezproxy.lib.vutbr.cz/content/pdf/10.1631/FITEE.1700814.pdf
 
