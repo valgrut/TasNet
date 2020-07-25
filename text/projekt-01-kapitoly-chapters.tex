@@ -111,7 +111,7 @@ Hodnota SDR se vypočítá jako
 %http://www.jonathanleroux.org/pdf/LeRoux2019ICASSP05sdr.pdf
 
 
-\subsection{Perceptual evaluation of speech qualit}
+\subsection{Perceptual evaluation of speech quality}
 Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná objektivní metoda pro vyhodnocování kvality řeči na end--to--end síti. PESQ byla vyvinuta pro předpověď subjektivního skóre \textit{mean opinion score} (MOS), kde posluchač hodnotil kvalitu připojení (řeči) jednou z~pěti možností (\uv{bad}, \uv{poor}, \uv{fair}, \uv{good}, \uv{excellent}). Těmto možnostem odpovídaly číselné hodnoty $1$ až $5$, které pak byly zprůměrovány, což nakonec byla finální hodnota MOS.
 
 Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{sdr-pesq-optimization}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Lze ho ale aplikovat i pro vyhodnocení separace mluvčích, kde referenční nahrávka je porovnána s~nahrávkou, která byla vyprodukována neuronovou sítí.
@@ -471,8 +471,6 @@ Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $
 \subsection{Algoritmus zpětné propagace}
 Algoritmus zpětné propagace (backpropagation algorithm) je adaptační algoritmus pro učení neuronových sítí metodou učení s~učitelem. Algoritmus pozpátku prochází neuronovou síťí a na základě hodnoty loss počítá gradient objektivní funkce $J(\theta)$ vzhledem ke všem váhám v síti. Skalární hodnota loss je výstupem objektivní funkce $J(\theta)$ a gradient této funkce vyjadřuje, jak moc každá váha přispívá k~celkové chybě. Cílem je minimalizovat hodnotu loss. Algoritmus je nejčastěji používán během trénování neuronových sítí, ale obecně ho lze použít pro výpočet jakékoli derivace~\cite{mitdeeplearning_small},~\cite{mitdeeplearning}.
 
-
-
 Proces začíná na výstupní vrstvě sítě. Algoritmus zde pro každý neuron spočítá chybový gradient $\delta$ reprezentující citlivost chyby sítě na změnu váhovaného součtu daného neuronu. Tyto gradienty jsou iterativně zpětně propagovány do předchozích vrstev, na základě nichž jsou počítány gradienty neuronů v~předchozích vrstvách, až po vrstvu vstupní. Pro úpravu vah na základě vypočítaných chybových gradientů se obvykle používá algoritmus gradient descent~\cite{mitdeeplearning_small}.
 
 
@@ -489,7 +487,7 @@ Gradient descent je iterativní optimalizační algoritmus, definující pravidl
 \end{figure}
 
 \todo{MOZNA sem hodit tu rovnici updatu vah}
-%https://ml-cheatsheet.readthedocs.io/en/latest/backpropagation.html
+% https://ml-cheatsheet.readthedocs.io/en/latest/backpropagation.html
 
 
 \subsection{Underfitting a generalizace}
