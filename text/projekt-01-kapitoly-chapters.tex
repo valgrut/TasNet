@@ -63,9 +63,8 @@ Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použ
 
 
 
-
 \subsection{Hluboké neuronové sítě}
-Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou--li definovány jako problémy učení s~učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat zdroj signálu z~motofónního signálu. Monofónní signál je signál nahraný jedním mikrofonem a má jeden kanál.
+Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou--li definovány jako problémy učení s~učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat původní zdroj signálu.
 
 Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short--time Fourier transform (STFT) $Y(t,f)$ pro rekonstrukci každého zdroje $X_s(t,f)$ v~T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k~nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z~trénovacího datasetu a odstranit tak nemožné kombinace~\cite{cocktailparty}.
 
@@ -845,7 +844,7 @@ Skript \textbf{\textit{gupload.sh}} pro odesílání zdrojových souborů na \te
 Skript \textbf{\textit{gdownload.sh}} je určený pro snadné stahování dat z~Google Drive. Stejně jako předchozí skript, používá operace poskytované nástrojem rsync. Při zavolání stáhne adresář obsahující data z~posledního trénování, nebo adresář, jehož název je předán jako argument skriptu v~přikazové řádce.   
 Stažený adresář obsahuje checkpointy, soubory obsahující výstup trénování, soubor obsahující dvojice hodnot \texttt{[zpracováno\_nahrávek, loss]}, které lze jednoduše vykreslit do grafu, a nakonec soubor s~výsledky testování obsahující hodnoty metrik pro testovaný checkpoint.
 
-Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s~různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k~adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}. Skript \textbf{\textit{nninference.sh}} přijímá na svém vstupu směs mluvčích a vyžaduje checkpoint s naučenou sítí. Jeho výstupem jsou separované nahrávky mluvčích ze vstupní směsi.
+Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění trénování a testování modelu s~různými přednastavenými parametry. Bylo tak možno mít mezi skripty rozdílné cesty k~adresářům pro účely trénování a ladění chyb nebo třeba nastavení času, po kterém se proces má sám ukončit. Pro spuštění trénování modelu tak lze zavolat skript \textbf{\textit{nntrain.sh}}, pro testování skript \textbf{\textit{nntest.sh}} a pro inferenci (separaci mluvčích na předané nahrávce) skript \textbf{\textit{nninference.sh}}. Skript \textbf{\textit{nninference.sh}} přijímá na svém vstupu směs mluvčích a vyžaduje checkpoint s~naučenou sítí. Jeho výstupem jsou separované nahrávky mluvčích ze vstupní směsi.
 
 
 \bigskip
@@ -859,7 +858,7 @@ Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění tr�
 
 \chapter{Experimenty a vyhodnocení}
 \label{experimenty}
-Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Proto je podstatný výkon stroje, na jakém je síť učena. Je--li k dispozici výkonný stroj, dá se doba trénování výrazně snížit.
+Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Proto je podstatný výkon stroje, na jakém je síť učena. Je--li k~dispozici výkonný stroj, dá se doba trénování výrazně snížit.
 
 Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry, které určují například počet vrstev sítě, velikost segmentace a další vlastnosti.
 
@@ -869,7 +868,7 @@ Cílem experimentů je zjistit, které z~hyper--parametrů mají největší vli
 \section{Dataset}
 Dataset je množina dat, na kterých je síť učena a testována. Dataset se dá rozdělit na tři podmnožiny, které jsou navzájem exkluzivní. Trénovací dataset je určen k~trénování sítě a bývá největší. Validační dataset se prochází po zpracování trénovacího datasetu v~průběhu trénování a slouží pro ověření, že hodnota loss na dosud neviděných datech stále klesá a nedochází tak k~přetrénování. Při zpracování tohoto datasetu je síti zabráněno v~učení. Poslední je testovací dataset, na kterém probíhá vyhodnocení sítě, tedy výpočet hodnot jednotlivých metrik. 
 
-Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0)~\cite{DBLP-dataset} a vytvořením směsi mluvčích z~těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes $10$ hodin a přes $6$ hodin validačních dat. Testovací data jsou vygenerována z 16ti, doposud neviděných, mluvčích. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na \uv{zero means} a \uv{jednotkovou varianci}. Skript pro generování datasetu lze nalézt v~\footnote{https://www.merl.com/demos/deep-clustering}.
+Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0)~\cite{DBLP-dataset} a vytvořením směsi mluvčích z~těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes $10$ hodin a přes $6$ hodin validačních dat. Testovací data jsou vygenerována z~16ti, doposud neviděných, mluvčích. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na \uv{zero means} a \uv{jednotkovou varianci}. Skript pro generování datasetu lze nalézt v~\footnote{https://www.merl.com/demos/deep-clustering}.
 
 \begin{figure}[H]
     \centering
@@ -896,9 +895,9 @@ Lze si všimnout, že sečtením signálů jednotlivých mluvčích na obrázku~
 
 
 \section{Průběh trénování}
-Bylo natrénováno $10$ modelů s různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:vliv-X4},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X8}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s hodnotou $learning rate = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:somelossTODO} a~\ref{graf:somelossTODO2}.
+Bylo natrénováno $10$ modelů s~různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:vliv-X4},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X8}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v~jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K~tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s~hodnotou $learning rate = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v~jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:somelossTODO} a~\ref{graf:somelossTODO2}.
 
-\todo{Pridat Grafy trenovani. Popis: Dát validni grafy a udelat druhy graf kde zkombinovat validacni a trenovaci loss do jednoho. Vydelit hlavne hodnoty na ose x poctem segmentu v jedne epose a ose y vydelit velikosti minibatche a poctem mluvcich ve smesi (2)}.
+\todo{Pridat Grafy trenovani. Popis: Dát validni grafy a udelat druhy graf kde zkombinovat validacni a trenovaci loss do jednoho. Vydelit hlavne hodnoty na ose x poctem segmentu v~jedne epose a ose y vydelit velikosti minibatche a poctem mluvcich ve smesi (2)}.
 
 %\todo{https://www.tablesgenerator.com/}.
 
@@ -960,7 +959,7 @@ Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky sdr vyjad
 
 \todo{miniÚvod, co bude zkoumano a vyhodnocovano.}
 
-\todo{Ucelene: referovat tabulku s Hyper parametry nahore.
+\todo{Ucelene: referovat tabulku s~Hyper parametry nahore.
 Kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r, jakoze v~podkapitole Vliv X budou grafy takove, ze pro kazdou metriku bude graf jeden, kde se meni X a je tam videt jak se jednotlive hodnoty metriky lisi pro ruzna X.
 }
 \todo{Mozna: Pametova narocnost modelu. Spektrum nahravek.}
@@ -1040,7 +1039,7 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 
 
 %---------------------------------------------------------------------------------------------
-\subsection{Úspěšnost modelů s ohledem na pohlaví mluvčích}
+\subsection{Úspěšnost modelů s~ohledem na pohlaví mluvčích}
 \todo{nebo zahrnout do podkapitol. histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.}
 
 
@@ -1061,13 +1060,13 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 \subsection{Výsledky referenčního modelu TasNet}
 \todo{Shrnout jejich vysledky. Muj nej a srovnat s~tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.}
 
-V referenční studii~\cite{luo2018convtasnet} byly modely trénovány $100$ epoch s různými hyper--parametry. Já se zaměřím na takové, se kterými experimentuji v rámci mých modelů. Modely jsou v nekauzální konfiguraci a používají batch normalizaci (BN).
+V~referenční studii~\cite{luo2018convtasnet} byly modely trénovány $100$ epoch s~různými hyper--parametry. Já se zaměřím na takové, se kterými experimentuji v~rámci mých modelů. Modely jsou v~nekauzální konfiguraci a používají batch normalizaci (BN).
 
-Nejlepší model TasNet s hodnotami parametrů $X=8$ a $R=4$ dosahuje hodnoty $SDR = 14.7 dB$ při délce filtrů $L = 20$ vzorků. Hodnoty $SDR = 13.0 dB$ dosahuje při hodnotě parametru $X = 7$ a délce filtrů $L = 40$ vzorků. Po zvětšení velikosti filtrů a zmenšení počtu konvolučních bloků (což zmenšuje také hodnotu dilatace) je patrný pokles hodnoty SDR. Při dalším zmenšování modelu dále klesá hodnota SDR, jak zobrazuje tabulka~\ref{tab:tasnet}.
+Nejlepší model TasNet s~hodnotami parametrů $X=8$ a $R=4$ dosahuje hodnoty $SDR = 14.7 dB$ při délce filtrů $L = 20$ vzorků. Hodnoty $SDR = 13.0 dB$ dosahuje při hodnotě parametru $X = 7$ a délce filtrů $L = 40$ vzorků. Po zvětšení velikosti filtrů a zmenšení počtu konvolučních bloků (což zmenšuje také hodnotu dilatace) je patrný pokles hodnoty SDR. Při dalším zmenšování modelu dále klesá hodnota SDR, jak zobrazuje tabulka~\ref{tab:tasnet}.
 
 \begin{table}[hbt]
 \centering
-\caption{Tabulka ukazující výsledky testovaní referenčních modelů TasNet v závislosti na konfiguraci}
+\caption{Tabulka ukazující výsledky testovaní referenčních modelů TasNet v~závislosti na konfiguraci}
 \label{tab:tasnet}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
