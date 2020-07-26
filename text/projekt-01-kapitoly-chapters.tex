@@ -376,7 +376,7 @@ Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišen�
     \caption{\label{fig:dilation_factor}Vizualizace časové dilatace na vstupním signálu. Zde je vidět kauzální konfigurace, při které je hodnota $y_T$ počítána pouze z hodnot v čase $t \leq T$.}
 \end{figure}
 
-Dalším faktorem, který ovlivňuje výpočet, je kauzalita sítě. Tato vlastnost určuje, která data mohou být použita pro výpočet výstupní hodnoty. Kauzální nastavení sítě ilustruje obrázek~\ref{fig:dilation_factor}, zatímco obrázek~\ref{fig:noncausal} ukazuje nekauzální konfiguraci, kde je hodnota $y_T$ počítána i z hodnot v čase $t \geq T$.
+Dalším faktorem, který ovlivňuje výpočet, je kauzalita sítě. Tato vlastnost určuje, která data mohou být použita pro výpočet výstupní hodnoty. Kauzální nastavení sítě ilustruje obrázek~\ref{fig:dilation_factor}, zatímco obrázek~\ref{fig:noncausal} ukazuje nekauzální konfiguraci, kde je hodnota $y_T$ počítána i z hodnot v čase $t > T$.
 
 \begin{figure}[H]
     \centering
@@ -520,12 +520,12 @@ Pro překonání nedostatků předešlých metod byla navržena architektura ful
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{obrazky-figures/tasnet-pipe.pdf}
-    \caption{\label{fig:tasnet-pipe}Zjednodušený model architektury TasNet.}
+    \caption{\label{fig:tasnet-pipe}Schéma architektury TasNet.}
 \end{figure}
 
 
 \section{Konvoluční auto--enkodér}
-Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z~reprezentace na původní nahrávku, jak ukazuje obrázek \ref{fig:tasnet-autoenkoder}.
+Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z~reprezentace na původní nahrávku, jak ukazuje obrázek~\ref{fig:tasnet-autoenkoder}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.9]{obrazky-figures/autoenkoder.pdf}
@@ -566,11 +566,11 @@ Nakonec jsou reprezentace $\boldsymbol{d_i}$ rekonstruovány zpět na korespondu
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/separation_module_scheme.pdf}
-    \caption{\label{fig:tasnet-autoenkoder}Schéma kompletního separačního modulu, jehož vstupem je nezáporná reprezentace směsi mluvčích.}
+    \caption{\label{fig:tasnet-separationmodule}Schéma separačního modulu, jehož vstupem je nezáporná reprezentace směsi mluvčích.}
 \end{figure}
 
 
-Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. Jak zapadá separační modul do schématu je zobrazeno na obrázku~\ref{fig:tasnet-autoenkoder}.
+Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. Jak zapadá separační modul do schématu je zobrazeno na obrázku~\ref{fig:tasnet-separationmodule}.
 
 \subsection{Temporal Convolutional Network}
 Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku~\ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje $X$ konvolučních bloků se zvyšující se časovou dilatací, která se zvyšuje exponenciálně podle počtu bloků a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajišťuje dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek~\ref{fig:dilation_factor} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
@@ -587,9 +587,9 @@ Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$
 
 
 \subsection{Konvoluční bloky}
-Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 1$ konvolučních bloků za \textit{depthwise separable convolution} (S--conv), která pomáhá snížit počet parametrů a ukázala se jako efektivní ve zpracováni obrazu~\cite{Chollet_2017_CVPR},~\cite{MobileNets}.
+Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 1$ konvolučních bloků za \textit{depthwise separable convolution} ($S\texttt{-}conv$), která pomáhá snížit počet parametrů a ukázala se jako efektivní ve zpracováni obrazu~\cite{Chollet_2017_CVPR},~\cite{MobileNets}. Konvoluční bloky jsou ve schématu~\ref{fig:tasnet-stacked-resblocks} znázorněny jako \uv{1D~Conv}.
 
-\textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution (D--conv) a standardní konvolucí $1 \times 1$--conv s~velikostí konvolučního jádra 1:
+\textit{Depthwise separable convolution} se skládá ze dvou, po sobě jdoucích, operací -- depthwise convolution ($D\texttt{-}conv$) a standardní konvolucí $1 \times 1 \texttt{-}conv$ s~velikostí konvolučního jádra $1$:
 
 \begin{equation}
 	D\texttt{-}conv(\boldsymbol{Y}, \boldsymbol{K}) = concat(\boldsymbol{y}_j \circledast \boldsymbol{k}_j), j = 1, \dots, N
@@ -599,15 +599,15 @@ Navržená architektura dále nahradila standardní konvoluci uvnitř $1 \times 
 	S\texttt{-}conv(\boldsymbol{Y}, \boldsymbol{K}, \boldsymbol{L}) = D\texttt{-}conv(\boldsymbol{Y}, \boldsymbol{K}) \circledast \boldsymbol{L}
 \end{equation}
 
-kde $\boldsymbol{Y} \in \mathbb{R}^{G \times M}$ je vstup do S--conv, $\boldsymbol{K} \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $\boldsymbol{y}_j \in \mathbb{R}^{1 \times M}$ a $\boldsymbol{k}_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $\boldsymbol{Y}$ a $\boldsymbol{K}$. $\boldsymbol{L} \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1$--conv se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
+kde $\boldsymbol{Y} \in \mathbb{R}^{G \times M}$ je vstup do $S\texttt{-}conv$, $\boldsymbol{K} \in \mathbb{R}^{G \times P}$ je konvoluční jádro o~velikosti $P$, dále $\boldsymbol{y}_j \in \mathbb{R}^{1 \times M}$ a $\boldsymbol{k}_j \in \mathbb{R}^{1 \times P}$ jsou řádky matic $\boldsymbol{Y}$ a $\boldsymbol{K}$. $\boldsymbol{L} \in \mathbb{R}^{G \times H \times 1}$ je konvoluční jádro o~velikosti 1. Operace $1 \times 1 \texttt{-}conv$ se chová jako plně propojená vrstva a transformuje příznaky do potřebných rozměrů.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/conv-res-block.pdf}
-    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok obsahující reziduální spojení mezi vstupem a výstupem.}
+    \caption{\label{fig:tasnet-convblock}Jeden konvoluční blok obsahující reziduální spojení mezi vstupem a výstupem. Je zde vidět sekvence operací $D\texttt{-}conv$ a $1 \times 1 \texttt{-}conv$, které dohromady tvoří operaci $S\texttt{-}conv$.}
 \end{figure}
 
-V~každém konvolučním bloku jsou operace $1 \times 1$--conv a D--conv následovány nelineární aktivační funkcí PReLU~\cite{he2015delving}, která byla popsána v~kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení~\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
+V~každém konvolučním bloku jsou operace $1 \times 1 \texttt{-}conv$ a $D\texttt{-}conv$ následovány nelineární aktivační funkcí PReLU~\cite{he2015delving}, která byla popsána v~kapitole \ref{neuronovky}, a normalizační vrstvou. Konvoluční bloky dále obsahují reziduální spojení~\cite{he2015deep} mezi vstupem a výstupem, které výrazně zjednodušuje trénování velmi hlubokých neuronových sítí díky ponechané referenci na vstupní netransformovaná data.
 
 
 \section{Normalizace}
@@ -627,7 +627,7 @@ Jak vypadá kompletní schéma architektury po sestavení a propojení jednotliv
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/tasnet-architecture.pdf}
-    \caption{\label{fig:tasnet-modul}Schéma architektury TasNet.}
+    \caption{\label{fig:tasnet-modul}Schéma kompletní architektury TasNet.}
 \end{figure}
 
 
@@ -735,10 +735,9 @@ Algoritmus~\ref{alg:segmentace_nahravek} a obrázek~\ref{fig:generovani_segmentu
 \bigskip
 
 \begin{algorithm}[H]
- \caption{\label{alg:segmentace_nahravek}Algoritmus segmenace nahrávek používá výhody Python generátoru, který, na rozdíl od běžných funkcí, po vrácení hodnoty příkazem \texttt{yield} neztrácí svůj vnitřní stav a při jeho dalším zavolání pokračuje tam, kde skončil. V~uvedeném příkladě je znázorněna pouze segmentace nahrávky jednoho mluvčího, ale analogicky se segmentují i nahrávky směsi mluvčích a nahrávky druhého mluvčího.}
+ \caption{\label{alg:segmentace_nahravek}Algoritmus segmenace nahrávek používá výhody Python generátoru, který, na rozdíl od běžných funkcí, po vrácení hodnoty příkazem \texttt{yield} neztrácí svůj vnitřní stav a při jeho dalším zavolání pokračuje tam, kde skončil. V~uvedeném příkladě je znázorněna pouze segmentace nahrávky jednoho mluvčího, ale analogicky se segmentují i nahrávky směsi mluvčích a nahrávky druhého mluvčího. Vizuálně lze sledovat varianty segmentace podle značek A, B, C a D v komentářích algoritmu na obrázku~\ref{fig:generovani_segmentu}.}
 
 \SetNoFillComment
-
 
 \SetKwProg{Fn}{Function}{ is}{end}
  \Fn{segmentGenerator() : int[]}{
@@ -746,17 +745,18 @@ Algoritmus~\ref{alg:segmentace_nahravek} a obrázek~\ref{fig:generovani_segmentu
 	 $\texttt{segptr} = \texttt{0}$\;
 	 \While{$\texttt{je dostupná další trojice nahrávek}$}{
 		\eIf{$\texttt{current\_mixture\_len} < \texttt{SEGMENT\_LENGTH}$}{
-			\tcc{aktuální nahrávka je kratší než délka segmentu}
+			\tcc{A) aktuální nahrávka je kratší než délka segmentu}
 			$\texttt{s1\_segment} = \texttt{current\_source1[:]}$\;
 			$\texttt{yield s1\_segment}$\;
 		}{
+			\tcc{B) aktuální nahrávka je delší než délka segmentu}
 			\eIf{$\texttt{segptr} + \texttt{SEGMENT\_LENGTH} < \texttt{current\_mixture\_len}$}{
-				\tcc{z~aktuální nahrávky vzít segment}				
+				\tcc{C) z~aktuální nahrávky vzít segment}				
 				$\texttt{s1\_segment} = \texttt{current\_source1[(segptr+SEGMENT\_LENGTH)]}$\;
 				$\texttt{segptr} += \texttt{SEGMENT\_LENGTH}$\;
 				$\texttt{yield s1\_segment}$\;
 			}{
-				\tcc{nelze již načíst celý segment, takže se vezme od konce}
+				\tcc{D) nelze již načíst celý segment, takže se vezme od konce}
 				$\texttt{start\_index} = \texttt{(current\_mixture\_len - SEGMENT\_LENGTH)}$\;
 				$\texttt{s1\_segment} = \texttt{current\_source1[start\_index:current\_mixture\_len]}$\;
 				$\texttt{yield s1\_segment}$\;
@@ -770,7 +770,7 @@ Algoritmus~\ref{alg:segmentace_nahravek} a obrázek~\ref{fig:generovani_segmentu
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/segmentation.pdf}
-    \caption{\label{fig:generovani_segmentu}Způsob segmentace nahrávek.}
+    \caption{\label{fig:generovani_segmentu}Způsob segmentace nahrávek. Obrázek slouží jako doplnění algoritmu~\ref{alg:segmentace_nahravek}. Význam schémat A, B, C a D je označen na odpovídajících pozicích v komentářích algoritmu. Šrafovaná pole reprezentují vytvářený segment a modrá pole reprezentují data zpracovávaného signálu.}
 \end{figure}
 
 
@@ -779,7 +779,7 @@ Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou přek
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/segment_overlap.pdf}
-    \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím.}
+    \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím. Zde je vidět překrytí (\texttt{overlap}) o délce $1$. Výsledný \texttt{offset} $n$--tého segmentu se vypočítá jako $\texttt{offset}_n = n*(seg\_len - overlap)$, kde $n = 0, 1, \dots, N$.}
 \end{figure}
 
 
@@ -858,60 +858,36 @@ Lze si všimnout, že sečtením signálů jednotlivých mluvčích na obrázku~
 
 
 \section{Průběh trénování}
-Bylo natrénováno $10$ modelů s~různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:vliv-X4},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X8}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v~jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K~tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s~hodnotou $learning rate = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v~jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:somelossTODO} a~\ref{graf:somelossTODO2}.
-
-\todo{Pridat Grafy trenovani. Popis: Dát validni grafy a udelat druhy graf kde zkombinovat validacni a trenovaci loss do jednoho. Vydelit hlavne hodnoty na ose x poctem segmentu v~jedne epose a ose y vydelit velikosti minibatche a poctem mluvcich ve smesi (2)}.
+Bylo natrénováno $10$ modelů s~různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:vliv-X4},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X8}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v~jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K~tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s~hodnotou $\texttt{learning rate} = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v~jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:X864R4trainloss} a~\ref{graf:X8R4trainlosssegments}. Dále grafy~\ref{graf:X8R4validtrainloss} a~\ref{graf:X4R4validtrainloss} zobrazují trénovací i validační hodnoty loss na konci epoch v průběhu trénování.
 
 %\todo{https://www.tablesgenerator.com/}.
 
-
-%\begin{table}[hbt]
-%\centering
-%\caption{Hodnoty hyperparametrů trénovaných sítí}
-%\label{hodnoty}
-%\begin{tabular}{|l|c|c|c|}
-%\hline
-% & X & R & segment length  \\
-% &  &  & sisnr  \\ \hline
-%2 & 2 & 4 & 8.3 \\ \hline
-%3 & 2 & 4& 9.45 \\ \hline
-%4 & 3 & 4 & 10.2 \\ \hline
-%8 & 4 & 2 & 13.6 \\ \hline
-%\end{tabular}
-%\end{table}
-
-
-%\begin{table}[hbt]
-%\centering
-%\caption{Hodnoty hyper--parametrů trénovaných modelů}
-%\label{tab:trenovani}
-%\begin{tabular}{|l|l|l|}
-%\hline
-%\textbf{X} & \textbf{R} & \textbf{Segment length} \\ \hline
-%4          & 2          & 32000                   \\ \hline
-%4          & 3          & 32000                   \\ \hline
-%4          & 4          & 32000                   \\ \hline
-%6          & 2          & 32000                   \\ \hline
-%6          & 3          & 32000                   \\ \hline
-%6          & 4          & 32000                   \\ \hline
-%8          & 2          & 32000                   \\ \hline
-%8          & 3          & 32000                   \\ \hline
-%8          & 4          & 32000                   \\ \hline
-%8          & 4          & 16000                   \\ \hline
-%\end{tabular}
-%\end{table}
-
-
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.55]{obrazky-figures/some-loss.png}
-    \caption{\label{graf:somelossTODO}Vykreslené grafy}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{obrazky-figures/expX864R4trainloss.png}
+        \caption{\label{graf:X864R4trainloss}Hodnota loss při trénování modelů s~různým počtem konvolučních bloků. Z grafu je patrné, že se zmenšujícím se počtem bloků se zhoršuje natrénovaný model.}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{obrazky-figures/expX8R4trainlosssegments.png}
+        \caption{\label{graf:X8R4trainlosssegments}Graf trénování modelů s rozdílnou délkou segmentů při trénování. Vzhledem k tomu, že je graf vykreslený v závislosti na počtu segmentů, tak model, který měl délku segmentů kratší (oranžový graf), tak jich zpracoval více, proto je delší než modrý.}
+    \end{minipage}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.55]{obrazky-figures/loss_triple.png}
-    \caption{\label{graf:somelossTODO2}Hodnota loss při trénování modelů s~různou velikostí hyperparametrů}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{obrazky-figures/expX8R4validtrainloss.png}
+        \caption{\label{graf:X8R4validtrainloss}Graf trénovací a validační loss pro každou epochu trénování. Model má rozměry $X=8$, $R=4$.}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{obrazky-figures/expX4R4validtrainloss.png}
+        \caption{\label{graf:X4R4validtrainloss}Graf trénovací a validační loss pro každou epochu trénování. Model má rozměry $X=4$, $R=4$.}
+    \end{minipage}
 \end{figure}
 
 
@@ -930,7 +906,6 @@ Kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r,
 \todo{rozdelit tabulku podle HzperParam a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
 experimenty:
 sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat.}
-
 
 
 
