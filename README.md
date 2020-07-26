@@ -215,8 +215,8 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         - udelat komentare treba kurzivou, zbytek jinak
 
 ### 22. 7. 2020 - Online konzultace
-    - kde udelat grafy: numpy nebo scipy
-    - TT experimenty - staci dve desetine mista 0.00
+    - note: kde udelat grafy: numpy nebo scipy
+    - [DONE] TT experimenty - staci dve desetine mista 0.00
     - exp - pohlavi - vysledky staci jednoho modelu, vysledky stejne budou podobne.
     - TT exp - tasnet exp - pridat do tabulky nejaky muj model, takovej co ma stejne param moje vysledky
 
