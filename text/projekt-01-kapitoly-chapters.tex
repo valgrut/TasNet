@@ -66,7 +66,7 @@ Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použ
 \subsection{Hluboké neuronové sítě}
 Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou--li definovány jako problémy učení s~učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat původní zdroj signálu.
 
-Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku \ref{fig:spektrum} pomocí short--time Fourier transform (STFT). Tato reprezentace $Y(t,f)$ sloužila pro rekonstrukci každého zdroje $X_s(t,f)$ v~T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k~nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z~trénovacího datasetu a odstranit tak nemožné kombinace~\cite{speechseparation}.
+Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku~\ref{fig:spektrum} pomocí short--time Fourier transform (STFT). Tato reprezentace $Y(t,f)$ sloužila pro rekonstrukci každého zdroje $X_s(t,f)$ v~T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k~nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z~trénovacího datasetu a odstranit tak nemožné kombinace~\cite{speechseparation}.
 
 Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme--li vstupní příznak $Y(t,f)$ směsi mluvčích, model se bude učit predikovat individuální tok příznaků $X_s(t,f)$ pomocí vhodného trénovacího datasetu. Později se ukázalo, že se lepších výsledků dosáhne, bude--li model odhadovat množinu masek $M_s(t,f)$ pro každý ze zdrojů, místo přímého odhadu spektra $X_s(t,f)$ a ty pak použít k~rekonstrukci spektra $X_s(t,f)$ jako $X_s = M_s \circ Y$, kde $\circ$ je násobení po prvcích. Masky jsou invariantní vůči proměnným vlastnostem vstupních dat a jejich správný odhad je důležitým faktorem pro kvalitu separace~\cite{speechseparation}.
 
@@ -75,12 +75,11 @@ Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.15]{obrazky-figures/spektrum.png}
-    \caption{\label{fig:spektrum}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa y) z~nahrávky řeči v~čase (osa x). Zvuk se na spektrogram (T--F reprezentaci) převádí pomocí operace short--time Fourier transform (STFT). Obrázek pochází z~\cite{speech-spectrogram}}
+    \caption{\label{fig:spektrum}Ukázka nahrávky řeči a korespondující spektrogram, na němž jsou zobrazeny frekvence (osa $y$) z~nahrávky řeči v~čase (osa $x$). Zvuk se na spektrogram (T--F reprezentaci) převádí pomocí operace short--time Fourier transform (STFT). Obrázek pochází z~\cite{speech-spectrogram}}
 \end{figure}
 
 
 Vzniklo mnoho dalších přístupů založených na hlubokém učení. Jeden z~nich ukázal, že pro separaci mluvčích není T--F doména optimální. Architektura TasNet~\cite{luo2018convtasnet}, na kterou se tato práce zaměřuje a je popsána v~kapitole~\ref{tasnet}, převádí vstupní směs na nezápornou reprezentaci a separaci provádí v~časové doméně s~velmi dobrými výsledky.
-
 
 
 \section{Vyhodnocovací metriky}
@@ -101,11 +100,15 @@ Hodnota SDR se vypočítá jako
   SDR = 10*log_{10}\frac{\|s_{target}\|^2}{\|e_{interf} + e_{noise} + e_{artif}\|^2}
 \end{equation}
 
-\todo{popsat einfer atd nevim jestli ANO nebo NE}
-%odsud \url{https://hal.inria.fr/inria-00544230/PDF/vincent_TASLP06bis.pdf}
-%nebo 
+Hodnoty $e_{interf}$, $e_{noise}$ a $e_{artif}$ udávají chybu inference, hluku a artefaktů. $s_{target} = f(s_j)$ je verze původního zdroje $s_j$, který je obohacen o dovolenou hladinou rušení $f \in \mathcal{F}$. Metrika je počítána pro každý odhadnutý zdroj $\hat{s_j}$ tak, že ten je porovnán s referenčním zdrojem $s_j$. V prvním kroku je dekomponován zdroj $\hat{s_j}$ jako součet $s_{target} + e_{interf} + e_{noise} + e_{artif}$. Ve druhém kroku jsou vypočítány poměry energie, které jsou potřeba při vyhodnocení relativního zastoupení těchto čtyř složek. Je--li při výpočtu porovnáván $\hat{s_j}$ se všemi ostatními zdroji $s_j'$, tak je jako finální vybrána taková hodnota, která během porovnávání dávala nejlepší výsledek. Porovnávat lze buď celý signál, nebo pouze jeho segmenty~\cite{vincent-inria-00544230}. V této práci je pro výpočet SDR používána knihovna $\texttt{mir\_eval}$~\cite{mir-eval}.
+
+
+% \cite{vincent-inria-00544230
+% \url{https://hal.inria.fr/inria-00544230/PDF/vincent_TASLP06bis.pdf}
+
+% \cite{sdr-pesq-optimization}
 % https://arxiv.org/abs/1901.09146
-%  \cite{sdr-pesq-optimization}
+
 
 % neco o si-sdr
 %http://www.jonathanleroux.org/pdf/LeRoux2019ICASSP05sdr.pdf
@@ -131,7 +134,7 @@ Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamen�
 \subsection{Short--time objective intelligibility}
 Short--time objective intelligibility (STOI)~\cite{taal-stoi} je metrika založená na hodnotě korelačního koeficientu mezi časově--frekvenčním spektrem referenčního a odhadnutého signálu řeči v~krátkých překrývajících se segmentech~\cite{5713237}. Spektrum čisté a separované nahrávky je získáno pomocí short--time Fourier transform (STFT).
 
-Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pomocí STFT, následně segmentovány na krátké úseky s~$50\%$ překrytím, normalizovány, klipnuty a nakonec porovnány průměry hodnot korelačních koeficientů~\cite{taal-stoi}. Hodnota STOI se pohybuje v~rozmezí $0$ a $1$, korespondující s~procentuální úspěšností.
+Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pomocí STFT, následně segmentovány na krátké úseky s~$50\%$ překrytím, normalizovány, klipnuty a nakonec porovnány průměry hodnot korelačních koeficientů~\cite{taal-stoi}. Hodnota STOI se pohybuje v~rozmezí $0$ a $1$, korespondující s~procentuální úspěšností, což znamená, že čím vyšší hodnota, tím lepší výsledek.
 
 % Kniha: https://books.google.cz/books?id=ib9ODwAAQBAJ&pg=PA215&lpg=PA215&dq=what+gives+value+of+stoi+in+good+speech&source=bl&ots=14SyU3Hc95&sig=ACfU3U3kMNnhD5fqdunpK2VJ3QRPNHrWTA&hl=en&sa=X&ved=2ahUKEwiQ2ML5gsPqAhUrRBUIHQfOB2wQ6AEwA3oECAgQAQ#v=onepage&q=what%20gives%20value%20of%20stoi%20in%20good%20speech&f=false
 % http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.696.995&rep=rep1&type=pdf
@@ -317,7 +320,7 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
 % ==Dvojtej obrazek==
 %\begin{figure}[H]
 %    \centering
-%    \includegraphics[scale=0.35]{obrazky-figures/cnnfeatures.png}
+%    \includegraphics[scale=0.35]{obrazky-figures/cnn.png}
 %    \caption{\label{fig:conv_nn_image_feature}Obrázek vlevo zobrazuje, jak probíhá konvoluování jádra se vstupními 2--D daty a mapování lokálních příznaků na prostor příznaků (feature space), což je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup. Obrázek napravo zobrazuje, jak mohou vypadat lokální příznaky.}
 %\end{figure}
 
@@ -340,12 +343,6 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/convmapping.pdf}
     \caption{\label{fig:convmapping}Průběh konvoluování jádra se vstupními daty a mapování lokálních příznaků na prostor příznaků (feature space), který je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.35]{obrazky-figures/features.png}
-    \caption{\label{fig:features}Obrázek zobrazující, jak mohou vypadat lokální příznaky}
 \end{figure}
 
 Konvoluování jádra přes nějaký vstup (například obrázek či zvuk) je ekvivalentní s~detektorem, který detekuje nějaký lokální příznak. Při aplikaci takového detektoru přes nějaký vstup zaznamenává všechny pozice, kde se příznak nacházel~\cite{mitdeeplearning_small}.

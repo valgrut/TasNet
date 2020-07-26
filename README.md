@@ -24,6 +24,21 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 - [tensor-flow](https://www.tensorflow.org/)
 - [Audacity]()
 
+
+## Resources
+[sanyamkapoor.com](https://www.sanyamkapoor.com/)
+[pythontips](http://book.pythontips.com/en/latest/enumerate.html.)
+[arxiv paper](https://arxiv.org/pdf/1809.07454.pdf)
+[pytorch](https://pytorch.org)
+[arxiv paper](https://arxiv.org/pdf/1801.04381.pdf)
+[conv nets in pytorch](https://blog.algorithmia.com/convolutional-neural-nets-in-pytorch/)
+[wav](https://www.premiumbeat.com/blog/when-to-use-wav-files-when-to-use-mp3-files-what-is-the-difference-between-the-two-formats/)
+[urban sound classification](http://aqibsaeed.github.io/2016-09-03-urban-sound-classification-part-1/)
+[resnet](http://torch.ch/blog/2016/02/04/resnets.html)
+
+## Bibtex tidy
+[tidy yout bibtex](https://flamingtempura.github.io/bibtex-tidy/)
+
 ## Konzultace
 ### ut 8. 10. 2019 - Konzultace
 - prvni schuze po lete
@@ -192,7 +207,6 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [DONE] do nazvu podkapitol nedavat zkratku, jen ten angl nazev - relu ...
     - [DONE] feedforward -> dopredna
     - [DONE] v rovnicich vektory a matice jsou tucne.
-    - !!! v pondeli a utery napsat experimenty, pres zbytek tydne doupravit text podle poznamek vedouci a dalsi pondeli odevzdat.
     - ! upravit italic a bold text
     - ! dopsat validacni dataset v trenovani
     - [DONE] texttt pro zdrojove veci
@@ -200,15 +214,12 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         - najit si konvence a upravit podle toho
         - udelat komentare treba kurzivou, zbytek jinak
 
-### 22. 7. 2020
-    - sdr vypocet na str 8 - urcite okomentovat jednotlive casti, bud vypocet nebo okomentovat jak se to vypocita, a pridat referenci na mir eval.
-    - 2.3.2 quality v nadpisu
-    - prohnat spell checkerem.
-    - i u STOI napsat jestli je vetsi hodnota lepsi nebo mensi lepsi jako u PESQ
+### 22. 7. 2020 - Online konzultace
     - kde udelat grafy: numpy nebo scipy
-    - obrazek priznaky - odnekd a referencovat resp citovat. mozna oddelat
-    - experimenty - staci dve desetine mista 0.00
-    - pohlavi - vysledky staci jednoho modelu, vysledky stejne budou podobne.
-    - tasnet exp - pridat do tabulky nejaky muj model, takovej co ma stejne param moje vysledky
+    - TT experimenty - staci dve desetine mista 0.00
+    - exp - pohlavi - vysledky staci jednoho modelu, vysledky stejne budou podobne.
+    - TT exp - tasnet exp - pridat do tabulky nejaky muj model, takovej co ma stejne param moje vysledky
 
 
+### 27. 7. 2020 - [online] konzultace
+    -
