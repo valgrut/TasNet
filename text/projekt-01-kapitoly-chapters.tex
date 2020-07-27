@@ -898,8 +898,7 @@ Bylo natrénováno $7$ modelů s~různými hodnotami zkoumaných hyper--parametr
 
 %---------------------------------------------------------------------------------------------
 \section{Vliv parametrů X a R}
-\todo{zmensovani a zvetsovani X, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy pro sdr, pesq, stoi}
-\todo{histogram vysledku skrze jednotlive promluvy, }
+\todo{mozna nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy pro sdr, pesq, stoi}
 
 Rozměry modelů mají značný vliv na přesnost. V~této části se zaměřím na vliv dvou parametrů -- X a R. Parametr X ovlivňuje počet konvolučních bloků, což přímo ovlivňuje velikost celkové časové dilatace. Parametr R udává, kolikrát se sekvence X konvolučních bloků opakuje. Tabulky~\ref{tab:vliv-X8},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X4} přehledně ukazují, jaké modely a o~jakých kombinacích parametrů byly natrénovány.
 
@@ -967,7 +966,8 @@ Přestože víme, že nejlépe si vede model o~rozměrech $X=8$ a $R=2$ s~jeho v
     \caption{\label{fig:sdrhistogram}Histogram hodnot SDR pro jednotlivé separace.}
 \end{figure}
 
-\todo{popsat obrazek a blah jsou dokonce nahravky, ktere dosahly hodnoty sdr vetsi nez 18, ale nejvetsi koncentrace je kolem hodnoty sdr XX.}
+Na první pohled je vidět největší koncentrace nahrávek kolem hodnoty SDR $15$~dB. Některé nahrávky dokonce  dosáhly hodnoty větší než $19$~dB, což by také příjemně zvyšovalo celkovou přesnost modelu, ale vzhledem k levé části od největší koncentrace je vidět, že pro mnoho nahrávek dosahovala síť pouze přesnosti od $0$~dB po $10$~dB. 
+
 
 %---------------------------------------------------------------------------------------------
 \section{Vliv délky segmentů}
@@ -1038,10 +1038,16 @@ Můj nejlepší model v~porovnání s~modely ze studie dosahuje hodnoty SDR $12.
 
 %---------------------------------------------------------------------------------------------
 \section{Shrnutí výsledků}
-\todo{1 odstavec}
-\todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace. okomentovat take pohlavi vysledky, prumery sdr, mean, a pod.}
-\todo{Zda se, ze parametr XYZ nema na SDR takovy vliv, jako parametr ABC...}
-\todo{jaky param ma tedy nejvetsi vliv na presnost. jestli ma vliv segmentlen, jakou kombinaci pohlavi sit nejlepe rozdeluje. Jake parametry bych mohl zmensit, aby model porad mel dobrou presnost ale byl mensi.}
+\todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace. okomentovat take pohlavi vysledky, prumery sdr, mean, a pod.}
+
+
+Během testování a experimentů jsem sledoval vliv parametrů X, R a délka segmentů na kvalitu sítě, která je vyhodnocována metrikami SDR, STOI a PESQ. Nejlepších hodnot dosahuje model rozměrově téměř největší (X = 8, R=2), a to SDR $12.71$~dB, STOI $0.94$ a PESQ $2.71$. Při zmenšování hodnoty X se ale přesnost razantně snižuje. Parametr X má tedy dle výsledků největší vliv na přesnost sítě. Oproti tomu změna parametru R přesnost téměř neovlivnila, stejně jako délka segmentů při trénování sítě. Vzhledem k dosaženým přesnostem bych vybral, jako kandidátní, modely o velikosti $R=2$ a $X=8$ nebo $X=6$. Tyto modely dosahují dostatečně dobré kvality separovaných nahrávek.
+
+%Rozdělení hodnoty SDR v rámci jednotlivých separací blah nevim
+Graf rozdělení SDR ukázal, že přestože se mnoho hodnot pohybuje lehce pod průměrnou hodnotou SDR daného modelu, tak mnoho separací dosáhlo poměrně větší přesnosti a mnoho separací poměrně menší přesnosti, než je průměrná.
+
+Zajímavý poznatek vyplynul ze sledování hodnoty SDR v rámci ruzných kombinací pohlaví na separovaných nahrávkách. Nejvyšší hodnotu ($14.6$~dB) měly směsi, kde se nacházela dvojice rozdílného pohlaví. Homogenní dvojice dosahovaly mnohem menší přesnosti.
+
 
 %---------------------------------------------------------------------------------------------
 \section{Možná rozšíření a navrhnutá vylepšení}
@@ -1052,20 +1058,18 @@ Můj nejlepší model v~porovnání s~modely ze studie dosahuje hodnoty SDR $12.
 \todo{Procist studii jaky oni tam navrhuji vylepseni}
 Todo.
 
+
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \chapter{Závěr}
 \label{zaver}
+Cílem práce bylo implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně a porovnat vliv velikosti sítě na kvalitu separace. Síť byla implementována za pomoci frameworku PyTorch a jazyku Python a natrénována na datasetu obsahujícím jednokanálové směsi dvou mluvčích. Bylo natrénováno $7$ modelů, které se od sebe lišily počtem opakujících se konvolučních bloků, velikostí časové dilatace a délkou vstupních segmentů směsí. Pro účel vyhodnocení modelů byly použity metriky SDR, STOI a PESQ, které se používají pro měření kvality separace. 
+
+Experimenty ukázaly, že během testování nejlépe dopadla síť, která měla 8 konvolučních bloků po 2 opakováních, učena s~délkou vstupních segmentů $L=4$ sekundy. Tento model dosáhl po 60 epochách trénování hodnoty až $12.71$~dB a tím se stal nejúspěšnějším modelem. Při fyzickém poslechu separovaných nahrávek není slyšet téměř žádný náznak druhého mluvčího. Oproti tomu, nejméně přesný model měl pouze 4 konvoluční bloky, 4 opakování a při délce segmentů $L=4$ sekundy dosahoval hodnoty SDR pouze $9.23$~dB. Přestože podmínky pro trénování nebyly ideální, tak bylo natrénováno několik úspěšných modelů.
+
+Zkoušel jsem separovat také nahrávky, které se v datasetu vůbec nenacházely, ale výsledek se nedá hodnotit jako úspěšný, jelikož hraje velkou roli prostředí, mikrofon, šum v~pozadí a další vlivy, na které byla neuronová síť naučena. Tento problém by se dal překonat rozšířením trénovacího datasetu o~větší škálu nahrávek mluvčích, které by byly pořízeny z~různých zařízení a v~různě rušném prostředí.
+
 \todo{co jak dopadlo, vysledky a vyhodnoceni velikosti modelu a jaky byl nejlepsi}
-
-Cílem práce bylo implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně a porovnat vliv velikosti sítě na kvalitu separace. Síť byla implementována za pomoci frameworku PyTorch a jazyku Python a natrénována na datasetu obsahujícím jednokanálové směsi dvou mluvčích. Trénování proběhlo na \todo{X} modelech, které se od sebe lišily počtem opakujících se konvolučních bloků, velikostí časové dilatace a délkou vstupních segmentů směsí. Pro účel vyhodnocení modelů byla použita metrika si-snr, která udává poměr chtěného signálu ku šumu na pozadí, tedy obecně kvalitu separace. 
-
-Experimenty ukázaly, že během testování nejlépe dopadla síť, která měla 8 konvolučních bloků po 4 opakováních, s~délkou vstupního segmentu $L=2$ sekundy. Tento model dosáhl po 100 epochách trénování hodnoty až \todo{13,4} a tím se stal nejúspěšnějším modelem. Při fyzickém poslechu separovaných nahrávek bychom neslyšeli téměř žádný náznak druhého mluvčího. Oproti tomu, nejméně přesný model měl pouze 4 konvoluční bloky, 2 opakování a při délce segmentů $L=4$ sekundy dosahoval hodnoty SDR pouze \todo{9.2}.
-
-Zkoušel jsem separovat také nahrávky, které byly úplně mimo dataset, ale výsledek se nedá hodnotit jako úspěšný, jelikož hraje velkou roli prostředí, mikrofon, šum v~pozadí a další vlivy, na které byla neuronová síť naučena. Tento problém by se dal překonat rozšířením trénovacího datasetu o~větší škálu nahrávek mluvčích, které by byly pořízeny z~různých zařízení v~různě rušném prostředí.
-
 \todo{Doplnit ještě neco eh}
-Mozna.
-
 
