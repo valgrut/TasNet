@@ -227,6 +227,7 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         -   [todo] u datasetu zkratit prvni odstavec
         -   [mozna] u uvodu - preformulovat to co tam pisu co je moc obecne, ze treba model je ovlivnej hyperparametry, tak konkretneji cim, takze treba X, a tak. Ten je ok, ale pokud je cas,
         - [todo] oddelat title grafu, oddelat cas a datum checkpointu.
+
         - [TODO] to co popisuji by bylo lepsi mit u sebe v tabulkach.
         -   v ramci jedne tebulky neco srovnavam
         -   vytucnit to, co je v tabulce nejlepsi
@@ -236,5 +237,4 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         -   vliv delky je naspsanej spravne, takze tak udelat i XR
         -   teoreticky sloucit tabulky 6.2 a 6.1
         -   a do dalsi tabulky dat X8, X6, X4 a R4 a popsat jak to ovlivnuje vysledky.
-    - citace c. 6 - podivat se na jmena autoru, neco je spatne.
 

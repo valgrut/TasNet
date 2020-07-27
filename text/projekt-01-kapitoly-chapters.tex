@@ -627,10 +627,6 @@ Pro vyhodnocování výkonu sítě byly použity metriky SDR, PESQ a STOI. Pro v
 
 \bigskip
 
-\todo{Jeste mozna doplnit pocty konvolucnich vrstev atd viz TasNet tabulka (X, R, N, L, P, ...)}
-\todo{zamyslet se co tu chci ukazat v~tom algu, pripadne vypustit parsovani, instanciaci atd}
-Neco.
-
 \begin{algorithm}[H]
 \caption{\label{alg:zakladnibeh}Zjednodušený algoritmus běhu programu pro trénování sítě.}
 \SetNoFillComment
@@ -922,19 +918,6 @@ Při zmenšování počtu konvolučních bloků X lze vidět znatelný pokles p�
 
 Zdá se, že příčinou, proč má změna parametru X takový vliv na výkon, přímo souvisí s~dilatačním faktorem, který se zvyšuje právě se zvyšujícím se počtem konvolučních bloků.
 
-%\begin{figure}[H]
-%    \centering
-%    \begin{minipage}{0.45\textwidth}
-%        \centering
-%        \includegraphics[width=1.0\textwidth]{obrazky-figures/.png}
-%        \caption{\label{graf:}TODO}
-%    \end{minipage}\hfill
-%    \begin{minipage}{0.45\textwidth}
-%        \centering
-%        \includegraphics[width=1.0\textwidth]{obrazky-figures/.png}
-%        \caption{\label{graf:}TODO}
-%    \end{minipage}
-%\end{figure}
 
 Přestože víme, že nejlépe si vede model o~rozměrech $X=8$ a $R=2$ s~jeho výslednou hodnotou SDR $12.71$~dB ale tato hodnota nám neříká nic o~výsledcích přesnosti jednotlivých směsí, protože je to průměrná hodnota ze všech nahrávek. Histogram~\ref{fig:sdrhistogram} zobrazuje rozdělení hodnoty SDR v~rámci zpracovaných nahrávek.
 
