@@ -1051,13 +1051,13 @@ Zajímavý poznatek vyplynul ze sledování hodnoty SDR v rámci ruzných kombin
 
 %---------------------------------------------------------------------------------------------
 \section{Možná rozšíření a navrhnutá vylepšení}
-\todo{1 odstavec}
-\todo{k~poslednimu bodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o~zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat. toto Podsekce na konci experimentu.}
-\todo{Variabilnejsi dataset, separace vice mluvcich, hlucne prostredi, identifikace recnika, realtime separace.}
-\todo{zkousel jsem separovat jinou nahravku, neslo. vice nahravacich prostredi, mikrofony, sum, ruseni.}
+\todo{k~poslednimu bodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o~zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat.}
 \todo{Procist studii jaky oni tam navrhuji vylepseni}
-Todo.
 
+%Problémů, které lze v rámci zpracování řeči řešit, je mnoho.
+Práce by mohla být rozšířena o variabilnější dataset pro trénování modelů. Zásadní problém při použití mých naučených modelů v reálném scénáři je ten, že trénovací dataset není variabilní, když nepočítám různé kombinace mluvčích. V případě, že by nahrávky řečníků byly pořízeny ve variabilnějším prostředí s rozdílnou technikou, mikrofony a různým ruchem v pozadí (další hlasy, hudba či tleskot), model by tak byl lépe využitelný. Trénování by také mohlo být rozšířeno o nahrávky s větším počtem mluvčích, což by ale vyžadovalo rozsáhlejší implementační úpravy.
+
+Přímo na model by se dalo navázat další neuronovou sítí, která by se učila identifikovat řečníka či analyzovat vlastnosti jeho hlasu a na základě toho provádět další operace. Další možností je přepis separované řeči mluvčích na text. 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
