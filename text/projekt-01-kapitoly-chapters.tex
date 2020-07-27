@@ -874,7 +874,7 @@ Bylo natrénováno $7$ modelů s~různými hodnotami zkoumaných hyper--parametr
 \section{Vliv parametrů X a R}
 \todo{mozna nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy pro sdr, pesq, stoi}
 
-Rozměry modelů mají značný vliv na přesnost. V~této části se zaměřím na vliv dvou parametrů -- X a R. Parametr X ovlivňuje počet konvolučních bloků, což přímo ovlivňuje velikost celkové časové dilatace. Parametr R udává, kolikrát se sekvence X konvolučních bloků opakuje. Tabulky~\ref{tab:vliv-X8},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X4} přehledně ukazují, jaké modely a o~jakých kombinacích parametrů byly natrénovány.
+Rozměry modelů mají značný vliv na přesnost. V~této části se zaměřím na vliv dvou parametrů -- X a R. Parametr X ovlivňuje počet konvolučních bloků, což přímo ovlivňuje velikost receptive field, což se dá popsat jako velikost kontextu, který síť dokáže vidět. Parametr R udává, kolikrát se sekvence X konvolučních bloků opakuje. Tabulky~\ref{tab:vliv-X8},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X4} přehledně ukazují, jaké modely a o~jakých kombinacích parametrů byly natrénovány.
 
 \begin{table}[!htbp]
 \centering
@@ -956,7 +956,7 @@ Testovací nahrávky jsou náhodné kombinace mužských a ženských mluvčích
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{obrazky-figures/sdrpohlaviX8R2.png}
-    \caption{\label{fig:sdrpohlavi}Histogram průměrné hodnoty SDR napříč různou kombinací pohlaví.}
+    \caption{\label{fig:sdrpohlavi}Histogram průměrné hodnoty SDR napříč různou kombinací pohlaví. Zkratka \uv{MM} označuje dvojici mužských mluvčích, zkratka \uv{MZ} označuje kombinovanou nahrávku s mužem a ženou a zkratka \uv{ZZ} označuje směs dvou žen.}
 \end{figure}
 
 Z~grafu~\ref{fig:sdrpohlavi} lze vypozorovat, jaký vliv má kombinace pohlaví na přesnost sítě. Nejlepších výsledků síť dosahuje v~případě, že na nahrávce jsou zastoupena obě pohlaví. V~takovém případě model dosahuje hodnoty SDR $14.6$~dB. Oproti tomu, v~případě stejných pohlaví si síť vede poměrně hůř. V~případě kombinace dvou žen síť dosahuje hodnoty SDR pouze $9.4$~dB a v~případě kombinace dvou mužů jen o~něco lépe $11.2$~dB. Výsledná hodnota je průměrem hodnot v~dané kombinaci pohlaví.
