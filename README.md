@@ -223,11 +223,9 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 
 ### 27. 7. 2020 - [online] konzultace
     - TODO
-        - dataset a uvod do experimentu uz mluvit konkretneji
-        -   [todo] u datasetu zkratit prvni odstavec
-        -   [mozna] u uvodu - preformulovat to co tam pisu co je moc obecne, ze treba model je ovlivnej hyperparametry, tak konkretneji cim, takze treba X, a tak. Ten je ok, ale pokud je cas,
         - [todo] oddelat title grafu, oddelat cas a datum checkpointu.
 
+        - pro XR odstavec
         - [TODO] to co popisuji by bylo lepsi mit u sebe v tabulkach.
         -   v ramci jedne tebulky neco srovnavam
         -   vytucnit to, co je v tabulce nejlepsi
