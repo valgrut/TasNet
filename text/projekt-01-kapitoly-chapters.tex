@@ -100,7 +100,7 @@ Hodnota SDR se vypočítá jako
   SDR = 10*log_{10}\frac{\|s_{target}\|^2}{\|e_{interf} + e_{noise} + e_{artif}\|^2}
 \end{equation}
 
-Hodnoty $e_{interf}$, $e_{noise}$ a $e_{artif}$ udávají chybu inference, hluku a artefaktů. $s_{target} = f(s_j)$ je verze původního zdroje $s_j$, který je obohacen o dovolenou hladinou rušení $f \in \mathcal{F}$. Metrika je počítána pro každý odhadnutý zdroj $\hat{s_j}$ tak, že ten je porovnán s referenčním zdrojem $s_j$. V prvním kroku je dekomponován zdroj $\hat{s_j}$ jako součet $s_{target} + e_{interf} + e_{noise} + e_{artif}$. Ve druhém kroku jsou vypočítány poměry energie, které jsou potřeba při vyhodnocení relativního zastoupení těchto čtyř složek. Je--li při výpočtu porovnáván $\hat{s_j}$ se všemi ostatními zdroji $s_j'$, tak je jako finální vybrána taková hodnota, která během porovnávání dávala nejlepší výsledek. Porovnávat lze buď celý signál, nebo pouze jeho segmenty~\cite{vincent-inria-00544230}. V této práci je pro výpočet SDR používána knihovna $\texttt{mir\_eval}$~\cite{mir-eval}.
+Hodnoty $e_{interf}$, $e_{noise}$ a $e_{artif}$ udávají chybu inference, hluku a artefaktů. $s_{target} = f(s_j)$ je verze původního zdroje $s_j$, který je obohacen o~dovolenou hladinou rušení $f \in \mathcal{F}$. Metrika je počítána pro každý odhadnutý zdroj $\hat{s_j}$ tak, že ten je porovnán s~referenčním zdrojem $s_j$. V~prvním kroku je dekomponován zdroj $\hat{s_j}$ jako součet $s_{target} + e_{interf} + e_{noise} + e_{artif}$. Ve druhém kroku jsou vypočítány poměry energie, které jsou potřeba při vyhodnocení relativního zastoupení těchto čtyř složek. Je--li při výpočtu porovnáván $\hat{s_j}$ se všemi ostatními zdroji $s_j'$, tak je jako finální vybrána taková hodnota, která během porovnávání dávala nejlepší výsledek. Porovnávat lze buď celý signál, nebo pouze jeho segmenty~\cite{vincent-inria-00544230}. V~této práci je pro výpočet SDR používána knihovna $\texttt{mir\_eval}$~\cite{mir-eval}.
 
 
 % \cite{vincent-inria-00544230
@@ -313,7 +313,7 @@ kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je kon
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/convmapping.pdf}
-    \caption{\label{fig:convmapping}Průběh konvoluování jádra se vstupními daty a mapování lokálních příznaků na prostor příznaků (feature space), který je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup. Je zde také dobře vidět, jak velikost jádra ovlivňuje rozměr výstupních dat. Jádro o rozměru $3 \times 3$ zmenšilo rozměr vstupních dat o rozměru $8 \times 8$ na výstupní rozměr $6 \times 6$. Toto chování se dá ovlivnit například zvýšením hodnoty \textit{padding}.}
+    \caption{\label{fig:convmapping}Průběh konvoluování jádra se vstupními daty a mapování lokálních příznaků na prostor příznaků (feature space), který je výstupem konvoluce. Jádro je postupně aplikováno skrze celý vstup. Je zde také dobře vidět, jak velikost jádra ovlivňuje rozměr výstupních dat. Jádro o~rozměru $3 \times 3$ zmenšilo rozměr vstupních dat o~rozměru $8 \times 8$ na výstupní rozměr $6 \times 6$. Toto chování se dá ovlivnit například zvýšením hodnoty \textit{padding}.}
 \end{figure}
 
 Konvoluování jádra přes nějaký vstup (například obrázek či zvuk) je ekvivalentní s~detektorem, který detekuje nějaký lokální příznak. Při aplikaci takového detektoru přes nějaký vstup zaznamenává všechny pozice, kde se příznak nacházel~\cite{mitdeeplearning_small}. Jak vypadá konvoluování a mapování příznaků ilustruje obrázek~\ref{fig:convmapping}.
@@ -343,7 +343,7 @@ Hodnota padding určuje, o~kolik se mají rozšířit vstupní data. V~případ�
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=0.7\textwidth]{obrazky-figures/stride2.pdf}
-        \caption{\label{fig:conv_stride2}Hodnota kroku ovlivňuje výstupní rozměr dat. Zde je vidět, že při kroku o velikosti $2$, rozměru jádra $2 \times 2$ a rozměru vstupních dat $4 \times 4$ je výstupní rozměr pouze $2 \times 2$.}
+        \caption{\label{fig:conv_stride2}Hodnota kroku ovlivňuje výstupní rozměr dat. Zde je vidět, že při kroku o~velikosti $2$, rozměru jádra $2 \times 2$ a rozměru vstupních dat $4 \times 4$ je výstupní rozměr pouze $2 \times 2$.}
     \end{minipage}
 \end{figure}
 
@@ -373,15 +373,15 @@ Hodnota dilation podporuje rozšíření pole působnosti bez ztráty rozlišen�
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.1]{obrazky-figures/causal_dilation.pdf}
-    \caption{\label{fig:dilation_factor}Vizualizace časové dilatace na vstupním signálu. Zde je vidět kauzální konfigurace, při které je hodnota $y_T$ počítána pouze z hodnot v čase $t \leq T$.}
+    \caption{\label{fig:dilation_factor}Vizualizace časové dilatace na vstupním signálu. Zde je vidět kauzální konfigurace, při které je hodnota $y_T$ počítána pouze z~hodnot v~čase $t \leq T$.}
 \end{figure}
 
-Dalším faktorem, který ovlivňuje výpočet, je kauzalita sítě. Tato vlastnost určuje, která data mohou být použita pro výpočet výstupní hodnoty. Kauzální nastavení sítě ilustruje obrázek~\ref{fig:dilation_factor}, zatímco obrázek~\ref{fig:noncausal} ukazuje nekauzální konfiguraci, kde je hodnota $y_T$ počítána i z hodnot v čase $t > T$.
+Dalším faktorem, který ovlivňuje výpočet, je kauzalita sítě. Tato vlastnost určuje, která data mohou být použita pro výpočet výstupní hodnoty. Kauzální nastavení sítě ilustruje obrázek~\ref{fig:dilation_factor}, zatímco obrázek~\ref{fig:noncausal} ukazuje nekauzální konfiguraci, kde je hodnota $y_T$ počítána i z~hodnot v~čase $t > T$.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.1]{obrazky-figures/non-causal.pdf}
-    \caption{\label{fig:noncausal}Nekauzální konfigurace umožňující výpočet hodnoty i z budoucích dat. Zde není použita časová dilatace (ale mohla by být).}
+    \caption{\label{fig:noncausal}Nekauzální konfigurace umožňující výpočet hodnoty i z~budoucích dat. Zde není použita časová dilatace (ale mohla by být).}
 \end{figure}
 
 \section{Učení neuronových sítí}
@@ -432,7 +432,7 @@ Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $
 
 
 \subsection{Algoritmus zpětné propagace}
-Algoritmus zpětné propagace (backpropagation algorithm) je adaptační algoritmus pro učení neuronových sítí metodou učení s~učitelem. Algoritmus pozpátku prochází neuronovou síťí a na základě hodnoty loss počítá gradient objektivní funkce $J(\theta)$ vzhledem ke všem váhám v síti. Skalární hodnota loss je výstupem objektivní funkce $J(\theta)$ a gradient této funkce vyjadřuje, jak moc každá váha přispívá k~celkové chybě. Cílem je minimalizovat hodnotu loss. Algoritmus je nejčastěji používán během trénování neuronových sítí, ale obecně ho lze použít pro výpočet jakékoli derivace~\cite{mitdeeplearning_small},~\cite{mitdeeplearning}.
+Algoritmus zpětné propagace (backpropagation algorithm) je adaptační algoritmus pro učení neuronových sítí metodou učení s~učitelem. Algoritmus pozpátku prochází neuronovou síťí a na základě hodnoty loss počítá gradient objektivní funkce $J(\theta)$ vzhledem ke všem váhám v~síti. Skalární hodnota loss je výstupem objektivní funkce $J(\theta)$ a gradient této funkce vyjadřuje, jak moc každá váha přispívá k~celkové chybě. Cílem je minimalizovat hodnotu loss. Algoritmus je nejčastěji používán během trénování neuronových sítí, ale obecně ho lze použít pro výpočet jakékoli derivace~\cite{mitdeeplearning_small},~\cite{mitdeeplearning}.
 
 Proces začíná na výstupní vrstvě sítě. Algoritmus zde pro každý neuron spočítá chybový gradient $\delta$ reprezentující citlivost chyby sítě na změnu váhovaného součtu daného neuronu. Tyto gradienty jsou iterativně zpětně propagovány do předchozích vrstev, na základě nichž jsou počítány gradienty neuronů v~předchozích vrstvách, až po vrstvu vstupní. Pro úpravu vah na základě vypočítaných chybových gradientů se obvykle používá algoritmus gradient descent~\cite{mitdeeplearning_small}.
 
@@ -735,7 +735,7 @@ Algoritmus~\ref{alg:segmentace_nahravek} a obrázek~\ref{fig:generovani_segmentu
 \bigskip
 
 \begin{algorithm}[H]
- \caption{\label{alg:segmentace_nahravek}Algoritmus segmenace nahrávek používá výhody Python generátoru, který, na rozdíl od běžných funkcí, po vrácení hodnoty příkazem \texttt{yield} neztrácí svůj vnitřní stav a při jeho dalším zavolání pokračuje tam, kde skončil. V~uvedeném příkladě je znázorněna pouze segmentace nahrávky jednoho mluvčího, ale analogicky se segmentují i nahrávky směsi mluvčích a nahrávky druhého mluvčího. Vizuálně lze sledovat varianty segmentace podle značek A, B, C a D v komentářích algoritmu na obrázku~\ref{fig:generovani_segmentu}.}
+ \caption{\label{alg:segmentace_nahravek}Algoritmus segmenace nahrávek používá výhody Python generátoru, který, na rozdíl od běžných funkcí, po vrácení hodnoty příkazem \texttt{yield} neztrácí svůj vnitřní stav a při jeho dalším zavolání pokračuje tam, kde skončil. V~uvedeném příkladě je znázorněna pouze segmentace nahrávky jednoho mluvčího, ale analogicky se segmentují i nahrávky směsi mluvčích a nahrávky druhého mluvčího. Vizuálně lze sledovat varianty segmentace podle značek A, B, C a D v~komentářích algoritmu na obrázku~\ref{fig:generovani_segmentu}.}
 
 \SetNoFillComment
 
@@ -770,7 +770,7 @@ Algoritmus~\ref{alg:segmentace_nahravek} a obrázek~\ref{fig:generovani_segmentu
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/segmentation.pdf}
-    \caption{\label{fig:generovani_segmentu}Způsob segmentace nahrávek. Obrázek slouží jako doplnění algoritmu~\ref{alg:segmentace_nahravek}. Význam schémat A, B, C a D je označen na odpovídajících pozicích v komentářích algoritmu. Šrafovaná pole reprezentují vytvářený segment a modrá pole reprezentují data zpracovávaného signálu.}
+    \caption{\label{fig:generovani_segmentu}Způsob segmentace nahrávek. Obrázek slouží jako doplnění algoritmu~\ref{alg:segmentace_nahravek}. Význam schémat A, B, C a D je označen na odpovídajících pozicích v~komentářích algoritmu. Šrafovaná pole reprezentují vytvářený segment a modrá pole reprezentují data zpracovávaného signálu.}
 \end{figure}
 
 
@@ -779,7 +779,7 @@ Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou přek
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/segment_overlap.pdf}
-    \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím. Zde je vidět překrytí (\texttt{overlap}) o délce $1$. Výsledný \texttt{offset} $n$--tého segmentu se vypočítá jako $\texttt{offset}_n = n*(seg\_len - overlap)$, kde $n = 0, 1, \dots, N$.}
+    \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím. Zde je vidět překrytí (\texttt{overlap}) o~délce $1$. Výsledný \texttt{offset} $n$--tého segmentu se vypočítá jako $\texttt{offset}_n = n*(seg\_len - overlap)$, kde $n = 0, 1, \dots, N$.}
 \end{figure}
 
 
@@ -825,13 +825,13 @@ Neuronové sítě představují mocný nástroj mnoha využití, který ale mus�
 
 Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry, které určují například počet vrstev sítě, velikost segmentace a další vlastnosti.
 
-Cílem experimentů je zjistit, které z~hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace mluvčích. Tato kvalita je měřena metrikami STOI, SDR a PESQ, které byly popsány v~kapitole~\ref{separace}.
+Cílem experimentů je zjistit, které z~hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace. Tato kvalita je měřena metrikami STOI, SDR a PESQ, které byly popsány v~kapitole~\ref{separace}.
 
 
 \section{Dataset}
 Dataset je množina dat, na kterých je síť učena a testována. Dataset se dá rozdělit na tři podmnožiny, které jsou navzájem exkluzivní. Trénovací dataset je určen k~trénování sítě a bývá největší. Validační dataset se prochází po zpracování trénovacího datasetu v~průběhu trénování a slouží pro ověření, že hodnota loss na dosud neviděných datech stále klesá a nedochází tak k~přetrénování. Při zpracování tohoto datasetu je síti zabráněno v~učení. Poslední je testovací dataset, na kterém probíhá vyhodnocení sítě, tedy výpočet hodnot jednotlivých metrik. 
 
-Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0)~\cite{DBLP-dataset} a vytvořením směsi mluvčích z~těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes $10$ hodin a přes $6$ hodin validačních dat. Testovací data jsou vygenerována z~16ti, doposud neviděných, mluvčích. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na \uv{zero means} a \uv{jednotkovou varianci}. Skript pro generování datasetu lze nalézt v~\footnote{https://www.merl.com/demos/deep-clustering}.
+Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahrávek směsí dvou mluvčích. Množina byla vygenerována náhodným výběrem různých mluvčích z~Wall Street Journal (WSJ0)~\cite{DBLP-dataset} a vytvořením směsi mluvčích z~těchto dvou náhodně vybraných nahrávek. Celková délka trénovacích dat je přes $10$ hodin a přes $6$ hodin validačních dat. Testovací data jsou vygenerována z~16ti, doposud neviděných, mluvčích. Nahrávky jsou převzorkovány na 8kHz a během trénování zarovnány na \textit{zero means} a jednotkovou varianci. Skript pro generování datasetu lze nalézt v~\footnote{https://www.merl.com/demos/deep-clustering}.
 
 \begin{figure}[H]
     \centering
@@ -858,7 +858,7 @@ Lze si všimnout, že sečtením signálů jednotlivých mluvčích na obrázku~
 
 
 \section{Průběh trénování}
-Bylo natrénováno $10$ modelů s~různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:vliv-X4},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X8}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v~jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K~tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s~hodnotou $\texttt{learning rate} = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v~jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:X864R4trainloss} a~\ref{graf:X8R4trainlosssegments}. Dále grafy~\ref{graf:X8R4validtrainloss} a~\ref{graf:X4R4validtrainloss} zobrazují trénovací i validační hodnoty loss na konci epoch v průběhu trénování.
+Bylo natrénováno $7$ modelů s~různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:vliv-X4},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X8}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v~jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K~tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s~hodnotou $\texttt{learning~rate} = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v~jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:X864R4trainloss} a~\ref{graf:X8R4trainlosssegments}. Dále grafy~\ref{graf:X8R4validtrainloss} a~\ref{graf:X4R4validtrainloss} zobrazují trénovací i validační hodnoty loss na konci epoch v~průběhu trénování vybraných modelů.
 
 %\todo{https://www.tablesgenerator.com/}.
 
@@ -867,12 +867,12 @@ Bylo natrénováno $10$ modelů s~různými hodnotami zkoumaných hyper--paramet
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=1.0\textwidth]{obrazky-figures/expX864R4trainloss.png}
-        \caption{\label{graf:X864R4trainloss}Hodnota loss při trénování modelů s~různým počtem konvolučních bloků. Z grafu je patrné, že se zmenšujícím se počtem bloků se zhoršuje natrénovaný model.}
+        \caption{\label{graf:X864R4trainloss}Hodnota loss při trénování modelů s~různým počtem konvolučních bloků. Z~grafu je patrné, že se zmenšujícím se počtem bloků se zhoršuje natrénovaný model.}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=1.0\textwidth]{obrazky-figures/expX8R4trainlosssegments.png}
-        \caption{\label{graf:X8R4trainlosssegments}Graf trénování modelů s rozdílnou délkou segmentů při trénování. Vzhledem k tomu, že je graf vykreslený v závislosti na počtu segmentů, tak model, který měl délku segmentů kratší (oranžový graf), tak jich zpracoval více, proto je delší než modrý.}
+        \caption{\label{graf:X8R4trainlosssegments}Graf trénování modelů s~rozdílnou délkou segmentů při trénování. Vzhledem k~tomu, že je graf vykreslený v~závislosti na počtu segmentů, tak model, který měl délku segmentů kratší (oranžový graf), tak jich zpracoval více, proto je delší než modrý.}
     \end{minipage}
 \end{figure}
 
@@ -893,100 +893,118 @@ Bylo natrénováno $10$ modelů s~různými hodnotami zkoumaných hyper--paramet
 
 %------------------------------------------------------------------------------
 
-\section{Experimenty s~modely}
-Pro vyhodnocení úspěšnosti a kvality modelů byly použity metriky sdr vyjadřující poměr XXX, pesq říkající YYY a stoi vyjadřující ZZZ.
-
-\todo{miniÚvod, co bude zkoumano a vyhodnocovano.}
-
-\todo{Ucelene: referovat tabulku s~Hyper parametry nahore.
-Kazda podkatpiola bude mit hrafy jako sisnr vs X,R, pesq vs x a r, stoi vs x, r, jakoze v~podkapitole Vliv X budou grafy takove, ze pro kazdou metriku bude graf jeden, kde se meni X a je tam videt jak se jednotlive hodnoty metriky lisi pro ruzna X.
-}
-\todo{Mozna: Pametova narocnost modelu. Spektrum nahravek.}
-
-\todo{rozdelit tabulku podle HzperParam a spis mensi tabulku ukazujici vysledku pro konkretni hyper parametry.
-experimenty:
-sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak ktere jsou dulezite. Kdyz budu zmensovat sit tak jak se bude zhorsovat.}
-
+%\section{Experimenty s~modely}
 
 
 %---------------------------------------------------------------------------------------------
+\section{Vliv parametrů X a R}
+\todo{zmensovani a zvetsovani X, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy pro sdr, pesq, stoi}
+\todo{histogram vysledku skrze jednotlive promluvy, }
 
+Rozměry modelů mají značný vliv na přesnost. V~této části se zaměřím na vliv dvou parametrů -- X a R. Parametr X ovlivňuje počet konvolučních bloků, což přímo ovlivňuje velikost celkové časové dilatace. Parametr R udává, kolikrát se sekvence X konvolučních bloků opakuje. Tabulky~\ref{tab:vliv-X8},~\ref{tab:vliv-X6} a~\ref{tab:vliv-X4} přehledně ukazují, jaké modely a o~jakých kombinacích parametrů byly natrénovány.
 
-\subsection{Vliv hyper--parametrů X a R}
-\todo{Pro obe podkapitoly X a R: zmensovani a zvetsovani X, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi X, obrazky, grafy, pohlavi histogramy}
-
-
-\begin{table}[hbt]
+\begin{table}[!htbp]
 \centering
-\caption{Tabulka zobrazující vliv počtu opakování pro $X=8$ konvolučních bloků na výsledky testování}
+\caption{Tabulka zobrazující vliv počtu opakování pro $X=8$ konvolučních bloků na výsledky testování.}
 \label{tab:vliv-X8}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů {[}vzorky{]}} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
 8 & 2 & 32000 & 12.71 & 0.94 & 2.71 \\ \hline
-8 & 3 & 32000 & 0.00 & 0.00 & 0.00 \\ \hline
 8 & 4 & 32000 & 12.45 & 0.93 & 2.69 \\ \hline
 \end{tabular}
 \end{table}
 
+Modely o~kombinaci parametrů z~tabulky~\ref{tab:vliv-X8} dosahují nejlepších výsledků. Výrazného zlepšení oproti menším modelům s~parametrem dosahují u~metriky SDR hodnoty až $12.71$~dB. Modely si vedou oproti menším poměrně lépe i v~metrice STOI, kde dosahují až hodnoty $2.71$. Podle této tabulky se zdá, že parametr R nemá moc velký vliv na výslednou přesnost sítě. Model s~nižším počtem opakování dokonce dosahuje lehce lepších výsledků než model s~počtem opakování $R = 4$. Důvodem by mohlo být to, že v~závislosti na velikosti trénovaného modelu by mohla lépe vyhovovat menší či větší hodnota \texttt{learning~rate}, než ta, která byla použita při trénování ($0.001$).
 
-\begin{table}[hbt]
+\begin{table}[!htbp]
 \centering
-\caption{Tabulka zobrazující vliv počtu opakování sekvence konvolučních bloků na výsledky testování}
+\caption{Tabulka zobrazující vliv počtu opakování pro $X=6$ konvolučních bloků na výsledky testování.}
 \label{tab:vliv-X6}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
-6 & 2 & 32000 & 0.00 & 0.00 & 0.00 \\ \hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů {[}vzorky{]}} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+6 & 2 & 32000 & 10.80 & 0.92 & 2.52 \\ \hline
 6 & 3 & 32000 & 10.78 & 0.92 & 2.52 \\ \hline
 6 & 4 & 32000 & 10.69 & 0.92 & 2.52 \\ \hline
 \end{tabular}
 \end{table}
 
-
-\begin{table}[hbt]
+\begin{table}[!htbp]
 \centering
-\caption{Tabulka zobrazující vliv počtu opakování sekvence konvolučních bloků na výsledky testování}
+\caption{Tabulka zobrazující vliv počtu opakování pro $X=4$ konvolučních bloků na výsledky testování.}
 \label{tab:vliv-X4}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
-4 & 2 & 32000 & 0.00 & 0.00 & 0.00 \\ \hline
-4 & 3 & 32000 & 10.78 & 0.92 & 2.52 \\ \hline
-4 & 4 & 32000 & 10.69 & 0.92 & 2.52 \\ \hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů {[}vzorky{]}} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+4 & 4 & 32000 & 9.23 & 0.89 & 2.23 \\ \hline
 \end{tabular}
 \end{table}
 
+Při zmenšování počtu konvolučních bloků X lze vidět znatelný pokles přesnosti ve sledovaných metrikách. Tabulky~\ref{tab:vliv-X6} a~\ref{tab:vliv-X4} obsahují rozměry těchto modelů a jejich dosaženou přesnost. V~první tabulce pro model s~velikostí $X=6$ téměř nedochází k~nějakému znatelnému zvýšení přesnosti při modifikaci parametru R. Znovu se tedy ukazuje, že parametr R nemá velký vliv na celkový výkon sítě. Druhá tabulka ukazuje hodnoty, zmenšíme--li model ještě více. Při parametru $X=4$ má model nejnižší přesnost z~mých natrénovaných modelů ve všech měřených metrikách, z~nichž největšího rozdílu doznaly metriky SDR a PESQ. 
+
+Zdá se, že příčinou, proč má změna parametru X takový vliv na výkon, přímo souvisí s~dilatačním faktorem, který se zvyšuje právě se zvyšujícím se počtem konvolučních bloků.
+
+%\begin{figure}[H]
+%    \centering
+%    \begin{minipage}{0.45\textwidth}
+%        \centering
+%        \includegraphics[width=1.0\textwidth]{obrazky-figures/.png}
+%        \caption{\label{graf:}TODO}
+%    \end{minipage}\hfill
+%    \begin{minipage}{0.45\textwidth}
+%        \centering
+%        \includegraphics[width=1.0\textwidth]{obrazky-figures/.png}
+%        \caption{\label{graf:}TODO}
+%    \end{minipage}
+%\end{figure}
+
+Přestože víme, že nejlépe si vede model o~rozměrech $X=8$ a $R=2$ s~jeho výslednou hodnotou SDR $12.71$~dB ale tato hodnota nám neříká nic o~výsledcích přesnosti jednotlivých směsí, protože je to průměrná hodnota ze všech nahrávek. Histogram~\ref{fig:sdrhistogram} zobrazuje rozdělení hodnoty SDR v~rámci zpracovaných nahrávek.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{obrazky-figures/sdrhistogramX8R2.png}
+    \caption{\label{fig:sdrhistogram}Histogram hodnot SDR pro jednotlivé separace.}
+\end{figure}
+
+\todo{popsat obrazek a blah jsou dokonce nahravky, ktere dosahly hodnoty sdr vetsi nez 18, ale nejvetsi koncentrace je kolem hodnoty sdr XX.}
 
 %---------------------------------------------------------------------------------------------
-\subsection{Vliv délky segmentů}
-\todo{zmensovani a zvetsovani SL, vysledky testovani, nejake fajnove grafy porovnani vysledky mezi jednotlivymi SL, grafy, histogramy pohlavi}
+\section{Vliv délky segmentů}
+Pro zjištění, zda--li má různá délka segmentů při trénování vliv na přesnost sítě, byly natrénovány dva modely o~stejných rozměrech, jak ukazuje tabulka~\ref{tab:vliv-segment-length}. Jak je vidět, jeden model při trénování segmentoval nahrávky na délku 16000 vzorků, zatímco druhý na 32000 vzorků.
 
-\begin{table}[hbt]
+\begin{table}[!htbp]
 \centering
-\caption{Tabulka zobrazující vliv délky segmentů na výsledky testování}
+\caption{Tabulka zobrazující vliv délky segmentů na výsledky testování.}
 \label{tab:vliv-segment-length}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-\textbf{X} & \textbf{R} & \textbf{Délka segmentů} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
+\textbf{X} & \textbf{R} & \textbf{Délka segmentů {[}vzorky{]}} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
 8 & 4 & 32000 & 12.45 & 0.93 & 2.69 \\ \hline
 8 & 4 & 16000 & 12.49 & 0.93 & 2.7 \\ \hline
 \end{tabular}
 \end{table}
 
+Testování ukázalo, že model, který používal kratší segmenty, dosahoval zanedbatelně lepších výsledků u~hodnoty SDR ($12.49$~dB), než model, který používal segmenty delší a dosahoval hodnoty SDR $12.45$~dB. Hodnoty ostatních metrik dosahují téměř stejných hodnot v~případě obou modelů.
 
 
 %---------------------------------------------------------------------------------------------
-\subsection{Úspěšnost modelů s~ohledem na pohlaví mluvčích}
-\todo{nebo zahrnout do podkapitol. histogram vysledku skrze jednotlive promluvy, zjistit pomery jeslti je lepsi vysledky muz zena nebo muz muz. Zkusit to treba pro nejlepsi model, pripadne pro nejakej jeden mensi.}
+\section{Úspěšnost s~ohledem na pohlaví mluvčích}
+Testovací nahrávky jsou náhodné kombinace mužských a ženských mluvčích. Pro separaci dvou mluvčích tedy mohou vzniknout až 3 typy nahrávek na základě pohlaví mluvčího -- muž--muž, muž--žena a žena--žena. Jednotlivé kombinace mluvčích mohou být pro síť rozdílně náročné pro separaci. Na mém nejlepším modelu o~rozměru $X=8$ a $R=2$ jsem zkoumal, jaké výsledky mají jednotlivé kombinace.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{obrazky-figures/sdrpohlaviX8R2.png}
+    \caption{\label{fig:sdrpohlavi}Histogram průměrné hodnoty SDR napříč různou kombinací pohlaví.}
+\end{figure}
 
+Z~grafu~\ref{fig:sdrpohlavi} lze vypozorovat, jaký vliv má kombinace pohlaví na přesnost sítě. Nejlepších výsledků síť dosahuje v~případě, že na nahrávce jsou zastoupena obě pohlaví. V~takovém případě model dosahuje hodnoty SDR $14.6$~dB. Oproti tomu, v~případě stejných pohlaví si síť vede poměrně hůř. V~případě kombinace dvou žen síť dosahuje hodnoty SDR pouze $9.4$~dB a v~případě kombinace dvou mužů jen o~něco lépe $11.2$~dB. Výsledná hodnota je průměrem hodnot v~dané kombinaci pohlaví.
+
+Výsledkem pozorování je, že síť od sebe separuje mluvčí mnohem lépe v~případě, že jsou zastoupena na směsi rozdílná pohlaví.
 
 %---------------------------------------------------------------------------------------------
 %\subsection{MOZNA Vliv hodnoty learning rate}
 %\todo{MOZNA ZASE SMAZAT. podkapitola o~rozdilnych LR, jestli stihnu natrenovat jeste - pouze pro X8 R4 --vetsi lr -- mensi loss}
-
-
 
 %---------------------------------------------------------------------------------------------
 %\subsection{Výsledek inference}
@@ -995,20 +1013,19 @@ sisnr, reportovat ruzne metriky - stoi, pesq, prozkoumat hyper parametry a jak k
 
 
 %---------------------------------------------------------------------------------------------
-\subsection{Výsledky referenčního modelu TasNet}
-\todo{Shrnout jejich vysledky. Muj nej a srovnat s~tim jejich nejlepsim, pripadne takovej, kde jsou parametry podobne tem mejm treba.}
-
+\section{Výsledky referenčního modelu TasNet}
 V~referenční studii~\cite{luo2018convtasnet} byly modely trénovány $100$ epoch s~různými hyper--parametry. Já se zaměřím na takové, se kterými experimentuji v~rámci mých modelů. Modely jsou v~nekauzální konfiguraci a používají batch normalizaci (BN).
 
-Nejlepší model TasNet s~hodnotami parametrů $X=8$ a $R=4$ dosahuje hodnoty $SDR = 14.7 dB$ při délce filtrů $L = 20$ vzorků. Hodnoty $SDR = 13.0 dB$ dosahuje při hodnotě parametru $X = 7$ a délce filtrů $L = 40$ vzorků. Po zvětšení velikosti filtrů a zmenšení počtu konvolučních bloků (což zmenšuje také hodnotu dilatace) je patrný pokles hodnoty SDR. Při dalším zmenšování modelu dále klesá hodnota SDR, jak zobrazuje tabulka~\ref{tab:tasnet}.
+Nejlepší model ze studie TasNet s~hodnotami parametrů $X=8$ a $R=4$ dosahuje hodnoty $SDR = 14.7$~dB při délce filtrů $L = 20$ vzorků. Hodnoty $SDR = 13.0$~dB dosahuje při hodnotě parametru $X = 7$ a délce filtrů $L = 40$ vzorků. Po zvětšení velikosti filtrů a zmenšení počtu konvolučních bloků (což zmenšuje také hodnotu dilatace) je patrný pokles hodnoty SDR. Při dalším zmenšování modelu dále klesá hodnota SDR, jak zobrazuje tabulka~\ref{tab:tasnet}.
 
-\begin{table}[hbt]
+\begin{table}[!htbp]
 \centering
-\caption{Tabulka ukazující výsledky testovaní referenčních modelů TasNet v~závislosti na konfiguraci}
+\caption{Tabulka ukazující výsledky testovaní referenčních modelů TasNet v~závislosti na konfiguraci.}
 \label{tab:tasnet}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-\textbf{L {[}samples{]}} & \textbf{X} & \textbf{R} & \textbf{Normalizace} & \textbf{SDR {[}dB{]}} & \textbf{Receptive field {[}s{]}} \\ \hline
+\textbf{L {[}vzorky{]}} & \textbf{X} & \textbf{R} & \textbf{Normalizace} & \textbf{SDR {[}dB{]}} & \textbf{Receptive field {[}s{]}} \\ \hline
+20 & 8 & 4 & BN & 14.7 & 2.55 \\ \hline
 40 & 7 & 4 & BN & 13.0 & 2.55 \\ \hline
 40 & 8 & 2 & BN & 12.6 & 2.56 \\ \hline
 40 & 6 & 4 & BN & 12.1 & 1.27 \\ \hline
@@ -1016,25 +1033,24 @@ Nejlepší model TasNet s~hodnotami parametrů $X=8$ a $R=4$ dosahuje hodnoty $S
 \end{tabular}
 \end{table}
 
-
-\todo{dopsat rozdil oproti te me a pripadne co muze byt pricina.}
-Příčinou rozdílných výsledků testování mohou být implementační rozdíly, použítá hodnota learning rate nebo také rozdílný počet epoch, po které byly modely trénovány.
-
+Můj nejlepší model v~porovnání s~modely ze studie dosahuje hodnoty SDR $12.71$~dB, jak ukazuje tabulka~\ref{tab:vliv-X8}. Důvodem horší přesnosti může být nedostatečné natrénování modelu (60 epoch oproti jejich 100 epochám), použitá hodnota learning rate při trénování či implementační rozdíly. Přesto tato hodnota ukazuje, že je model již schopen obstojně separovat nahrávky.
 
 
 %---------------------------------------------------------------------------------------------
-\subsection{Vyhodnocení a porovnání modelů}
+\section{Shrnutí výsledků}
+\todo{1 odstavec}
 \todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, obrazky, grafy. Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace. okomentovat take pohlavi vysledky, prumery sdr, mean, a pod.}
 \todo{Zda se, ze parametr XYZ nema na SDR takovy vliv, jako parametr ABC...}
-
+\todo{jaky param ma tedy nejvetsi vliv na presnost. jestli ma vliv segmentlen, jakou kombinaci pohlavi sit nejlepe rozdeluje. Jake parametry bych mohl zmensit, aby model porad mel dobrou presnost ale byl mensi.}
 
 %---------------------------------------------------------------------------------------------
-
-
 \section{Možná rozšíření a navrhnutá vylepšení}
+\todo{1 odstavec}
 \todo{k~poslednimu bodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o~zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat. toto Podsekce na konci experimentu.}
-\todo{Variabilnejsi dataset, separace vice mluvcich, hlucne prostredi, identifikace recnika, realtime separace}
-
+\todo{Variabilnejsi dataset, separace vice mluvcich, hlucne prostredi, identifikace recnika, realtime separace.}
+\todo{zkousel jsem separovat jinou nahravku, neslo. vice nahravacich prostredi, mikrofony, sum, ruseni.}
+\todo{Procist studii jaky oni tam navrhuji vylepseni}
+Todo.
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------

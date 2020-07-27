@@ -21,7 +21,7 @@ def parseGendre(mixname, men_speech_array, women_speech_array):
         result += "Z"
     if parsed_name[2][:3] in women_speech_array:
         result += "Z"
-    
+
     if result == "ZM" or result == "MZ":
         return "MZ"
     return result
@@ -39,12 +39,12 @@ if __name__== "__main__":
             dest='men_id_path',
             type=str,
             help='Full path to file with men speaker ids')
-    
+
     parser.add_argument('--women-id-path',
             dest='women_id_path',
             type=str,
             help='Full path to file with women speaker ids')
-    
+
     parser.add_argument('--round',
             dest='round',
             default=4,
@@ -68,11 +68,11 @@ if __name__== "__main__":
     if not args.men_id_path:
         print("Chyba: Pozadovana cesta k souboru s men id")
         exit(1)
-    
+
     if not args.women_id_path:
         print("Chyba: Pozadovana cesta k souboru s women id")
         exit(1)
-    
+
     if args.round < 1 or args.round > 20:
         print("Chyba: Parametr round prijima pouze hodnotu v rozmezi 1 - 20")
         exit(2)
@@ -92,7 +92,7 @@ if __name__== "__main__":
             sdr = np.array(line[1]).astype(np.float64)
             speech_sdr_map.update({line[0]+str(cnt) : sdr})
             # print("Line {}: {}".format(line[0]+str(cnt), line[1]))
-    
+
     # Load IDs of speakers
     men_prefix = []
     women_prefix = []
@@ -128,7 +128,7 @@ if __name__== "__main__":
         # Create histogram of sdr based on genre
         combination = parseGendre(mixture, men_prefix, women_prefix)
         histogram_gendre[combination].append(round_sdr)
-    
+
 
     # Calculate avg for gendre histogram
     gendres = ["MM", "MZ", "ZZ"]
@@ -143,27 +143,27 @@ if __name__== "__main__":
     reverse_sort = True    # reverse sort - asc / desc
     sorted_histogram = sorted(histogram.items(), key=lambda x: x[sort_key], reverse=reverse_sort)
     # for sdr, count in sorted_histogram.items():
-    x = [] 
+    x = []
     y = []
     for pair in sorted_histogram:
         # print(pair[0], " : ", pair[1])
         x.append(pair[0])
         y.append(pair[1])
-        
+
     # Draw basic histogram
-    plt.figure(1)
+    # plt.figure(1)
     plt.title('SDR Histogram')
-    plt.xlabel('SDR value')
-    plt.ylabel('Number of SDR occurence')
-    plt.subplot(121)
+    plt.xlabel('Hodnota SDR')
+    plt.ylabel('Počet nahrávek')
+    # plt.subplot(121)
     plt.bar(x, y, width=0.1, color='g')
-    # plt.show()
-    
+    plt.show()
+
     # Draw gendre histogram
-    plt.title('SDR Histogram')
-    plt.xlabel('Pohlavi mluvcich na smesi')
-    plt.ylabel('Prumerne SDR')
-    plt.subplot(122)
+    plt.title('SDR Histogram pohlaví')
+    plt.xlabel('Pohlaví mluvčích na směsi')
+    plt.ylabel('Průměrné SDR')
+    # plt.subplot(122)
     plt.bar(gendres, gendre_sdr, width=0.5, color='g')
     plt.show()
 
