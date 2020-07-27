@@ -834,8 +834,9 @@ Management}{\@fit@EN}%
 \fi
 \makedeclaration
 \clearpage
-\setcounter{tocdepth}{2}\setcounter{page}{1}
+\setcounter{tocdepth}{1}\setcounter{page}{1}
 }
+%\setcounter{tocdepth}{2}  2...part,chapters,sections,subsections
 
 %-----------------------------------------------------------------------------
 \def\uv#1{\iflanguage{english}{``#1''}%

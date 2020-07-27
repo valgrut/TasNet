@@ -29,7 +29,7 @@ Pro vyřešení problému je potřeba se zaměřit na dvě oblasti. Na separaci 
 
 
 \section{Metody pro separaci jednokanálových nahrávek}
-Pro separaci zdrojových signálů z~nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z~nichž asi nejznámější jsou computational auditory scene analysis (CASA)~\cite{choi2005blind} a non--negative matrix factorization (NMF)~\cite{NIPS2000_1861},~\cite{yoshii2013beyond}, používané pro separaci jednokanálových nahrávek. V~posledních letech se do popředí dostaly přístupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody beamforming~\cite{adel2012beamforming} nebo state--of--the--art multi-channel blind source separation~\cite{Negro_2016}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v~článku~\cite{speechseparation}.
+Pro separaci zdrojových signálů z~nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z~nichž asi nejznámější jsou computational auditory scene analysis (CASA)~\cite{choi2005blind} a non--negative matrix factorization (NMF)~\cite{NIPS2000_1861},~\cite{yoshii2013beyond}, používané pro separaci jednokanálových nahrávek. V~posledních letech se do popředí dostaly přístupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody beamforming~\cite{adel2012beamforming} nebo state--of--the--art multi--channel blind source separation~\cite{Negro_2016}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v~článku~\cite{speechseparation}.
 
 
 \subsection{Computational auditory scene analysis}
@@ -186,22 +186,22 @@ Výstupní hodnota závisí na vstupních datech, aktuálním vnitřním stavu (
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1.0]{obrazky-figures/perceptron.pdf}
+    \includegraphics[scale=1.1]{obrazky-figures/perceptron.pdf}
     \caption{\label{fig:neuron}Schéma umělého neuronu.}
 \end{figure}
 
-Hodnota bias $b$, která je přičtena k~sumě násobků vah a vstupních hodnot, je prahová hodnota modifikující dobu, kdy se aktivuje neuron a změní svůj výstup. Matematicky to znamená, že s~grafem aktivační funkce horizontálně pohybuje doleva nebo doprava v~závislosti na tom, je-li hodnota biasu pozitivní nebo negativní. Toto posunutí je znázorněno na obrázku \ref{fig:bias}. V~závislosti na řešeném problému může být žádoucí, aby i hodnota bias byla modifikována během učení společně s~ostatními váhami.
+Hodnota bias $b$, která je přičtena k~sumě násobků vah a vstupních hodnot, je prahová hodnota modifikující dobu, kdy se aktivuje neuron a změní svůj výstup. Matematicky to znamená, že s~grafem aktivační funkce horizontálně pohybuje doleva nebo doprava v~závislosti na tom, je-li hodnota biasu pozitivní nebo negativní. V~závislosti na řešeném problému může být žádoucí, aby i hodnota bias byla modifikována během učení společně s~ostatními váhami.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.4]{obrazky-figures/bias.png}
-    \caption{\label{fig:bias}Vliv hodnoty bias na aktivační funkci.}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.4]{obrazky-figures/bias.png}
+%    \caption{\label{fig:bias}Vliv hodnoty bias na aktivační funkci.}
+%\end{figure}
 
 
 Výstup neuronu se vypočítá jako
 \begin{equation}
-	y = f\Big((\sum_{k=1}^n w_kx_k) + b\Big)
+	y = f\Big(b + \sum_{k=1}^n w_kx_k \Big)
 \end{equation}
 kde $f$ je aktivační funkce, $x_k \in \mathbb{R}$ je vstupní hodnota, $w_k \in \mathbb{R}$ je váha, kterou se vstupní hodnota vynásobí a $b \in \mathbb{R}$ je hodnota bias.
 
@@ -224,14 +224,14 @@ Používá se na výstupních vrstvách pro predikci výstupu na základě pravd
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.18]{obrazky-figures/sigmoid.png}
+    \includegraphics[scale=0.75]{obrazky-figures/sigmoid.png}
     \caption{\label{fig:sigmoid}Graf aktivační funkce sigmoid.}
 \end{figure}
 
 
 
 \subsection*{Softmax}
-Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z~vektoru reálných čísel. Výstupem je hodnota v~rozmezí $0$ až $1$, jak zobrazuje graf~\ref{fig:softmax}. V~klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s~tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
+Aktivační funkce softmax~\cite{mitdeeplearning}, neboli normalizovaná exponenciální funkce, se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z~vektoru reálných čísel. Výstupem je hodnota v~rozmezí $0$ až $1$, jak zobrazuje graf~\ref{fig:softmax}, na kterém lze vidět, že každá z křivek reprezentuje pravděpodobnost nějaké třídy a jejich součtem v jakémkoli bodě $x$ získáme hodnotu $1$. V~klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s~tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
 
 \begin{equation}
   f(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
@@ -240,10 +240,9 @@ Aktivační funkce softmax~\cite{mitdeeplearning} se často umisťuje na výstup
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/softmax.png}
-    \caption{\label{fig:softmax}Graf aktivační funkce softmax.}
+    \includegraphics[scale=0.75]{obrazky-figures/softmax.png}
+    \caption{\label{fig:softmax}Graf aktivační funkce softmax. Každá křivka reprezentuje pravděpodobnost příslušnosti do nějaké třídy. Graf zobrazuje pravděpodobnostní rozdělení celkem $4$ tříd. Součtem hodnot $y$ v libovolném bodě $x$ získáme hodnotu $1$.}
 \end{figure}
-
 
 
 \subsection*{Rectified Linear Unit}
@@ -252,13 +251,6 @@ Rectified Linear Unit (ReLU) je nejčastěji používaná aktivační funkce a s
 \begin{equation}
    f(x)=max(0,x)
 \end{equation}
-
-%\begin{figure}[H]
-%    \centering
-%    \includegraphics[scale=0.2]{obrazky-figures/ReLU.png}
-%    \caption{\label{fig:relu}Graf aktivační funkce ReLU}
-%\end{figure}
-
 
 
 \subsection*{Parametric Rectified Linear Unit}
@@ -273,12 +265,6 @@ Předpis funkce PReLU je definován jako
   \end{cases}
 \end{equation}
 
-%\begin{figure}[H]
-%    \centering
-%    \includegraphics[scale=1.4]{obrazky-figures/prelu.jpg}
-%    \caption{\label{fig:prelu}Graf aktivační funkce PReLU}
-%\end{figure}
-
 V~případě, že je hodnota parametru $\alpha=0$, pak se jedná o~ReLU. Je--li parametr $\alpha = c$, kde $c\in\mathbb{R}$ je malá konstanta (například $c = 0.03$), jedná se o~Leaky ReLU (LReLU) a motivací pro její zavedení bylo vyhnout se nulovému gradientu.
 
 
@@ -286,12 +272,12 @@ V~případě, že je hodnota parametru $\alpha=0$, pak se jedná o~ReLU. Je--li 
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.7\textwidth]{obrazky-figures/ReLU.png}
+        \includegraphics[width=1.00\textwidth]{obrazky-figures/relu.png}
         \caption{\label{fig:relu}Graf aktivační funkce ReLU.}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{obrazky-figures/prelu.jpg}
+        \includegraphics[width=1.00\textwidth]{obrazky-figures/prelu.png}
         \caption{\label{fig:prelu}Graf aktivační funkce PReLU.}
     \end{minipage}
 \end{figure}
@@ -404,14 +390,14 @@ Mean squared error loss (MSE) je nejčastěji používaná objektivní funkce p�
 \begin{equation}
   MSE = \frac{1}{N}\sum_{i=1}^N(y_i - \hat{y_i})^2
 \end{equation}
-kde $N$ je počet trénovacích dat v~datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k~druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$, jak lze vidět na obrázku \ref{fig:mseloss}. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví. 
+kde $N$ je počet trénovacích dat v~datasetu, $y_i$ je předpovězená hodnota a $\hat{y_i}$ je odhadnutá hodnota. Vzhledem k~druhé mocnině je výsledek vždy pozitivní nezávisle na znaménku hodnot $y_i$ a $\hat{y_i}$. Druhá mocnina také zajišťuje, že čím větší je rozdíl mezi předpovídanou a aktuální odhadnutou hodnotou, tím více se chyba projeví. 
 %Funkce dosahuje L2 regularizace.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.4]{obrazky-figures/mseloss.png}
-    \caption{\label{fig:mseloss}Graf objektivní funkce MSE Loss.}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.4]{obrazky-figures/mseloss.png}
+%    \caption{\label{fig:mseloss}Graf objektivní funkce MSE Loss.}
+%\end{figure}
 
 
 \subsection*{Mean absolute error loss}
@@ -424,11 +410,11 @@ Výhodnou MAE je její lineární průběh, takže se, vzhledem k~lineární zá
 
 Nevýhodou je, že kvůli absolutní povaze není diferencovatelná v~hodnotě $x=0$, což může mít negativní následky pro výpočet gradientu.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.4]{obrazky-figures/maeloss.png}
-    \caption{\label{fig:maeloss}Graf objektivní funkce MAE Loss (červeně).}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.4]{obrazky-figures/maeloss.png}
+%    \caption{\label{fig:maeloss}Graf objektivní funkce MAE Loss (červeně).}
+%\end{figure}
 
 
 \subsection{Algoritmus zpětné propagace}
@@ -835,19 +821,19 @@ Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahr
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/dataset-s1.png}
+    \includegraphics[scale=0.24]{obrazky-figures/s1.png}
     \caption{\label{fig:ref-s1}První mluvčí ze směsi}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/dataset-s2.png}
+    \includegraphics[scale=0.24]{obrazky-figures/s2.png}
     \caption{\label{fig:ref-s2}Druhý mluvčí ze směsi}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{obrazky-figures/dataset-mix.png}
+    \includegraphics[scale=0.24]{obrazky-figures/mix.png}
     \caption{\label{fig:ref-mixture}Ukázka směsi dvou mluvčích}
 \end{figure}
 
