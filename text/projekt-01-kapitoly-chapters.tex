@@ -201,7 +201,7 @@ Hodnota bias $b$, která je přičtena k~sumě násobků vah a vstupních hodnot
 
 Výstup neuronu se vypočítá jako
 \begin{equation}
-	y = f\Big(b + \sum_{k=1}^n w_kx_k \Big)
+	y = f\Big(b + \sum_{k=1}^N w_kx_k \Big)
 \end{equation}
 kde $f$ je aktivační funkce, $x_k \in \mathbb{R}$ je vstupní hodnota, $w_k \in \mathbb{R}$ je váha, kterou se vstupní hodnota vynásobí a $b \in \mathbb{R}$ je hodnota bias.
 
@@ -473,16 +473,8 @@ Velmi hluboké neuronové sítě přinesly v~mnoha aplikacích velmi dobré výs
 Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či více vrstvami. Problém mizejícího gradientu řeší tím, že používá aktivace z~předchozí vrstvy, dokud váhy následující vrstvy nejsou naučeny. Spojení lze formulovat jako $\mathcal{F}(x) + x$, kde $\mathcal{F}(x)$ je výsledná hodnota transformace jednotlivými vrstvami a $x$ je původní vstup, který vrstvy přeskočí a následně je sečten s~výstupem $\mathcal{F}(x)$. Výhodou je, že jeho použitím se nezvyšuje počet parametrů ani výpočetní náročnost~\cite{he2015deep},~\cite{zaeemzadeh2018normpreservation}.
 
 
-
 \subsection{Význam validační množiny v~trénování}
-\todo{Mozna ne jako subsekci ale jen jako jeden odstavec}
-Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v~průběhu nemění, protože hodnoty by bylo obtížné optimalizovat. 
-Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k~přetrénováníoverfitting) v~důsledku \todo{CEHO??}. Pro tento případ potřebujeme validační sadu, která je odlišná od trénovací sady.
-Po každém zpracování trénovací sady následuje validační sada, po jejímž skončení jsou optimalizovány hyperparametry[][].
-\todo{[kniha 117-118] kap 5.3 = Hyperparameters and validation set} 
-\todo{najit jeste nejakej zdroj s~popisem a pripadne nejaky zajimavejsi info.}
-
-
+Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v~průběhu nemění. Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k~přetrénování (\textit{overfitting}). Pro tento případ se použije validační sada, která je odlišná od trénovací sady a síť z ní ještě neviděla nahrávky. Validační sada je zpracována po skončení zpracování trénovací sady a je použita pro monitorování, jak dobře síť generalizuje dosud neviděná data. Na základě výsledků lze následně rozhodnout o úpravě některých hyper--parametrů~\cite{mitdeeplearning}.
 
 
 %\bigskip

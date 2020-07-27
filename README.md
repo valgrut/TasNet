@@ -208,17 +208,17 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [DONE] feedforward -> dopredna
     - [DONE] v rovnicich vektory a matice jsou tucne.
     - ! upravit italic a bold text
-    - ! dopsat validacni dataset v trenovani
+    - [DONE] dopsat validacni dataset v trenovani
     - [DONE] texttt pro zdrojove veci
     - uprava algoritmuuu
         - najit si konvence a upravit podle toho
         - udelat komentare treba kurzivou, zbytek jinak
 
 ### 22. 7. 2020 - Online konzultace
-    - note: kde udelat grafy: numpy nebo scipy
-    - [DONE] TT experimenty - staci dve desetine mista 0.00
-    - exp - pohlavi - vysledky staci jednoho modelu, vysledky stejne budou podobne.
-    - TT exp - tasnet exp - pridat do tabulky nejaky muj model, takovej co ma stejne param moje vysledky
+    - [DONE] note: kde udelat grafy: numpy nebo scipy
+    - [DONE] exp - staci dve desetine mista 0.00
+    - [DONE] exp - pohlavi - vysledky staci jednoho modelu, vysledky stejne budou podobne.
+    - [DONE] exp - tasnet exp - pridat do tabulky nejaky muj model, takovej co ma stejne param moje vysledky
 
 
 ### 27. 7. 2020 - [online] konzultace
@@ -237,7 +237,4 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
         -   teoreticky sloucit tabulky 6.2 a 6.1
         -   a do dalsi tabulky dat X8, X6, X4 a R4 a popsat jak to ovlivnuje vysledky.
     - citace c. 6 - podivat se na jmena autoru, neco je spatne.
-    - [online] pouze u webpage
-    - val mnoz v tren - posledni veta - neoptimalizujeme, ale na zaklade val sady monitorujeme jak dobre generalizuje nn na jina data a na zaklade tech vysledku na valid. sade se muzeme rozhodntou pro urcite hodnoty hyper parametru.
-    
 
