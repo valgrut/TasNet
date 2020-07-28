@@ -3,6 +3,11 @@ import torch.nn as nn
 
 
 class ResBlock(nn.Module):
+    """
+    Trida reprezentuje jeden konvolucni blok.
+    Tyto bloky jsou v hlavni tride TasNet skladany za sebe.
+    Trida je konstruovana s urcitou casovou dilataci, ktera ovlivnuje kontextualni okno, ktere sit vidi.
+    """
     def __init__(self, in_channels, dilation, DEBUG=False):
         super(ResBlock, self).__init__()
         self.DEBUG=DEBUG

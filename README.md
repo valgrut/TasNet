@@ -26,15 +26,22 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 
 
 ## Resources
-[sanyamkapoor.com](https://www.sanyamkapoor.com/)
-[pythontips](http://book.pythontips.com/en/latest/enumerate.html.)
-[arxiv paper](https://arxiv.org/pdf/1809.07454.pdf)
-[pytorch](https://pytorch.org)
-[arxiv paper](https://arxiv.org/pdf/1801.04381.pdf)
-[conv nets in pytorch](https://blog.algorithmia.com/convolutional-neural-nets-in-pytorch/)
-[wav](https://www.premiumbeat.com/blog/when-to-use-wav-files-when-to-use-mp3-files-what-is-the-difference-between-the-two-formats/)
-[urban sound classification](http://aqibsaeed.github.io/2016-09-03-urban-sound-classification-part-1/)
-[resnet](http://torch.ch/blog/2016/02/04/resnets.html)
+- [sanyamkapoor.com](https://www.sanyamkapoor.com/)
+- [pythontips](http://book.pythontips.com/en/latest/enumerate.html.)
+- [arxiv paper](https://arxiv.org/pdf/1809.07454.pdf)
+- [pytorch](https://pytorch.org)
+- [arxiv paper](https://arxiv.org/pdf/1801.04381.pdf)
+- [conv nets in pytorch](https://blog.algorithmia.com/convolutional-neural-nets-in-pytorch/)
+- [wav](https://www.premiumbeat.com/blog/when-to-use-wav-files-when-to-use-mp3-files-what-is-the-difference-between-the-two-formats/)
+- [urban sound classification](http://aqibsaeed.github.io/2016-09-03-urban-sound-classification-part-1/)
+- [resnet](http://torch.ch/blog/2016/02/04/resnets.html)
+- [neural networks separation model IEEE](https://dl.acm.org/doi/10.1109/TASLP.2018.2842159)
+- https://wiki.aalto.fi/display/ITSP/Spectrogram+and+the+STFT
+- https://stackoverflow.com/questions/42883547/intuitive-understanding-of-1d-2d-and-3d-convolutions-in-convolutional-neural-n
+- [recent advances in cnn](https://arxiv.org/pdf/1512.07108.pdf)
+- http://yann.lecun.com/exdb/publis/index.html#lecun-89
+- http://yann.lecun.com/ex/research/index.html
+
 
 ## Bibtex tidy a latex tooly
 [tidy yout bibtex](https://flamingtempura.github.io/bibtex-tidy/)
@@ -236,4 +243,4 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 ### 28. 7. 2020 - Online konzultace (16:00)
     - Finalni zhodnoceni textu
     - Co vsechno odevzdat
-    
+    - ..

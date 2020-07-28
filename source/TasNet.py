@@ -7,6 +7,10 @@ from ResBlock import ResBlock
 
 
 class Net(nn.Module):
+    """
+    Trida reprezentujici model TasNet. Jejim zavolanim na smes mluvcich vygeneruje data reprezentujici separovane mluvci.
+    Trida pouziva konvolucni bloky implementovane ve tride ResBlock.
+    """
     def __init__(self, X, R, nn_stride, padd, batch_size, DEBUG):
         super(Net, self).__init__()
         self.DEBUG=DEBUG
@@ -30,7 +34,6 @@ class Net(nn.Module):
                 dilation += 1
             dilation = 0
 
-        # TODO je tohle OK?
         torch.nn.init.xavier_uniform_(self.conv1.weight)
         torch.nn.init.xavier_uniform_(self.deconv.weight)
 

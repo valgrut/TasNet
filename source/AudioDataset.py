@@ -9,7 +9,8 @@ from tools import *
 
 class AudioDataset(data_utils.Dataset):
     """
-    Dataset of speech mixtures for speech separation.
+    Trida reprezentuje dataset a nahrava, transformuje a v cyklu poskytuje nahravky z datasetu.
+    Trida se pouziva pri testovani site, protoze pri testovani se pouzivaji cele nahravky a neni potreba je segmentovat. 
     """
     def __init__(self, path, transform=None, DEBUG=False):
         super(AudioDataset, self).__init__()

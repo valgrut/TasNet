@@ -14,6 +14,7 @@ SegmentDataset
 class SegmentDataset(data_utils.Dataset):
     """
     Dataset of speech mixtures for speech separation.
+    Trida reprezentuje dataset pro trenovani a validaci. Nahravky ktere jsou touto tridou nacteny, jsou segmentovany. Delka segmentu je dana parametrem. Segmenty jsou touto tridou poskytovany na vystup v pripade jejiho zavolani dataloaderem. V pripade, ze je nahravka segmentovana a zpracovana, tak se nahraje dalsi nahravka a zacne se segmentovat ta, az dokud se nezpracuje cely dataset.
     """
     def __init__(self, path, segment_length=32000):
         # print(">> __init__ ", path)
