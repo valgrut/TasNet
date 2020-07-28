@@ -16,6 +16,8 @@ import matplotlib.pyplot as plt
 x = np.arange(-3.0, 7.0, 0.1)
 scores = np.vstack([x, np.ones_like(x), 1.3 * np.ones_like(x), x/1.1 + 1])
 
+print(scores)
+
 plt.grid()
 plt.xlabel("x")
 plt.ylabel("Pravděpodobnost = Softmax(x)")

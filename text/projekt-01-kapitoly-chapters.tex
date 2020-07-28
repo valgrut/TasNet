@@ -231,18 +231,17 @@ Používá se na výstupních vrstvách pro predikci výstupu na základě pravd
 
 
 \subsection*{Softmax}
-Aktivační funkce softmax~\cite{mitdeeplearning}, neboli normalizovaná exponenciální funkce, se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z~vektoru reálných čísel. Výstupem je hodnota v~rozmezí $0$ až $1$, jak zobrazuje graf~\ref{fig:softmax}, na kterém lze vidět, že každá z~křivek reprezentuje pravděpodobnost nějaké třídy a jejich součtem v~jakémkoli bodě $x$ získáme hodnotu $1$. V~klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s~tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
+Aktivační funkce softmax~\cite{mitdeeplearning}, neboli normalizovaná exponenciální funkce, se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z~vektoru reálných čísel. Výstupem je hodnota v~rozmezí $0$ až $1$. Součtem pravděpodobností tříd v~jakémkoli bodě $x$ získáme hodnotu $1$. V~klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s~tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
 
 \begin{equation}
   f(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 \end{equation}
 
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.75]{obrazky-figures/softmax.png}
-    \caption{\label{fig:softmax}Graf aktivační funkce softmax. Každá křivka reprezentuje pravděpodobnost příslušnosti do nějaké třídy. Graf zobrazuje pravděpodobnostní rozdělení celkem $4$ tříd. Součtem hodnot $y$ v~libovolném bodě $x$ získáme hodnotu $1$.}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[scale=0.75]{obrazky-figures/softmax.png}
+%    \caption{\label{fig:softmax}Graf aktivační funkce softmax. Každá křivka reprezentuje pravděpodobnost příslušnosti do nějaké třídy. Graf zobrazuje pravděpodobnostní rozdělení celkem $4$ tříd. Součtem hodnot $y$ v~libovolném bodě $x$ získáme hodnotu $1$.}
+%\end{figure}
 
 
 \subsection*{Rectified Linear Unit}
@@ -793,12 +792,11 @@ Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění tr�
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
 \chapter{Experimenty a vyhodnocení}
 \label{experimenty}
 Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činnost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Proto je podstatný výkon stroje, na jakém je síť učena. Je-li k~dispozici výkonný stroj, dá se doba trénování výrazně snížit.
 
-Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper-parametry X, který ovlivňuje počet konvolučních bloků, hyper-parametrem R, který ovlivňuje počet opakování sekvence bloků a velikost segmentace nahrávek při trénování.
+Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper-parametry X, který ovlivňuje počet konvolučních bloků, hyper-parametrem R, který ovlivňuje počet opakování sekvence bloků a velikost segmentace nahrávek při trénování. Jak hodnoty X a R ovlivňují velikost sítě je dobře vidět na obrázku~\ref{fig:tasnet-stacked-resblocks}.
 
 Cílem experimentů je zjistit, které z~hyper-parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace. Kvalita separace je měřena metrikami STOI, SDR a PESQ, které byly popsány v~kapitole~\ref{separace}.
 
@@ -810,19 +808,19 @@ Trénování a vyhodnocení modelu proběhlo na množině jednokanálových nahr
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.24]{obrazky-figures/s1.png}
+    \includegraphics[scale=0.23]{obrazky-figures/s1.png}
     \caption{\label{fig:ref-s1}První mluvčí ze směsi}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.24]{obrazky-figures/s2.png}
+    \includegraphics[scale=0.23]{obrazky-figures/s2.png}
     \caption{\label{fig:ref-s2}Druhý mluvčí ze směsi}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.24]{obrazky-figures/mix.png}
+    \includegraphics[scale=0.23]{obrazky-figures/mix.png}
     \caption{\label{fig:ref-mixture}Ukázka směsi dvou mluvčích}
 \end{figure}
 
@@ -876,7 +874,7 @@ Rozměry modelů mají značný vliv na přesnost. V~této části se zaměřím
 \hline
 \textbf{X} & \textbf{R} & \textbf{Délka segmentů {[}vzorky{]}} & \textbf{SDR {[}dB{]}} & \textbf{STOI} & \textbf{PESQ} \\ \hline
 8 & 4 & 32000 & 12.45 & 0.93 & 2.69 \\ \hline
-8 & 2 & 32000 & \textbf{12.71} & \textbf{0.94} & \textbf{2.71} \\ \hline
+8 & 2 & 32000 & \textbf{12.71} & \textbf{0.94} & \textbf{2.71} \\ \hline \hline
 6 & 4 & 32000 & 10.69 & 0.92 & 2.52 \\ \hline
 6 & 3 & 32000 & 10.78 & 0.92 & 2.52 \\ \hline
 6 & 2 & 32000 & 10.80 & 0.92 & 2.52 \\ \hline
@@ -892,7 +890,7 @@ Podle výsledků zachycených v~této tabulce se zdá, že parametr R nemá moc 
 
 \begin{table}[!htbp]
 \centering
-\caption{Tabulka zobrazující vliv počtu opakování pro $X=4$ konvolučních bloků na výsledky testování.}
+\caption{Tabulka zobrazující vliv počtu opakování pro fixní hodnotu $R=4$ na výsledky testování.}
 \label{tab:vliv-X}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
@@ -991,9 +989,7 @@ Můj nejlepší model v~porovnání s~modely ze studie dosahuje hodnoty SDR $12.
 %\todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace. okomentovat take pohlavi vysledky, prumery sdr, mean, a pod.}
 
 
-Během testování a experimentů jsem sledoval vliv parametrů X, R a délka segmentů na kvalitu sítě, která je vyhodnocována metrikami SDR, STOI a PESQ. Nejlepších hodnot dosahuje model rozměrově téměř největší ($X = 8$, $R=2$), a to SDR $12.71$~dB, STOI $0.94$ a PESQ $2.71$. Při zmenšování hodnoty X se ale přesnost razantně snižuje. Parametr X má tedy dle výsledků největší vliv na přesnost sítě. Oproti tomu změna parametru R přesnost téměř neovlivnila, stejně jako délka segmentů při trénování sítě. Vzhledem k~dosaženým přesnostem bych vybral, jako kandidátní, modely o~velikosti $R=2$ a $X=8$ nebo $X=6$. Tyto modely dosahují dostatečně dobré kvality separovaných nahrávek.
-
-
+Během testování a experimentů jsem sledoval vliv parametrů X, R a délka segmentů na kvalitu sítě, která je vyhodnocována metrikami SDR, STOI a PESQ. Nejlepších hodnot dosahuje model rozměrově téměř největší ($X = 8$, $R=2$), a to SDR $12.71$~dB, STOI $0.94$ a PESQ $2.71$. Při zmenšování hodnoty X se ale přesnost razantně snižuje. Parametr X má tedy dle výsledků největší vliv na přesnost sítě. Oproti tomu změna parametru R přesnost téměř neovlivnila, stejně jako délka segmentů při trénování sítě. Vzhledem k~dosaženým přesnostem bych vybral, jako kandidátní, modely o~velikosti $R=2$ a $X=8$ nebo $X=6$. Tyto modely dosahují dostatečně dobré kvality separovaných nahrávek. Ukázka separovaných nahrávek k poslechu je přiložena na paměťovém médiu.
 
 Graf rozdělení SDR ukázal, že přestože se mnoho hodnot pohybuje lehce pod průměrnou hodnotou SDR daného modelu, tak mnoho separací dosáhlo poměrně větší přesnosti a mnoho separací poměrně menší přesnosti, než je průměrná.
 

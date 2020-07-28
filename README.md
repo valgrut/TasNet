@@ -244,3 +244,4 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - Finalni zhodnoceni textu
     - Co vsechno odevzdat
     - ..
+    - 
