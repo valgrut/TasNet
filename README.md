@@ -36,8 +36,10 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
 [urban sound classification](http://aqibsaeed.github.io/2016-09-03-urban-sound-classification-part-1/)
 [resnet](http://torch.ch/blog/2016/02/04/resnets.html)
 
-## Bibtex tidy
+## Bibtex tidy a latex tooly
 [tidy yout bibtex](https://flamingtempura.github.io/bibtex-tidy/)
+[generator tabulek](https://www.tablesgenerator.com/)
+
 
 ## Konzultace
 ### ut 8. 10. 2019 - Konzultace
@@ -220,19 +222,18 @@ Bakalarska prace (Bachelor thesis) - Speaker separation in time domain.
     - [DONE] exp - pohlavi - vysledky staci jednoho modelu, vysledky stejne budou podobne.
     - [DONE] exp - tasnet exp - pridat do tabulky nejaky muj model, takovej co ma stejne param moje vysledky
 
-
-### 27. 7. 2020 - [online] konzultace
-    - TODO
-        - [todo] oddelat title grafu, oddelat cas a datum checkpointu.
-
-        - pro XR odstavec
+### 27. 7. 2020 - Online konzultace (9:00)
+    - DONE
+        - (vliv delky je naspsanej spravne, takze tak udelat i XR)
         - [TODO] to co popisuji by bylo lepsi mit u sebe v tabulkach.
         -   v ramci jedne tebulky neco srovnavam
         -   vytucnit to, co je v tabulce nejlepsi
         -   nevadi, kdyz by byly duplicitni data
         -   takze tavulka a podto jeji popis
-        -   tam kde jsou vysledky z clanku, tak tam dat jeste vice jasne, ze je to z tama a dat citaci.
-        -   vliv delky je naspsanej spravne, takze tak udelat i XR
         -   teoreticky sloucit tabulky 6.2 a 6.1
         -   a do dalsi tabulky dat X8, X6, X4 a R4 a popsat jak to ovlivnuje vysledky.
 
+### 28. 7. 2020 - Online konzultace (16:00)
+    - Finalni zhodnoceni textu
+    - Co vsechno odevzdat
+    
