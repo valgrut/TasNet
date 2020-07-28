@@ -989,7 +989,7 @@ Můj nejlepší model v~porovnání s~modely ze studie dosahuje hodnoty SDR $12.
 %\todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace. okomentovat take pohlavi vysledky, prumery sdr, mean, a pod.}
 
 
-Během testování a experimentů jsem sledoval vliv parametrů X, R a délka segmentů na kvalitu sítě, která je vyhodnocována metrikami SDR, STOI a PESQ. Nejlepších hodnot dosahuje model rozměrově téměř největší ($X = 8$, $R=2$), a to SDR $12.71$~dB, STOI $0.94$ a PESQ $2.71$. Při zmenšování hodnoty X se ale přesnost razantně snižuje. Parametr X má tedy dle výsledků největší vliv na přesnost sítě. Oproti tomu změna parametru R přesnost téměř neovlivnila, stejně jako délka segmentů při trénování sítě. Vzhledem k~dosaženým přesnostem bych vybral, jako kandidátní, modely o~velikosti $R=2$ a $X=8$ nebo $X=6$. Tyto modely dosahují dostatečně dobré kvality separovaných nahrávek. Ukázka separovaných nahrávek k poslechu je přiložena na paměťovém médiu.
+Během testování a experimentů jsem sledoval vliv parametrů X, R a délka segmentů na kvalitu sítě, která je vyhodnocována metrikami SDR, STOI a PESQ. Nejlepších hodnot dosahuje model rozměrově téměř největší ($X = 8$, $R=2$), a to SDR $12.71$~dB, STOI $0.94$ a PESQ $2.71$. Při zmenšování hodnoty X se ale přesnost razantně snižuje. Parametr X má tedy dle výsledků největší vliv na přesnost sítě. Oproti tomu změna parametru R přesnost téměř neovlivnila, stejně jako délka segmentů při trénování sítě. Vzhledem k~dosaženým přesnostem bych vybral, jako kandidátní, modely o~velikosti $R=2$ a $X=8$ nebo $X=6$. Tyto modely dosahují dostatečně dobré kvality separovaných nahrávek. Ukázka separovaných nahrávek k~poslechu je přiložena na paměťovém médiu.
 
 Graf rozdělení SDR ukázal, že přestože se mnoho hodnot pohybuje lehce pod průměrnou hodnotou SDR daného modelu, tak mnoho separací dosáhlo poměrně větší přesnosti a mnoho separací poměrně menší přesnosti, než je průměrná.
 
@@ -998,13 +998,26 @@ Zajímavý poznatek vyplynul ze sledování hodnoty SDR v~rámci různých kombi
 
 %---------------------------------------------------------------------------------------------
 \section{Možná rozšíření a navrhnutá vylepšení}
-%\todo{k~poslednimu bodu zadani, ze diskutujte -- tak lze jen napsat, ze by mohlo toto toto, proste ukazat, ze jsem se nad tim minimalne zamyslel. mrknout na Tasnet studii, kde to resili jak by to slo vyresit, pripadne jestli bych nasel nejake studie ktere diskutuji o~zlepseni. Kdyz bude cas, tak to pak i vyzkouset a porovnat.}
-%\todo{Procist studii jaky oni tam navrhuji vylepseni}
-
-%Problémů, které lze v rámci zpracování řeči řešit, je mnoho.
-Práce by mohla být rozšířena o~variabilnější dataset pro trénování modelů. Zásadní problém při použití mých naučených modelů v~reálném scénáři je ten, že trénovací dataset není variabilní, když nepočítám různé kombinace mluvčích. V~případě, že by nahrávky řečníků byly pořízeny ve variabilnějším prostředí s~rozdílnou technikou, mikrofony a různým ruchem v~pozadí (další hlasy, hudba či tleskot), model by tak byl lépe využitelný. Trénování by také mohlo být rozšířeno o~nahrávky s~větším počtem mluvčích, což by ale vyžadovalo rozsáhlejší implementační úpravy.
+Práce by mohla být rozšířena o~variabilnější dataset pro trénování modelů. Zásadní problém při použití mých naučených modelů v~reálném scénáři je ten, že trénovací dataset není variabilní, když nepočítám různé kombinace konkrétních mluvčích a jejich pohlaví. V~případě, že by nahrávky řečníků byly pořízeny ve variabilnějším prostředí s~rozdílnou technikou, mikrofony a různým ruchem v~pozadí (další hlasy, hudba či tleskot), model by tak byl lépe využitelný. Trénování by také mohlo být rozšířeno o~nahrávky s~větším počtem mluvčích, což by ale vyžadovalo rozsáhlejší implementační úpravy. 
 
 Přímo na model by se dalo navázat další neuronovou sítí, která by se učila identifikovat řečníka či analyzovat vlastnosti jeho hlasu a na základě toho provádět další operace. Další možností je přepis separované řeči mluvčích na text. 
+
+Z~vnějšího pohledu by tedy bylo zajímavé rozšířit či navázat na model či vylepšit jeho trénování následovně.
+\begin{itemize}
+  \item \textbf{Variabilnější dataset} by mohl obsahovat nahrávky zachycené různými zařízeními a z~různého prostředí.
+  \item \textbf{Natrénovat větší modely} než jsem trénoval já v~rámci mých experimentů. Bylo by zajímavé vyzkoušet model o~velikosti třeba $X=10$ a sledovat chování a výsledky sítě. To jsem ale z~důvodu časové náročnosti trénování nestihl. 
+  \item \textbf{Více zdrojů na nahrávce} jako další mluvčí, hudba a podobně, což by ale obnášelo mnohé implementační změny.
+  \item \textbf{Identifikace mluvčího} na separované nahrávce a následné využití například k~ovládání domácího asistenta.
+  \item \textbf{Přepis řeči na text}, což vyžaduje separované nahrávky. Systém by tak mohl v~prostředí s~mnoha mluvčími separovat jejich řeč a automaticky tak přepisovat záznam ze schůze. 
+\end{itemize}
+
+Z~vnitřního pohledu na síť by mohl být model vylepšen mnoha způsoby, ale osobně bych, v~případě více času, navrhnul a vyzkoušel následující modifikace.
+\begin{itemize}
+  \item \textbf{Dvě metriky} jako objektivní funkce, místo dosavadní jedné.
+  \item \textbf{Dropout vrstvy} zakomponovat do modelu sítě. Bývají aplikovány po konvolučních vrstvách a mohlo by být zajímavé sledovat následné chování.
+  \item \textbf{Kauzální konfigurace} sítě a vyzkoušet jiné normalizační techniky.
+\end{itemize}
+
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------------------------------------
