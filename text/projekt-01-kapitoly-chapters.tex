@@ -961,7 +961,6 @@ Výsledkem pozorování je, že síť od sebe separuje mluvčí mnohem lépe v~p
 %\todo{podkapitola Inference -- ukazat separovane inferovane nahravky oproti referencni nahravce}
 
 
-
 %---------------------------------------------------------------------------------------------
 \section{Výsledky referenčního modelu TasNet}
 V~referenční studii~\cite{luo2018convtasnet} byly modely trénovány $100$ epoch s~různými hyper-parametry. Já se zaměřím na takové, se kterými experimentuji v~rámci mých modelů. Modely jsou v~nekauzální konfiguraci a používají batch normalizaci (BN).
@@ -983,7 +982,7 @@ Nejlepší model ze studie TasNet s~hodnotami parametrů $X=8$ a $R=4$ dosahuje 
 \end{tabular}
 \end{table}
 
-Můj nejlepší model v~porovnání s~modely ze studie dosahuje hodnoty SDR $12.71$~dB, jak ukazuje tabulka~\ref{tab:vliv-R}. Důvodem horší přesnosti může být nedostatečné natrénování modelu (60 epoch oproti jejich 100 epochám), použitá hodnota learning rate při trénování či implementační rozdíly. Přesto tato hodnota ukazuje, že je model již schopen obstojně separovat nahrávky.
+Můj nejlepší model v~porovnání s~modely ze studie dosahuje hodnoty SDR $12.71$~dB, jak ukazuje tabulka~\ref{tab:vliv-R}. Důvodem horší přesnosti může být nedostatečné natrénování modelu (60 epoch oproti jejich 100 epochám), použitá hodnota \textit{learning rate} při trénování či implementační rozdíly. Přesto tato hodnota ukazuje, že je model již schopen obstojně separovat nahrávky.
 
 
 %---------------------------------------------------------------------------------------------
@@ -997,7 +996,7 @@ Během testování a experimentů jsem sledoval vliv parametrů X, R a délka se
 
 Graf rozdělení SDR ukázal, že přestože se mnoho hodnot pohybuje lehce pod průměrnou hodnotou SDR daného modelu, tak mnoho separací dosáhlo poměrně větší přesnosti a mnoho separací poměrně menší přesnosti, než je průměrná.
 
-Zajímavý poznatek vyplynul ze sledování hodnoty SDR v~rámci ruzných kombinací pohlaví na separovaných nahrávkách. Nejvyšší hodnotu ($14.6$~dB) měly směsi, kde se nacházela dvojice rozdílného pohlaví. Homogenní dvojice dosahovaly mnohem menší přesnosti.
+Zajímavý poznatek vyplynul ze sledování hodnoty SDR v~rámci různých kombinací pohlaví na separovaných nahrávkách. Nejvyšší hodnotu ($14.6$~dB) měly směsi, kde se nacházela dvojice rozdílného pohlaví. Homogenní dvojice dosahovaly mnohem menší přesnosti.
 
 
 %---------------------------------------------------------------------------------------------
