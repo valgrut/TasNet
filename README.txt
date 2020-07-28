@@ -2,15 +2,14 @@
 Bakalarska prace (Bachelor thesis)
 
 
+
 ## Adresarova struktura
-- README.md
 - README.txt
-- experiments/
-    - fragmenty z prubehu implementace
+- BP.pdf
+- BP_tisk.pdf
 - colabntbs/
     - soubory pro spousteni site na Google colab
 - source/
-    - requirements.txt
     - train.py
     - test.py
     - inference.py
@@ -22,23 +21,37 @@ Bakalarska prace (Bachelor thesis)
     - util.py
     - tools.py
     - snr.py
-    - *.sh helper scripts
+    - nn.*.sh pomocne skripty pro jednoduche spousteni site s ruznym nastavenim
+
+- scripts/
+    - skripty pro odesilani dat na google drive, merlina a pod.
+    - getFromMerlin.sh
+    - sendToMerlin.sh
+    - gupload.sh
+    - gdownload.sh
+    - skripty pro vykresleni nekterych grafu
     - soubory s prefixy podle pohlavi na nahravkach
-    - ...
+
 - text/
+    - bib-styles/
+    - template-fig/
     - obrazky-figures/
         - obrazky a grafy k textu
-    - skripty pro odesilani textu na server pro preklad
     - *.bib a *.tex soubory s textem
+    - fitthesis.cls
     - Makefile
     - zadani.pdf
-    - bp.pdf
-- trained/
+
+- examples/
+    - mix.wav
+	- reconstructed_s1.wav
+    	- reconstructed_s2.wav
     - x.y.2020/
         - .log
         - .loss
         - checkpoints
         - inference
+
 
 
 ## Pouziti
@@ -47,8 +60,14 @@ usage: train.py [-h] [--epochs EPOCHS] [--segment-length SEGMENT_LENGTH] [--padd
                 [--load-checkpoint CHECKPOINT_FILE] [--disable-validation] [--disable-training]
                 [--debug] [--X X] [--R R] [--basepath BASE_DATA_PATH] [--dst-dir DST_DIR]
 
-### Setup and init neural network
+usage: test.py [-h] [--padding PADDING] [--stride STRIDE] [--minibatch-size MINIBATCH_SIZE] [--lr LEARNING_RATE] [--load-checkpoint CHECKPOINT_FILE] [--debug] [--X X] [--R R] [--basepath BASE_DATA_PATH]
+               [--dst-dir DST_DIR]
 
+usage: inference.py [-h] [--epochs EPOCHS] [--padding PADDING] [--stride STRIDE] [--minibatch-size MINIBATCH_SIZE] [--lr LEARNING_RATE] [--load-checkpoint CHECKPOINT_FILE] [--debug] [--X X] [--R R]
+                    [--basepath BASE_DATA_PATH] [--dst-dir DST_DIR] [--input-mixture INPUT_MIXTURE]
+
+
+## Setup and init neural network
 optional arguments:
   -h, --help            show this help message and exit
   --epochs EPOCHS       number of epochs for training
@@ -74,7 +93,10 @@ optional arguments:
   --dst-dir DST_DIR     path to directory where separated mixtures will be saved.
 
 
+
+
 ## Priklady
+### spusteni trenovani site
 python3 train.py \
     --epochs 60 \
     --X 8 \
@@ -83,7 +105,7 @@ python3 train.py \
     --dst-dir="$HOME/TEST/" \
     --minibatch-size 50
 
-
+### inference - preda se smes mluvcich a vystupem budou dve nahravky se separovanymi mluvcimi
 infere="$HOME/Desktop/speech_e2_a15000_mix.wav"
 python3 inference.py --R 3 --X 7 \
     --load-checkpoint="$HOME/TEST/tasnet_model_checkpoint_X7_R3.tar" \
@@ -91,10 +113,42 @@ python3 inference.py --R 3 --X 7 \
     --input-mixture="$(basename $infere)" \
     --dst-dir="$HOME/TEST/"
 
+### Testovani modelu
 python3 test.py --R 1 --X 1 \
     --basepath="$HOME/Documents/full/min/" \
     --load-checkpoint="$HOME/TEST/2020-07-01_X1_R1/checkpoint_X1_R1_e2.tar" \
     --dst-dir="$HOME/TEST/2020-07-01_X1_R1/" \
     --minibatch-size 1
 
+### Nacteni checkpointu a pokracovani trenovani
+python3 train.py \
+    --epochs 5 --X 1 --R 1 \
+    --load-checkpoint="$HOME/TEST/"$training_dir"/tasnet_model_checkpoint_2020-03-22_X1_R1_e5.tar" \
+    --basepath="$HOME/Documents/full/min/" \
+    --dst-dir="$HOME/TEST/"$training_dir"/" \
+    --minibatch-size 4
+
+### Dalsi moznosti
+Nebo lze pouzit skripty jako nntrain.sh a pod, ktere obsahuji prednastavene parametry a zjednodusuji tak spousteni. Je ale nutne modifikovat patricne parametry argumentu pro aktualni prostredi.
+
+
+
+
+## Nektere pozadovane knihovny
+- pystoi
+    - https://github.com/mpariente/pystoi
+    - pip install pystoi
+    - or for python3:
+    - pip3 install pystoi
+
+- pesq
+    - https://github.com/ludlows/python-pesq
+    - pip3 install https://github.com/ludlows/python-pesq/archive/master.zip
+
+- si-sdr
+    - https://github.com/sigsep/bsseval
+    - pip install bsseval
+
+- PyTorch
+- python3
 
