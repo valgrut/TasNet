@@ -633,27 +633,28 @@ Pro vyhodnocování výkonu sítě byly použity metriky SDR, PESQ a STOI. Pro v
  
  parsování argumentů programu\;
  instanciace modelu TasNet\;
- \If{$args.checkpoint != NULL$}{
+ \If{args.checkpoint != NULL}{
 	načtení checkpointu\; 
  }
- instanciace třídy SegmentDataset a dataloaderu pro trénovací data\;
- instanciace třídy SegmentDataset a dataloaderu pro validační data\;
+ instanciace třídy \texttt{SegmentDataset} a dataloaderu pro trénovací data\;
+ instanciace třídy \texttt{SegmentDataset} a dataloaderu pro validační data\;
+ 
  \For{epocha v~args.Epochs}{
-  \tcc{trénování}
+  \tcc{\textit{trénování}}
   loss = 0\;
   \For{směs\_mluvčích z~trénovacího datasetu}{
-    \tcc{cyklus načítá z~dataloaderu segmenty nahrávek, které jsou generovány v~třídě SegmentDataset}
-  	$odhadovaná\_separace = TasNet(směs\_mluvčích)$\;
-  	$loss = sisnr(optimální\_separace, odhadovaná\_separace)$\;
+    \tcc{\textit{cyklus načítá z~dataloaderu segmenty nahrávek, které jsou generovány v~třídě SegmentDataset}}
+  	odhadovaná\_separace = \texttt{TasNet}(směs\_mluvčích)\;
+  	loss = sisnr(optimální\_separace, odhadovaná\_separace)\;
   	propagace chyby a úprava vah\;
   }
-  \tcc{validace}
+  \tcc{\textit{validace}}
   vypnout gradient\;
   \For{směs\_mluvčích z~validačního datasetu}{
-  	$odhadovaná\_separace = TasNet(směs\_mluvčích)$\;
-  	$validacni\_loss = sisnr(optimální\_separace, odhadovaná\_separace)$\;
+  	odhadovaná\_separace = \texttt{TasNet}(směs\_mluvčích)\;
+  	validacni\_loss = sisnr(optimální\_separace, odhadovaná\_separace)\;
   	\If{hodnota validační loss neklesla potřetí v~řadě}{
-		$learning\_rate = learning\_rate / 2$\;
+		learning\_rate = learning\_rate / 2\;
   	}
   }
   na konci epochy uložit checkpoint\;
@@ -715,25 +716,25 @@ Algoritmus~\ref{alg:segmentace_nahravek} a obrázek~\ref{fig:generovani_segmentu
 
 \SetKwProg{Fn}{Function}{ is}{end}
  \Fn{segmentGenerator() : int[]}{
-	 $\texttt{s1\_segment} = \texttt{[]}$\;
-	 $\texttt{segptr} = \texttt{0}$\;
-	 \While{$\texttt{je dostupná další trojice nahrávek}$}{
-		\eIf{$\texttt{current\_mixture\_len} < \texttt{SEGMENT\_LENGTH}$}{
-			\tcc{A) aktuální nahrávka je kratší než délka segmentu}
-			$\texttt{s1\_segment} = \texttt{current\_source1[:]}$\;
-			$\texttt{yield s1\_segment}$\;
+	 \texttt{s1\_segment} = \texttt{[]}\;
+	 \texttt{segptr} = \texttt{0}\;
+	 \While{je dostupná další trojice nahrávek}{
+		\eIf{\texttt{current\_mixture\_len} < \texttt{SEGMENT\_LENGTH}}{
+			\tcc{\textit{A) aktuální nahrávka je kratší než délka segmentu}}
+			\texttt{s1\_segment} = \texttt{current\_source1[:]}\;
+			\texttt{yield s1\_segment}\;
 		}{
-			\tcc{B) aktuální nahrávka je delší než délka segmentu}
-			\eIf{$\texttt{segptr} + \texttt{SEGMENT\_LENGTH} < \texttt{current\_mixture\_len}$}{
-				\tcc{C) z~aktuální nahrávky vzít segment}				
-				$\texttt{s1\_segment} = \texttt{current\_source1[(segptr+SEGMENT\_LENGTH)]}$\;
-				$\texttt{segptr} += \texttt{SEGMENT\_LENGTH}$\;
-				$\texttt{yield s1\_segment}$\;
+			\tcc{\textit{B) aktuální nahrávka je delší než délka segmentu}}
+			\eIf{\texttt{segptr} + \texttt{SEGMENT\_LENGTH} < \texttt{current\_mixture\_len}}{
+				\tcc{\textit{C) z~aktuální nahrávky vzít segment}}				
+				\texttt{s1\_segment} = \texttt{current\_source1[(segptr+SEGMENT\_LENGTH)]}\;
+				\texttt{segptr} += \texttt{SEGMENT\_LENGTH}\;
+				\texttt{yield s1\_segment}\;
 			}{
-				\tcc{D) nelze již načíst celý segment, takže se vezme od konce}
-				$\texttt{start\_index} = \texttt{(current\_mixture\_len - SEGMENT\_LENGTH)}$\;
-				$\texttt{s1\_segment} = \texttt{current\_source1[start\_index:current\_mixture\_len]}$\;
-				$\texttt{yield s1\_segment}$\;
+				\tcc{\textit{D) nelze již načíst celý segment, takže se vezme od konce}}
+				\texttt{start\_index} = \texttt{(current\_mixture\_len - SEGMENT\_LENGTH)}\;
+				\texttt{s1\_segment} = \texttt{current\_source1[start\_index:current\_mixture\_len]}\;
+				\texttt{yield s1\_segment}\;
 			}
 		}
 	}
