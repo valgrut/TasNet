@@ -1,7 +1,7 @@
 \chapter{Úvod}
 Zpracování řeči hraje v~dnešní době důležitou roli v~mnoha rozličných oborech. Mezi jeden z~hlavních úkolů bezesporu patří separace zdrojů v~zaznamenaném signálu, který může být složen ze signálů N mluvčích, ale i nechtěného hluku okolí. Vyřešení problému je předpoklad k~dalším úkonům jako identifikace konkrétního mluvčího nebo třeba přepis konverzace na text. Se stále se zrychlujícím vývojem počítačů a s~jejich zvyšujícím se výkonem se do popředí dostávají metody zpracování řeči založené na neuronových sítích, které v~mnoha ohledech předčily ostatní algoritmy strojového učení.
 
-Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short--Time Fourier Transform). Taková reprezentace signálu není optimalizovaná pro separaci řeči a nemusí pro tento úkol být optimální. V~architektuře, která je navržena v~referenční studii s~názvem \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet}, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zároveň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
+Separace mluvčích v~časové doméně dosahuje mimořádných výsledků v~porovnání s~dosavadními metodami  založenými na převodu signálu z~časové domény do frekvenční domény pomocí algoritmu STFT (Short-Time Fourier Transform). Taková reprezentace signálu není optimalizovaná pro separaci řeči a nemusí pro tento úkol být optimální. V~architektuře, která je navržena v~referenční studii s~názvem \textbf{TasNet: Surpassing Ideal Time-Frequency Masking for Speech Separation}~\cite{luo2018convtasnet}, je vstupní signál převeden do nezáporné reprezentace, která je optimální pro extrakci jednotlivých mluvčích. Silnou stránkou systému je hluboká architektura sítě, která lépe modeluje dlouhodobé závislosti v~signálu. Zároveň se ale musí vypořádat s~problémy, které hluboké neuronové sítě mohou přinášet.
 
 Úkolem této práce je nastudovat si problematiku neuronových sítí a jejich základní principy, seznámit se problémem separace mluvčích pomocí neuronových sítí a následně implementovat síť podle architektury TasNet pro separaci mluvčích v~časové doméně, která byla navržena a popsána ve studii~\cite{luo2018convtasnet}. Poté tuto neuronovou síť natrénovat s~různými kombinacemi hodnot hyperparametrů, které ovlivňují velikost sítě a její vlastnosti, a nakonec porovnat přesnost a kvalitu separace mezi jednotlivými, různě velkými sítěmi a s~výsledky, kterých bylo dosaženo ve studii. Přesnost a kvalita separace bude vypočítána pomocí metrik určených k~hodnocení kvality řečového signálu. Sítě budou testovány a vyhodnocovány na testovací množině jednokanálových směsí dvou mluvčích.
 
@@ -29,16 +29,16 @@ Pro vyřešení problému je potřeba se zaměřit na dvě oblasti. Na separaci 
 
 
 \section{Metody pro separaci jednokanálových nahrávek}
-Pro separaci zdrojových signálů z~nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z~nichž asi nejznámější jsou computational auditory scene analysis (CASA)~\cite{choi2005blind} a non--negative matrix factorization (NMF)~\cite{NIPS2000_1861},~\cite{yoshii2013beyond}, používané pro separaci jednokanálových nahrávek. V~posledních letech se do popředí dostaly přístupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody beamforming~\cite{adel2012beamforming} nebo state--of--the--art multi--channel blind source separation~\cite{Negro_2016}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v~článku~\cite{speechseparation}.
+Pro separaci zdrojových signálů z~nahrávek směsí existuje mnoho algoritmů založených na zpracování signálů, z~nichž asi nejznámější jsou computational auditory scene analysis (CASA)~\cite{choi2005blind} a non-negative matrix factorization (NMF)~\cite{NIPS2000_1861},~\cite{yoshii2013beyond}, používané pro separaci jednokanálových nahrávek. V~posledních letech se do popředí dostaly přístupy založené na hlubokých neuronových sítích, které předčily svou přesností a výkonností dosavadní algoritmy. Pro separaci vícekanálových nahrávek se používají metody beamforming~\cite{adel2012beamforming} nebo state-of-the-art multi-channel blind source separation~\cite{Negro_2016}, které ale jsou nad rámec této práce. Tato kapitola shrnuje některé metody pro řešení separace, které jsou zmíněny v~článku~\cite{speechseparation}.
 
 
 \subsection{Computational auditory scene analysis}
-Metoda computational auditory scene analysis (CASA) je založena na procesu v~lidském mozku, který separuje zdroje ze směsi mluvčích a simuluje vysokoúrovňové chování lidského sluchu. Pro separaci jsou většinou manuálně navrhnuta segmentační pravidla pro operování nad nízkoúrovňovými příznaky k~odhadu časově frekvenční (T--F) masky, která izoluje komponenty signálu jednotlivých mluvčích a následně je použita pro rekonstrukci všech zdrojů.
+Metoda computational auditory scene analysis (CASA) je založena na procesu v~lidském mozku, který separuje zdroje ze směsi mluvčích a simuluje vysokoúrovňové chování lidského sluchu. Pro separaci jsou většinou manuálně navrhnuta segmentační pravidla pro operování nad nízkoúrovňovými příznaky k~odhadu časově frekvenční (T-F) masky, která izoluje komponenty signálu jednotlivých mluvčích a následně je použita pro rekonstrukci všech zdrojů.
 
 Přestože tato metoda byla i nadále rozvíjena, tak má mnoho nevýhod jako špatnou generalizaci v~důsledku manuálního vytváření pravidel, nemožnost automatického učení z~dat nebo nemožnost použití na separaci jiných zdrojů než je lidská řeč, které značně omezují její použití v~mnoha reálných případech.
 
 
-\subsection{Non--negative matrix factorization}
+\subsection{Non-negative matrix factorization}
 Non-negative matrix factorization (NMF) patří mezi daty řízené metody a je založena na předpokladu, že struktura spektrogramu může být reprezentována malým počtem bází.
 
 Pro NMF platí
@@ -64,26 +64,26 @@ Stejně jako metoda CASA, i tato má mnoho nevýhod, které omezují její použ
 
 
 \subsection{Hluboké neuronové sítě}
-Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou--li definovány jako problémy učení s~učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat původní zdroj signálu.
+Nejlépe si při řešení problému separace mluvčích vedou postupy založené na hlubokém učení a neuronových sítích. Takové modely jsou nejefektivnější, jsou-li definovány jako problémy učení s~učitelem. Podle definice~\ref{equ:definiceseparace}, je cílem separace rekonstruovat původní zdroj signálu.
 
-Metody většinou převáděly směs do časově--frekvenční (T--F) reprezentace znázorněné na obrázku~\ref{fig:spektrum} pomocí short--time Fourier transform (STFT). Tato reprezentace $Y(t,f)$ sloužila pro rekonstrukci každého zdroje $X_s(t,f)$ v~T--F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k~nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z~trénovacího datasetu a odstranit tak nemožné kombinace~\cite{speechseparation}.
+Metody většinou převáděly směs do časově-frekvenční (T-F) reprezentace znázorněné na obrázku~\ref{fig:spektrum} pomocí short-time Fourier transform (STFT). Tato reprezentace $Y(t,f)$ sloužila pro rekonstrukci každého zdroje $X_s(t,f)$ v~T-F doméně pro každý časový bod $t$ a frekvenci $f$. Vzhledem k~nekonečnému počtu kombinací zdrojových signálů, ze kterých by se dala poskládat původní směs, je nutné naučit model vlastnosti signálů z~trénovacího datasetu a odstranit tak nemožné kombinace~\cite{speechseparation}.
 
-Takový problém lze formulovat jako mnoha--třídový regresní problém. Máme--li vstupní příznak $Y(t,f)$ směsi mluvčích, model se bude učit predikovat individuální tok příznaků $X_s(t,f)$ pomocí vhodného trénovacího datasetu. Později se ukázalo, že se lepších výsledků dosáhne, bude--li model odhadovat množinu masek $M_s(t,f)$ pro každý ze zdrojů, místo přímého odhadu spektra $X_s(t,f)$ a ty pak použít k~rekonstrukci spektra $X_s(t,f)$ jako $X_s = M_s \circ Y$, kde $\circ$ je násobení po prvcích. Masky jsou invariantní vůči proměnným vlastnostem vstupních dat a jejich správný odhad je důležitým faktorem pro kvalitu separace~\cite{speechseparation}.
+Takový problém lze formulovat jako mnoha-třídový regresní problém. Máme-li vstupní příznak $Y(t,f)$ směsi mluvčích, model se bude učit predikovat individuální tok příznaků $X_s(t,f)$ pomocí vhodného trénovacího datasetu. Později se ukázalo, že se lepších výsledků dosáhne, bude-li model odhadovat množinu masek $M_s(t,f)$ pro každý ze zdrojů, místo přímého odhadu spektra $X_s(t,f)$ a ty pak použít k~rekonstrukci spektra $X_s(t,f)$ jako $X_s = M_s \circ Y$, kde $\circ$ je násobení po prvcích. Masky jsou invariantní vůči proměnným vlastnostem vstupních dat a jejich správný odhad je důležitým faktorem pro kvalitu separace~\cite{speechseparation}.
 
 % https://link-springer-com.ezproxy.lib.vutbr.cz/content/pdf/10.1631/FITEE.1700814.pdf
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.15]{obrazky-figures/spektrum.png}
-    \caption{\label{fig:spektrum}Ukázka nahrávky řeči a korespondujícího spektrogramu, na němž jsou zobrazeny frekvence (osa $y$) z~nahrávky řeči v~čase (osa $x$). Zvuk se na spektrogram (T--F reprezentaci) převádí pomocí operace short--time Fourier transform (STFT). Obrázek převzat z~\cite{speech-spectrogram}.}
+    \caption{\label{fig:spektrum}Ukázka nahrávky řeči a korespondujícího spektrogramu, na němž jsou zobrazeny frekvence (osa $y$) z~nahrávky řeči v~čase (osa $x$). Zvuk se na spektrogram (T-F reprezentaci) převádí pomocí operace short-time Fourier transform (STFT). Obrázek převzat z~\cite{speech-spectrogram}.}
 \end{figure}
 
 
-Vzniklo mnoho dalších přístupů založených na hlubokém učení. Jeden z~nich ukázal, že pro separaci mluvčích není T--F doména optimální. Architektura TasNet~\cite{luo2018convtasnet}, na kterou se tato práce zaměřuje a je popsána v~kapitole~\ref{tasnet}, převádí vstupní směs na nezápornou reprezentaci a separaci provádí v~časové doméně s~velmi dobrými výsledky.
+Vzniklo mnoho dalších přístupů založených na hlubokém učení. Jeden z~nich ukázal, že pro separaci mluvčích není T-F doména optimální. Architektura TasNet~\cite{luo2018convtasnet}, na kterou se tato práce zaměřuje a je popsána v~kapitole~\ref{tasnet}, převádí vstupní směs na nezápornou reprezentaci a separaci provádí v~časové doméně s~velmi dobrými výsledky.
 
 
 \section{Vyhodnocovací metriky}
-Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba závisí na řešeném problému. Jejich výpočet probíhá na testovacím datasetu. Nejčastěji používané metriky pro měření kvality separace jsou metriky pro vyhodnocování slepé separace zdrojů (BSS), dále short-time objective intelligibility (STOI) a procentuální vyhodnocení kvality řeči (PESQ). Metriky pro BSS jsou source--to--distortion ratio (SDR), signal--to--inference ratio (SIR) a signal--to--artifacts ratio (SAR).
+Pro vyhodnocení kvality separace se používají různé metriky. Jejich volba závisí na řešeném problému. Jejich výpočet probíhá na testovacím datasetu. Nejčastěji používané metriky pro měření kvality separace jsou metriky pro vyhodnocování slepé separace zdrojů (BSS), dále short-time objective intelligibility (STOI) a procentuální vyhodnocení kvality řeči (PESQ). Metriky pro BSS jsou source-to-distortion ratio (SDR), signal-to-inference ratio (SIR) a signal-to-artifacts ratio (SAR).
 
 
 \subsection{Source to distortion ratio}
@@ -100,7 +100,7 @@ Hodnota SDR se vypočítá jako
   SDR = 10*log_{10}\frac{\|s_{target}\|^2}{\|e_{interf} + e_{noise} + e_{artif}\|^2}
 \end{equation}
 
-Hodnoty $e_{interf}$, $e_{noise}$ a $e_{artif}$ udávají chybu inference, hluku a artefaktů. $s_{target} = f(s_j)$ je verze původního zdroje $s_j$, který je obohacen o~dovolenou hladinou rušení $f \in \mathcal{F}$. Metrika je počítána pro každý odhadnutý zdroj $\hat{s_j}$ tak, že ten je porovnán s~referenčním zdrojem $s_j$. V~prvním kroku je dekomponován zdroj $\hat{s_j}$ jako součet $s_{target} + e_{interf} + e_{noise} + e_{artif}$. Ve druhém kroku jsou vypočítány poměry energie, které jsou potřeba při vyhodnocení relativního zastoupení těchto čtyř složek. Je--li při výpočtu porovnáván $\hat{s_j}$ se všemi ostatními zdroji $s_j'$, tak je jako finální vybrána taková hodnota, která během porovnávání dávala nejlepší výsledek. Porovnávat lze buď celý signál, nebo pouze jeho segmenty~\cite{vincent-inria-00544230}. V~této práci je pro výpočet SDR používána knihovna $\texttt{mir\_eval}$~\cite{mir-eval}.
+Hodnoty $e_{interf}$, $e_{noise}$ a $e_{artif}$ udávají chybu inference, hluku a artefaktů. $s_{target} = f(s_j)$ je verze původního zdroje $s_j$, který je obohacen o~dovolenou hladinou rušení $f \in \mathcal{F}$. Metrika je počítána pro každý odhadnutý zdroj $\hat{s_j}$ tak, že ten je porovnán s~referenčním zdrojem $s_j$. V~prvním kroku je dekomponován zdroj $\hat{s_j}$ jako součet $s_{target} + e_{interf} + e_{noise} + e_{artif}$. Ve druhém kroku jsou vypočítány poměry energie, které jsou potřeba při vyhodnocení relativního zastoupení těchto čtyř složek. Je-li při výpočtu porovnáván $\hat{s_j}$ se všemi ostatními zdroji $s_j'$, tak je jako finální vybrána taková hodnota, která během porovnávání dávala nejlepší výsledek. Porovnávat lze buď celý signál, nebo pouze jeho segmenty~\cite{vincent-inria-00544230}. V~této práci je pro výpočet SDR používána knihovna $\texttt{mir\_eval}$~\cite{mir-eval}.
 
 
 % \cite{vincent-inria-00544230
@@ -115,7 +115,7 @@ Hodnoty $e_{interf}$, $e_{noise}$ a $e_{artif}$ udávají chybu inference, hluku
 
 
 \subsection{Perceptual evaluation of speech quality}
-Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná objektivní metoda pro vyhodnocování kvality řeči na end--to--end síti. PESQ byla vyvinuta pro předpověď subjektivního skóre \textit{mean opinion score} (MOS), kde posluchač hodnotil kvalitu připojení (řeči) jednou z~pěti možností (\uv{bad}, \uv{poor}, \uv{fair}, \uv{good}, \uv{excellent}). Těmto možnostem odpovídaly číselné hodnoty $1$ až $5$, které pak byly zprůměrovány, což nakonec byla finální hodnota MOS.
+Procentuální vyhodnocení kvality řeči (PESQ)~\cite{pesq-itut} je standardizovaná objektivní metoda pro vyhodnocování kvality řeči na end-to-end síti. PESQ byla vyvinuta pro předpověď subjektivního skóre \textit{mean opinion score} (MOS), kde posluchač hodnotil kvalitu připojení (řeči) jednou z~pěti možností (\uv{bad}, \uv{poor}, \uv{fair}, \uv{good}, \uv{excellent}). Těmto možnostem odpovídaly číselné hodnoty $1$ až $5$, které pak byly zprůměrovány, což nakonec byla finální hodnota MOS.
 
 Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamená lepší procentuální kvalitu~\cite{sdr-pesq-optimization}. Hodnota je určena na základě porovnání originálního signálu a přeneseného signálu skrze komunikační systém. Lze ho ale aplikovat i pro vyhodnocení separace mluvčích, kde referenční nahrávka je porovnána s~nahrávkou, která byla vyprodukována neuronovou sítí.
 %http://wireless.feld.cvut.cz/mesaqin2002/full09.pdf
@@ -131,10 +131,10 @@ Hodnota PESQ se pohybuje od $-0.5$ do $4.5$ s~tím, že vyšší hodnota znamen�
 
 
 
-\subsection{Short--time objective intelligibility}
-Short--time objective intelligibility (STOI)~\cite{taal-stoi} je metrika založená na hodnotě korelačního koeficientu mezi časově--frekvenčním spektrem referenčního a odhadnutého signálu řeči v~krátkých překrývajících se segmentech~\cite{5713237}. Spektrum čisté a separované nahrávky je získáno pomocí short--time Fourier transform (STFT).
+\subsection{Short-time objective intelligibility}
+Short-time objective intelligibility (STOI)~\cite{taal-stoi} je metrika založená na hodnotě korelačního koeficientu mezi časově-frekvenčním spektrem referenčního a odhadnutého signálu řeči v~krátkých překrývajících se segmentech~\cite{5713237}. Spektrum čisté a separované nahrávky je získáno pomocí short-time Fourier transform (STFT).
 
-Oba signály jsou dekomponovány pomocí $\frac{1}{3}$--oktávových filtrů pomocí STFT, následně segmentovány na krátké úseky s~$50\%$ překrytím, normalizovány, klipnuty a nakonec porovnány průměry hodnot korelačních koeficientů~\cite{taal-stoi}. Hodnota STOI se pohybuje v~rozmezí $0$ a $1$, korespondující s~procentuální úspěšností, což znamená, že čím vyšší hodnota, tím lepší výsledek.
+Oba signály jsou dekomponovány pomocí $\frac{1}{3}$-oktávových filtrů pomocí STFT, následně segmentovány na krátké úseky s~$50\%$ překrytím, normalizovány, klipnuty a nakonec porovnány průměry hodnot korelačních koeficientů~\cite{taal-stoi}. Hodnota STOI se pohybuje v~rozmezí $0$ a $1$, korespondující s~procentuální úspěšností, což znamená, že čím vyšší hodnota, tím lepší výsledek.
 
 % Kniha: https://books.google.cz/books?id=ib9ODwAAQBAJ&pg=PA215&lpg=PA215&dq=what+gives+value+of+stoi+in+good+speech&source=bl&ots=14SyU3Hc95&sig=ACfU3U3kMNnhD5fqdunpK2VJ3QRPNHrWTA&hl=en&sa=X&ved=2ahUKEwiQ2ML5gsPqAhUrRBUIHQfOB2wQ6AEwA3oECAgQAQ#v=onepage&q=what%20gives%20value%20of%20stoi%20in%20good%20speech&f=false
 % http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.696.995&rep=rep1&type=pdf
@@ -154,9 +154,9 @@ Neuronové sítě (\textit{artificial neural networks}) jsou výpočetní model,
 
 Účelem neuronové sítě je naučit se plnit zadanou úlohu. Rozdíl oproti běžným algoritmům je ale ten, že způsob, jakým síť má problém řešit, není explicitně naprogramován, ale je postupně naučen. Základní způsoby učení jsou s~učitelem (\textit{supervised}) a bez učitele (\textit{unsupervised}). 
 
-\textbf{Učení s~učitelem}, pod které spadá i tato práce, spočívá v~mapování vstupních dat na data výstupní na základě vzorových příkladů dvojic vstup--výstup. Množině takových dvojic se říká trénovací dataset.
+\textbf{Učení s~učitelem}, pod které spadá i tato práce, spočívá v~mapování vstupních dat na data výstupní na základě vzorových příkladů dvojic vstup-výstup. Množině takových dvojic se říká trénovací dataset.
 
-Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. Problém separace mluvčích, který spadá do zpracování řeči, se dá klasifikovat jako mnoho--třídový regresní problém.
+Mezi problémy, které se dají řešit neuronovými sítěmi patří klasifikační a regresní problémy. Konkrétní příklad z~oblasti klasifikace může být rozpoznávání objektů na obraze, psaného písma nebo detekce obličejů na videu, ale i mnohé aplikace ve zpracování řeči. Problém separace mluvčích, který spadá do zpracování řeči, se dá klasifikovat jako mnoho-třídový regresní problém.
 
 Upravovat samotnou strukturu a chování neuronové sítě lze pomocí jejích hyperparametrů, což jsou parametry určující nastavení neuronové sítě a trénovacího algoritmu. Tyto parametry musí být určeny před začátkem trénování a většinu nelze později měnit. Mohou určovat kapacitu modelu, velikost záběrného pole, velikost filtrů, ale i regulovat samotný proces učení nastavením počtu epoch, po které se model má učit, nebo také počet dat předaný v~jedné dávce (tzv. \textit{minibatches}) během učení sítě.
 
@@ -231,7 +231,7 @@ Používá se na výstupních vrstvách pro predikci výstupu na základě pravd
 
 
 \subsection*{Softmax}
-Aktivační funkce softmax~\cite{mitdeeplearning}, neboli normalizovaná exponenciální funkce, se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z~vektoru reálných čísel. Výstupem je hodnota v~rozmezí $0$ až $1$, jak zobrazuje graf~\ref{fig:softmax}, na kterém lze vidět, že každá z křivek reprezentuje pravděpodobnost nějaké třídy a jejich součtem v jakémkoli bodě $x$ získáme hodnotu $1$. V~klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s~tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
+Aktivační funkce softmax~\cite{mitdeeplearning}, neboli normalizovaná exponenciální funkce, se často umisťuje na výstupní vrstvy a používá se pro výpočet rozdělení pravděpodobnosti z~vektoru reálných čísel. Výstupem je hodnota v~rozmezí $0$ až $1$, jak zobrazuje graf~\ref{fig:softmax}, na kterém lze vidět, že každá z~křivek reprezentuje pravděpodobnost nějaké třídy a jejich součtem v~jakémkoli bodě $x$ získáme hodnotu $1$. V~klasifikačních modelech výstup reprezentuje pravděpodobnosti jednotlivých tříd s~tím, že cílová třída má nejvyšší hodnotu pravděpodobnosti~\cite{nwankpa2018activation}. Vypočítá se jako
 
 \begin{equation}
   f(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
@@ -241,7 +241,7 @@ Aktivační funkce softmax~\cite{mitdeeplearning}, neboli normalizovaná exponen
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.75]{obrazky-figures/softmax.png}
-    \caption{\label{fig:softmax}Graf aktivační funkce softmax. Každá křivka reprezentuje pravděpodobnost příslušnosti do nějaké třídy. Graf zobrazuje pravděpodobnostní rozdělení celkem $4$ tříd. Součtem hodnot $y$ v libovolném bodě $x$ získáme hodnotu $1$.}
+    \caption{\label{fig:softmax}Graf aktivační funkce softmax. Každá křivka reprezentuje pravděpodobnost příslušnosti do nějaké třídy. Graf zobrazuje pravděpodobnostní rozdělení celkem $4$ tříd. Součtem hodnot $y$ v~libovolném bodě $x$ získáme hodnotu $1$.}
 \end{figure}
 
 
@@ -265,7 +265,7 @@ Předpis funkce PReLU je definován jako
   \end{cases}
 \end{equation}
 
-V~případě, že je hodnota parametru $\alpha=0$, pak se jedná o~ReLU. Je--li parametr $\alpha = c$, kde $c\in\mathbb{R}$ je malá konstanta (například $c = 0.03$), jedná se o~Leaky ReLU (LReLU) a motivací pro její zavedení bylo vyhnout se nulovému gradientu.
+V~případě, že je hodnota parametru $\alpha=0$, pak se jedná o~ReLU. Je-li parametr $\alpha = c$, kde $c\in\mathbb{R}$ je malá konstanta (například $c = 0.03$), jedná se o~Leaky ReLU (LReLU) a motivací pro její zavedení bylo vyhnout se nulovému gradientu.
 
 
 \begin{figure}[H]
@@ -284,7 +284,7 @@ V~případě, že je hodnota parametru $\alpha=0$, pak se jedná o~ReLU. Je--li 
 
 
 \section{Konvoluční vrstvy}
-Konvoluční neuronová síť (CNN)~\cite{6795724} je typ dopředných neuronových sítí, která obsahuje jednu či více konvolučních vrstev. CNN jsou vhodné pro zpracování dat v~mřížkovitém uspořádání. To může být ve 2--D obrázek ve formě pole pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v~čase v~1--D. Konvoluční vrstvy používají místo běžného násobení matic speciální typ lineární operace -- konvoluci.
+Konvoluční neuronová síť (CNN)~\cite{6795724} je typ dopředných neuronových sítí, která obsahuje jednu či více konvolučních vrstev. CNN jsou vhodné pro zpracování dat v~mřížkovitém uspořádání. To může být ve 2-D obrázek ve formě pole pixelů či spektrum nahrávky, nebo vzorky zvukové nahrávky v~čase v~1-D. Konvoluční vrstvy používají místo běžného násobení matic speciální typ lineární operace -- konvoluci.
 
 Diskrétní konvoluce je definována jako
 \begin{equation}
@@ -293,7 +293,7 @@ Diskrétní konvoluce je definována jako
 kde $\star$ je konvoluční operátor, $f$ je funkce signálu, funkce $g$ je konvoluční jádro a $f_i$ a $g_i$ jsou hodnoty funkce na indexu $i$.
 
 
-Účelem CNN je v~prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. V~pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nezformují v~konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V~některých modelech zpracování řeči je zvuk transformován na 2--D spektrogram (viz obrázek \ref{fig:spektrum}) a lze s~ním pracovat stejně, jako při zpracování obrazu.
+Účelem CNN je v~prvních vrstvách sítě extrahovat lokální příznaky ze vstupu. V~pozdějších vrstvách neurony kombinují extrahované lokální příznaky do komplexnějších příznaků (oko, nos), až dokud nezformují v~konečných vrstvách například celý obličej, znak, kočka či jiný objekt, který se síť učí detekovat. V~některých modelech zpracování řeči je zvuk transformován na 2-D spektrogram (viz obrázek \ref{fig:spektrum}) a lze s~ním pracovat stejně, jako při zpracování obrazu.
 
 
 \begin{figure}[H]
@@ -311,7 +311,7 @@ Konvoluční operace je definována jako
 \begin{equation}
    s[n] = (x \star w)[n]
 \end{equation}
-kde $x$ jsou vstupní data obvykle ve formě multidimenzionílního pole (tenzoru) a funkce $w$ je konvoluční jádro. Výstupem operace je mapa příznaků. Konvoluční operaci lze definovat i pro vyšší dimenze. Máme--li například 2--D vstupní obrázek, pak i konvoluční jádro bude dvourozměrné. Přestože v~mnoha knihovnách lze nalézt implementovanou operaci konvoluce, často se jedná o~cross--korelaci.
+kde $x$ jsou vstupní data obvykle ve formě multidimenzionílního pole (tenzoru) a funkce $w$ je konvoluční jádro. Výstupem operace je mapa příznaků. Konvoluční operaci lze definovat i pro vyšší dimenze. Máme-li například 2-D vstupní obrázek, pak i konvoluční jádro bude dvourozměrné. Přestože v~mnoha knihovnách lze nalézt implementovanou operaci konvoluce, často se jedná o~cross-korelaci.
 
 
 Průběh a chování konvoluce lze řídit hyperparametry \textit{stride}, \textit{padding} a \textit{dilation}. Hodnota stride modifikuje velikost kroku konvolučního jádra. Chování při různých hodnotách lze vidět na obrázku~\ref{fig:conv_stride1} a~\ref{fig:conv_stride2}. 
@@ -371,13 +371,13 @@ Dalším faktorem, který ovlivňuje výpočet, je kauzalita sítě. Tato vlastn
 \end{figure}
 
 \section{Učení neuronových sítí}
-Cílem trénování je naučit neuronovou síť vykonávat nějaký úkol. Trénování založené na metodě učení s~učitelem vyžaduje dostatečně velký dataset obsahující dvojice vstup--výstup a obnáší volbu objektivní funkce, kterou se během trénování snažíme minimalizovat. 
+Cílem trénování je naučit neuronovou síť vykonávat nějaký úkol. Trénování založené na metodě učení s~učitelem vyžaduje dostatečně velký dataset obsahující dvojice vstup-výstup a obnáší volbu objektivní funkce, kterou se během trénování snažíme minimalizovat. 
 
 Formálně je cílem učení aproximovat nějakou funkci $f^\ast$. Síti je předána vstupní hodnota $x$, pro kterou síť definuje mapování na výstupní hodnotu jako $y = f(x; \theta)$, kde $\theta$ je parametr, který se síť učí tak, aby dosáhla nejlepší aproximace funkce~\cite{mitdeeplearning}.
 
 
 \subsection{Objektivní funkce}
-Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v~závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \uv{cenu}, která je asociována s~touto událostí či hodnotami. Je--li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce. Výstupní hodnota loss funkce nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z~datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije--li se hodnota objektivní funkce s~opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
+Objektivní funkce (loss funkce, cost funkce) je funkce, která je během učení minimalizována nebo maximalizována, v~závislosti na konkrétním úkolu a kontextu použití. Tato funkce mapuje událost či hodnoty na reálné číslo reprezentující \uv{cenu}, která je asociována s~touto událostí či hodnotami. Je-li tato funkce použita pro optimalizační problém, pak je cílem hodnotu minimalizovat a funkci se pak říká loss funkce. Výstupní hodnota loss funkce nám udává velikost chyby, která se počítá na základě rozdílu mezi výstupem sítě a odpovídajícími trénovacími daty z~datasetu. Pak platí, že čím menší chyba, tím lépe síť provádí svůj úkol, na který je trénována. Použije-li se hodnota objektivní funkce s~opačným znaménkem, tak lze funkci použít jako hodnotící metriku.
 
 
 V~rámci učení sítě je žádoucí, aby gradient objektivní funkce byl dostatečně velký (prudký) a předvídatelný. V~takovém případě bude dobře sloužit pro účely trénování. V~případě malého gradientu by funkce saturovala (byla by příliš plochá) a to by mohlo negativně ovlivnit trénování sítě~ \cite{mitdeeplearning}. 
@@ -462,7 +462,7 @@ Regularizace je souhrn postupů, které říkají, jak modifikovat učící algo
 %str 117
 
 \subsection{Reziduální spojení}
-Velmi hluboké neuronové sítě přinesly v~mnoha aplikacích velmi dobré výsledky. S~přibývající hloubkou se ale stává její trénování složitější. Jeden z~problémů, který se při učení projevoval, byl explodující a mizející gradient~\cite{279181}. Tento problém byl adresován zavedením normalizačních vrstev~\cite{ioffe2015batch} a počáteční optimalizované inicializace, což dovolilo sítím konvergovat s~využitím \textit{stochastic gradient descent} se zpětnou propagací (\textit{back--propagation})~ \cite{6795724}. Poté se objevil problém degradace, který nebyl zapříčiněn přetrénováním, a způsobil, že s~přibývající hloubkou sítě její přesnost náhle prudce klesla, což indikovalo, že systémy nelze optimalizovat stejným způsobem a přidání dalších vrstev pouze zvýšilo trénovací chybu. Problém degradace lze řešit zakomponováním reziduálních spojení, které je zobrazeno na obrázku \ref{fig:residualconnection}~\cite{he2015deep}.
+Velmi hluboké neuronové sítě přinesly v~mnoha aplikacích velmi dobré výsledky. S~přibývající hloubkou se ale stává její trénování složitější. Jeden z~problémů, který se při učení projevoval, byl explodující a mizející gradient~\cite{279181}. Tento problém byl adresován zavedením normalizačních vrstev~\cite{ioffe2015batch} a počáteční optimalizované inicializace, což dovolilo sítím konvergovat s~využitím \textit{stochastic gradient descent} se zpětnou propagací (\textit{back-propagation})~ \cite{6795724}. Poté se objevil problém degradace, který nebyl zapříčiněn přetrénováním, a způsobil, že s~přibývající hloubkou sítě její přesnost náhle prudce klesla, což indikovalo, že systémy nelze optimalizovat stejným způsobem a přidání dalších vrstev pouze zvýšilo trénovací chybu. Problém degradace lze řešit zakomponováním reziduálních spojení, které je zobrazeno na obrázku \ref{fig:residualconnection}~\cite{he2015deep}.
 
 \begin{figure}[H]
     \centering
@@ -474,11 +474,11 @@ Reziduální spojení, neboli identitní mapování, je zkratka mezi jednou či 
 
 
 \subsection{Význam validační množiny v~trénování}
-Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v~průběhu nemění. Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k~přetrénování (\textit{overfitting}). Pro tento případ se použije validační sada, která je odlišná od trénovací sady a síť z ní ještě neviděla nahrávky. Validační sada je zpracována po skončení zpracování trénovací sady a je použita pro monitorování, jak dobře síť generalizuje dosud neviděná data. Na základě výsledků lze následně rozhodnout o úpravě některých hyper--parametrů~\cite{mitdeeplearning}.
+Většina algoritmů strojového učení má nějakou sadu hyperparametrů, kterou je upravováno chování algoritmu. Hodnoty hyperparametrů obvykle bývají nastavovány ručně ještě před spuštěním procesu učení a hodnota se v~průběhu nemění. Některá nastavení se nicméně mohou stát hyperparametrem a být upravována během trénování, ale není vhodné je měnit na základě výsledku učení na trénovací sadě, protože by mohlo dojít k~přetrénování (\textit{overfitting}). Pro tento případ se použije validační sada, která je odlišná od trénovací sady a síť z~ní ještě neviděla nahrávky. Validační sada je zpracována po skončení zpracování trénovací sady a je použita pro monitorování, jak dobře síť generalizuje dosud neviděná data. Na základě výsledků lze následně rozhodnout o~úpravě některých hyper-parametrů~\cite{mitdeeplearning}.
 
 
 %\bigskip
-%V~této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V~návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back--propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
+%V~této kapitole byly popsány základní principy neuronových sítí, jejich základní struktura a stavební bloky. V~návaznosti na to byly zmíněny konvoluční sítě, které jsou pro tuto práci stěžejní. Dále byl popsán proces trénování sítí a algoritmy back-propagation a gradient descent. Nakonec byly zmíněny některé oblasti, které se zabývají optimalizacemi sítě, kladoucí si za cíl zlepšit například dobu trénování nebo kvalitu naučení sítě, což může mít za následek lepší výkon sítě při její evaluaci nebo umožnit nasazení ve zdrojově omezeném prostředí.
 
 
 
@@ -491,9 +491,9 @@ Tato kapitola vychází z~referenční studie \textbf{TasNet: Surpassing Ideal T
 
 Přestože metody pro zpracování řeči v~takovém akustickém prostředí, ve kterém se současně prolíná mnoho řečových signálů, v~poslední době zaznamenaly velké zlepšení, stále trpí mnoha nedostatky. Přesnost systémů, odezva a nároky na výpočetní výkon jsou u~těchto metod natolik zásadní, že znemožňují nebo velmi omezují jejich nasazení mimo výzkumné prostředí, například v~aplikacích, které by mohly zpracovávat řeč v~reálném čase.
 
-Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově--frekvenční (T--F) reprezentace (spektrogramu) pomocí short--time Fourier transform (STFT), ale tato reprezentace není optimální pro separaci mluvčích~\cite{speechseparationoverview}.
+Většina dosavadních postupů byla založena na převodu směsi řečových signálů do časově-frekvenční (T-F) reprezentace (spektrogramu) pomocí short-time Fourier transform (STFT), ale tato reprezentace není optimální pro separaci mluvčích~\cite{speechseparationoverview}.
 
-Pro překonání nedostatků předešlých metod byla navržena architektura fully convolutional time--domain audio separation network (Conv--TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~temporal convolutional network (TCN)~\cite{lea2016temporal},~\cite{bai2018empirical}. TCN je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
+Pro překonání nedostatků předešlých metod byla navržena architektura fully convolutional time-domain audio separation network (Conv-TasNet), založena na hlubokém učení a konvolučních neuronových sítích. Model prvně použije konvoluční enkodér k~převodu krátkých segmentů směsi mluvčích na odpovídající nezápornou reprezentaci, která je optimalizovaná pro extrakci jednotlivých mluvčích. Samotné separace je docíleno aplikací masek na danou reprezentaci. Masky pro každého mluvčího pro každý segment v~každém časovém kroku jsou odhadnuty v~temporal convolutional network (TCN)~\cite{lea2016temporal},~\cite{bai2018empirical}. TCN je tvořena opakující se posloupností konvolučních bloků se zvyšující se časovou dilatací. Po aplikaci masek jsou separovaní mluvčí rekonstruováni lineárním dekodérem. Tuto posloupnost operací zobrazuje zjednodušený obrázek \ref{fig:tasnet-pipe}. Dále v~kapitole budou jednotlivé části popsány detailněji.
 
 \begin{figure}[H]
     \centering
@@ -502,8 +502,8 @@ Pro překonání nedostatků předešlých metod byla navržena architektura ful
 \end{figure}
 
 
-\section{Konvoluční auto--enkodér}
-Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z~reprezentace na původní nahrávku, jak ukazuje obrázek~\ref{fig:tasnet-autoenkoder}.
+\section{Konvoluční auto-enkodér}
+Konvoluční auto-enkodér převádí vstupní segmenty nahrávky na nezápornou reprezentaci a následně zase zpět z~reprezentace na původní nahrávku, jak ukazuje obrázek~\ref{fig:tasnet-autoenkoder}.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.9]{obrazky-figures/autoenkoder.pdf}
@@ -512,7 +512,7 @@ Konvoluční auto--enkodér převádí vstupní segmenty nahrávky na nezáporno
 
 
 \subsection{Enkódování směsi}
-Každý segment směsi o~délce $L$, $\boldsymbol{x_k} \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $\boldsymbol{w} \in \mathbb{R}^{1 \times N}$ pomocí 1--D konvoluční operace jako
+Každý segment směsi o~délce $L$, $\boldsymbol{x_k} \in \mathbb{R}^{1 \times L}$, kde $k = 1, \dots, \frac{T}{L}$, je transformován na nezápornou reprezentaci $\boldsymbol{w} \in \mathbb{R}^{1 \times N}$ pomocí 1-D konvoluční operace jako
 \begin{equation}
   	\boldsymbol{w} = ReLU(\boldsymbol{x} \circledast \boldsymbol{U})
 \end{equation}
@@ -520,7 +520,7 @@ kde $\boldsymbol{U} \in \mathbb{R}^{N \times L}$ obsahuje $N$ vektorů, každý 
 
 
 \subsection{Dekódování extrahovaných mluvčích}
-Pro převod z~reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1--D dekonvoluční operace rekonstruuje původní signál $\boldsymbol{x}$ jako $\boldsymbol{x} \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
+Pro převod z~reprezentace zpět do podoby audio nahrávky slouží lineární dekodér. Pomocí 1-D dekonvoluční operace rekonstruuje původní signál $\boldsymbol{x}$ jako $\boldsymbol{x} \in \mathbb{R}^{1 \times L}$. Tuto operaci lze definovat jako 
 \begin{equation}
 \label{equ:decoder}
   \boldsymbol{\hat{x}} = \boldsymbol{w}\boldsymbol{V}
@@ -548,10 +548,10 @@ Nakonec jsou reprezentace $\boldsymbol{d_i}$ rekonstruovány zpět na korespondu
 \end{figure}
 
 
-Na začátku separačního modulu je přidána lineární operace $1 \times 1$--conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. Jak zapadá separační modul do schématu je zobrazeno na obrázku~\ref{fig:tasnet-separationmodule}.
+Na začátku separačního modulu je přidána lineární operace $1 \times 1$-conv jako bottleneck, která určuje počet kanálů na vstupu a výstupu následující sekvence konvolučních bloků. Jak zapadá separační modul do schématu je zobrazeno na obrázku~\ref{fig:tasnet-separationmodule}.
 
 \subsection{Temporal Convolutional Network}
-Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1--D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku~\ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje $X$ konvolučních bloků se zvyšující se časovou dilatací, která se zvyšuje exponenciálně podle počtu bloků a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$--krát. Exponenciální růst dilatačního faktoru zajišťuje dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek~\ref{fig:dilation_factor} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
+Jádrem separační části je \textit{temporal convolutional network} skládající se z~naskládaných  1-D konvolučních bloků s~časovou dilatací jak lze vidět na obrázku~\ref{fig:tasnet-stacked-resblocks}. Každá vrstva v~TCN obsahuje $X$ konvolučních bloků se zvyšující se časovou dilatací, která se zvyšuje exponenciálně podle počtu bloků a nabývá hodnot $1, 2, 4, \dots, 2^{X-1}$. Taková sekvence bloků je opakována $R$-krát. Exponenciální růst dilatačního faktoru zajišťuje dostatečně velké okno pro využití výhod dlouhých časových závislostí v~signálu řeči. Obrázek~\ref{fig:dilation_factor} zobrazuje rostoucí časovou dilataci na vstupních vzorcích signálu.
 
 Výstup posledního bloku posledního opakování v~TCN je předán $1 \times 1$ konvoluční vrstvě, která má $N \times C$ filtrů a nakonec aktivační funkci softmax k~odhadu $C$ vektorů masek pro každého z~$C$ cílových mluvčích.
 
@@ -589,11 +589,11 @@ V~každém konvolučním bloku jsou operace $1 \times 1 \texttt{-}conv$ a $D\tex
 
 
 \section{Normalizace}
-Při trénování neuronových sítí může docházet k~fenoménu \uv{vnitřní kovariantní posuv} (\textit{internal covariate shift}), kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini--batch trénovacích dat~\cite{ioffe2015batch},~\cite{ba2016layer}.
+Při trénování neuronových sítí může docházet k~fenoménu \uv{vnitřní kovariantní posuv} (\textit{internal covariate shift}), kvůli kterému je nutné pečlivě inicializovat parametry a volit menší hodnotu learning rate, což zpomaluje trénování sítě. K~adresování problému slouží zakomponování normalizace do architektury neuronové sítě. Normalizace je aplikována na každý mini-batch trénovacích dat~\cite{ioffe2015batch},~\cite{ba2016layer}.
 
-Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s~channel--wise layer normalization (cLN), global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}, kterou jsem se rozhodl použít v~mé implementaci.
+Konvoluční bloky obsahují normalizační vrstvy, které můžou významně ovlivnit výkon sítě. Ve studii bylo experimentováno s~channel-wise layer normalization (cLN), global layer normalization (gLN) a batch normalization (BN)~\cite{ioffe2015batch}, kterou jsem se rozhodl použít v~mé implementaci.
 
-Metoda cLN je aplikována na vstup separačního modulu pro zajištění invariance při změně měřítka vstupních dat. Tato metoda je vhodná pro použití v~kauzální i nekauzální konfiguraci, je--li použita v~konvolučních blocích. Normalizace cLN je aplikována na každý segment $y_k$. 
+Metoda cLN je aplikována na vstup separačního modulu pro zajištění invariance při změně měřítka vstupních dat. Tato metoda je vhodná pro použití v~kauzální i nekauzální konfiguraci, je-li použita v~konvolučních blocích. Normalizace cLN je aplikována na každý segment $y_k$. 
 
 Metoda gLN je aplikována globálně na každý příznak na rozměry kanálu i času. Tuto normalizaci lze použít pouze při nekauzální konfiguraci, protože výpočet probíhá na základě celého vstupu.
 Při kauzální konfiguraci může být použita také metoda BN.
@@ -619,9 +619,9 @@ Jak vypadá kompletní schéma architektury po sestavení a propojení jednotliv
 \label{implementace}
 Pro implementaci neuronových sítí vzniklo mnoho frameworků jako PyTorch, Tensorflow, Keras a další, které umožňují síť poskládat z~již předdefinovaných modulů. Jejich vlastnosti lze modifikovat dle potřeby pomocí argumentů při jejich instanciaci nebo při jejich použití. Kromě těchto bloků a mnoha dalších možností frameworky obsahují i metody pro práci s~datasety, funkce pro vykreslování grafů a pro matematické operace.
 
-Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet~\cite{luo2018convtasnet} pro separaci mluvčích v~časové doméně. V~rámci zadání jsem si zvolil použít framework s~názvem PyTorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. PyTorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v~celé práci používám jeho aktuálně nejnovější verzi (Python~3.8.2). Mimo jiné podporuje práci s~datasety, včetně implementace vlastního nahrávání a manipulace s~daty. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku PyTorch je \texttt{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána síti ke zpracování. Samotná implementace probíhala na systému Kali linux (4.19.0--kali5--amd64), který je založený na systému Debian. Aplikace byla vyvíjena v~textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v~příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z~terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
+Mým úkolem bylo implementovat neuronovou síť podle architektury TasNet~\cite{luo2018convtasnet} pro separaci mluvčích v~časové doméně. V~rámci zadání jsem si zvolil použít framework s~názvem PyTorch\footnote{\url{https://pytorch.org/}}, který má kvalitní dokumentaci a aktivní uživatelskou základnu. PyTorch funguje nad jazykem Python\footnote{\url{https://www.python.org/}} a v~celé práci používám jeho aktuálně nejnovější verzi (Python~3.8.2). Mimo jiné podporuje práci s~datasety, včetně implementace vlastního nahrávání a manipulace s~daty. Základní jednotkou, se kterou síť pracuje, je tensor. Ve frameworku PyTorch je \texttt{torch.Tensor} třída reprezentující multidimenzionální matici obsahující data jednoho typu. Na tensory jsou převáděna data během načítání datasetu a následně předávána síti ke zpracování. Samotná implementace probíhala na systému Kali linux (4.19.0-kali5-amd64), který je založený na systému Debian. Aplikace byla vyvíjena v~textovém editoru Vim\footnote{\url{https://www.vim.org/}} a byla během implementace spouštěna a testována v~příkazovém procesoru Bash\footnote{\url{https://www.gnu.org/software/bash/}} (Bourne Again SHell) verze 5.0.16. Bash jsem zvolil i pro implementaci některých pomocných skriptů kvůli jednoduchému spouštění z~terminálu a možnostem automatizace některých opakujících se příkazů. Pro správu verzí jsem používal verzovací systém Git\footnote{\url{https://git-scm.com/}}.
 
-Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50--70}, což se ale ukázalo jako naprosto nevhodné vzhledem k~náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožnilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24~hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v~závislosti na tom, která z~nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
+Trénování sítě probíhalo z~počátku na CPU \textit{intel i5} mého osobního notebooku \textit{Lenovo Y50-70}, což se ale ukázalo jako naprosto nevhodné vzhledem k~náročnosti výpočtu kvůli nedostatečnému výkonu. Začal jsem tedy používat službu \textit{Google colab}, která poskytuje na omezenou dobu (12 hodin) stroje, které navíc obsahují technologii \textit{cuda}, což mi umožnilo výpočet provádět na GPU, čímž se trénování zrychlilo několikanásobně. Ještě více pomohlo předplacení služby, čímž se mi prodloužila doba, po kterou jsem mohl síť trénovat, na 24~hodin a zvýšila se šance na získání silnějších strojů. Modely byly trénovány na GPU \textit{T80} a \textit{T100} v~závislosti na tom, která z~nich mi zrovna byla přidělena pro dané sezení (\textit{session}). 
 
 Pro vyhodnocování výkonu sítě byly použity metriky SDR, PESQ a STOI. Pro výpočet SDR jsem použil zdrojový kód nacházející se na githubu~\footnote{\url{https://github.com/craffel/mir_eval}}. Metriky PESQ~\footnote{\url{https://github.com/ludlows/python-pesq}} a STOI~\footnote{\url{https://github.com/mpariente/pystoi}} byly nainstalovány pomocí balíkového nástroje pip~\footnote{\url{https://pypi.org/project/pip/}}.
 
@@ -667,9 +667,9 @@ Model neuronové sítě byl logicky rozdělen na několik dílčích částí, z
 
 
 \subsection*{Třídy SegmentDataset a AudioDataset}
-Třídy \texttt{SegmentDataset} a \texttt{AudioDataset} slouží pro načítání korespondujících trojic nahrávek směs--zdroj1--zdroj2 z~adresáře, kde je uložen dataset. Nahrávky jsou ve formátu wav a vzorkovány na 8KHz. Třídy tato data dále transformují na tenzory a normalizují na jednotkovou varianci a zero--mean. 
+Třídy \texttt{SegmentDataset} a \texttt{AudioDataset} slouží pro načítání korespondujících trojic nahrávek směs-zdroj1-zdroj2 z~adresáře, kde je uložen dataset. Nahrávky jsou ve formátu wav a vzorkovány na 8KHz. Třídy tato data dále transformují na tenzory a normalizují na jednotkovou varianci a \textit{zero-mean}. 
 
-Tyto třídy používají některé pomocné funkce definované v~souboru \texttt{tools.py} pro dorovnání nedostatečně velkých nahrávek ve zpracovávaném mini--batchi nulami na velikost nejdelší z~nich, protože data obsažená v~mini--batchi musejí mít stejnou velikost.
+Tyto třídy používají některé pomocné funkce definované v~souboru \texttt{tools.py} pro dorovnání nedostatečně velkých nahrávek ve zpracovávaném mini-batchi nulami na velikost nejdelší z~nich, protože data obsažená v~mini-batchi musejí mít stejnou velikost.
 
 Při spuštění programu jsou nahrány názvy wav souborů do polí, které jsou poté buď náhodně či sekvenčně procházeny a postupně dochází k~načítání trojic nahrávek na aktuálním indexu. 
 
@@ -688,9 +688,9 @@ Třída \texttt{ResBlock} reprezentuje jeden konvoluční blok, který je opakov
 
 \section{Segmentace nahrávek}
 \label{sec:segmentace}
-Pro účely trénování sítě byly vstupní nahrávky rozdělovány na segmenty o~délce 4, případně 2 sekund. Délku segmentů $L_s$ lze nastavit přes argument $\texttt{----segment\_length}$ při volání skriptu $\texttt{train.py}$. Tato hodnota reprezentuje jeden z~hyper--parametrů sítě. Výchozí hodnota je 4 sekundy. Při nižších hodnotách se prodlužuje délka trénování, protože se z~jedné vstupní nahrávky o~délce $L$ vygeneruje až $L/L_s$  segmentů a tím narůstá počet dat, který síť musí zpracovat. 
+Pro účely trénování sítě byly vstupní nahrávky rozdělovány na segmenty o~délce 4, případně 2 sekund. Délku segmentů $L_s$ lze nastavit přes argument $\texttt{----segment\_length}$ při volání skriptu $\texttt{train.py}$. Tato hodnota reprezentuje jeden z~hyper-parametrů sítě. Výchozí hodnota je 4 sekundy. Při nižších hodnotách se prodlužuje délka trénování, protože se z~jedné vstupní nahrávky o~délce $L$ vygeneruje až $L/L_s$  segmentů a tím narůstá počet dat, který síť musí zpracovat. 
 
-Poslední segment by byl kratší, pokud by délka nahrávky byla kratší než délka segmentu. V~takovém případě je segment doplněn nulami do délky ostatních segmentů jak lze vidět na obrázku~\ref{fig:segmentace_padding}. Toto doplnění je nutné kvůli dávkovému zpracování (\textit{mini--batches}), které neumožňuje rozdílnou délku elementů v~dávce. Pokud je délka nahrávky delší než délka segmentu, tak se poslední segment vezme od konce bez nutnosti ho pak nulami doplňovat. Skládání segmentů do minibatche zobrazuje obrázek~\ref{fig:minibatch_segmentace}. Při vzorkovací frekvenci $f_s = 8000Hz$, obsahují segmenty $f_s * L_s$ vzorků vstupní nahrávky. 
+Poslední segment by byl kratší, pokud by délka nahrávky byla kratší než délka segmentu. V~takovém případě je segment doplněn nulami do délky ostatních segmentů jak lze vidět na obrázku~\ref{fig:segmentace_padding}. Toto doplnění je nutné kvůli dávkovému zpracování (\textit{mini-batches}), které neumožňuje rozdílnou délku elementů v~dávce. Pokud je délka nahrávky delší než délka segmentu, tak se poslední segment vezme od konce bez nutnosti ho pak nulami doplňovat. Skládání segmentů do minibatche zobrazuje obrázek~\ref{fig:minibatch_segmentace}. Při vzorkovací frekvenci $f_s = 8000Hz$, obsahují segmenty $f_s * L_s$ vzorků vstupní nahrávky. 
 
 \begin{figure}[H]
     \centering
@@ -701,7 +701,7 @@ Poslední segment by byl kratší, pokud by délka nahrávky byla kratší než 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.9]{obrazky-figures/minibatch_segmentace_padding.pdf}
-    \caption{\label{fig:segmentace_padding}Je--li zpracovávána nahrávka, jejíž délka je kratší než je délka segmentu, je tento segment doplněn z~prava nulami do požadované délky.}
+    \caption{\label{fig:segmentace_padding}Je-li zpracovávána nahrávka, jejíž délka je kratší než je délka segmentu, je tento segment doplněn z~prava nulami do požadované délky.}
 \end{figure}
 
 Algoritmus~\ref{alg:segmentace_nahravek} a obrázek~\ref{fig:generovani_segmentu} zobrazují proces segmentace. Funkce $\texttt{segmentGenerator()}$, která slouží jako generátor, pracuje současně se třemi nahrávkami -- se směsí dvou mluvčích, s~nahrávkou prvního mluvčího a s~nahrávkou druhého mluvčího, které jsou do atributů $\texttt{current\_mixture}$, $\texttt{current\_source1}$ a $\texttt{current\_source2}$ třídy $\texttt{SegmentDataset}$ nahrávány funkcí $\texttt{loadNextAudio()}$ poté, co z~předchozí trojice nahrávek již nelze vygenerovat další segmenty.
@@ -753,7 +753,7 @@ Kód segmentace také umožňuje určit délku, o~kterou se segmenty budou přek
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{obrazky-figures/segment_overlap.pdf}
-    \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím. Zde je vidět překrytí (\texttt{overlap}) o~délce $1$. Výsledný \texttt{offset} $n$--tého segmentu se vypočítá jako $\texttt{offset}_n = n*(seg\_len - overlap)$, kde $n = 0, 1, \dots, N$.}
+    \caption{\label{fig:segment_overlap}Segmentace nahrávek s~nenulovým překrytím. Zde je vidět překrytí (\texttt{overlap}) o~délce $1$. Výsledný \texttt{offset} $n$-tého segmentu se vypočítá jako $\texttt{offset}_n = n*(seg\_len - overlap)$, kde $n = 0, 1, \dots, N$.}
 \end{figure}
 
 
@@ -795,11 +795,11 @@ Dále jsem vytvořil několik jednoduchých skriptů pro rychlé spuštění tr�
 
 \chapter{Experimenty a vyhodnocení}
 \label{experimenty}
-Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činnost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Proto je podstatný výkon stroje, na jakém je síť učena. Je--li k~dispozici výkonný stroj, dá se doba trénování výrazně snížit.
+Neuronové sítě představují mocný nástroj mnoha využití, který ale musí být naučen, jak danou činnost provádět. Trénování sítí je výpočetně náročný úkol, jehož náročnost se, krom dalších parametrů, může lišit v~závislosti na velikosti datasetu a sítě. Obecně čím větší dataset a rozměr sítě, tím déle trénování trvá. Proto je podstatný výkon stroje, na jakém je síť učena. Je-li k~dispozici výkonný stroj, dá se doba trénování výrazně snížit.
 
-Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper--parametry X, který ovlivňuje počet konvolučních bloků, hyper--parametrem R, který ovlivňuje počet opakování sekvence bloků a velikost segmentace nahrávek při trénování.
+Po dostatečném natrénování probíhá vyhodnocení sítě. Výsledky trénování jsou měřeny metrikami, které se volí na základě problému, který se síť učila řešit. Výsledky testování sítě jsou následně porovnávány v~závislosti na velikosti daného modelu. Velikost modelu je ovlivněna hyper-parametry X, který ovlivňuje počet konvolučních bloků, hyper-parametrem R, který ovlivňuje počet opakování sekvence bloků a velikost segmentace nahrávek při trénování.
 
-Cílem experimentů je zjistit, které z~hyper--parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace. Kvalita separace je měřena metrikami STOI, SDR a PESQ, které byly popsány v~kapitole~\ref{separace}.
+Cílem experimentů je zjistit, které z~hyper-parametrů mají největší vliv na kvalitu separace a tedy na výsledky vyhodnocení, a jak moc lze model zmenšit, aby stále dával dostatečně dobré výsledky separace. Kvalita separace je měřena metrikami STOI, SDR a PESQ, které byly popsány v~kapitole~\ref{separace}.
 
 
 \section{Dataset}
@@ -830,7 +830,7 @@ Lze si všimnout, že sečtením signálů jednotlivých mluvčích na obrázku~
 
 %------------------------------------------------------------------------------
 \section{Průběh trénování}
-Bylo natrénováno $7$ modelů s~různými hodnotami zkoumaných hyper--parametrů, jak ukazují tabulky~\ref{tab:vliv-X} a~\ref{tab:vliv-R}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v~jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K~tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s~hodnotou $\texttt{learning~rate} = 0.001$ a velikostí mini--batchů fixovanou na $50$ segmentů v~jednom mini--batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:X864R4trainloss} a~\ref{graf:X8R4trainlosssegments}. Dále grafy~\ref{graf:X8R4validtrainloss} a~\ref{graf:X4R4validtrainloss} zobrazují trénovací i validační hodnoty loss na konci epoch v~průběhu trénování vybraných modelů.
+Bylo natrénováno $7$ modelů s~různými hodnotami zkoumaných hyper-parametrů, jak ukazují tabulky~\ref{tab:vliv-X} a~\ref{tab:vliv-R}. Hodnota $X$ představuje počet konvolučních bloků, hodnota $R$ představuje počet opakování sekvence $X$ bloků a hodnota \uv{segment length} představuje počet vzorků v~jednom segmentu. Trénování proběhlo na datasetu Wall Street Journal (WSJ0), který obsahuje $20000$ trénovacích nahrávek následováno průchodem validačního datasetu, který obsahuje $10000$ nahrávek, na konci každé epochy. K~tomu byl použit stroj na Google Colab -- Tesla P100-PCIE, který poskytuje rovněž výkonné GPU. Doba trénování jednotlivých modelů se pohybovala kolem $20$ hodin. Všechny modely byly trénovány po 60 epoch s~hodnotou $\texttt{learning~rate} = 0.001$ a velikostí mini-batchů fixovanou na $50$ segmentů v~jednom mini-batchi. Hodnotu loss během trénování zobrazují, pro vybrané modely, grafy~\ref{graf:X864R4trainloss} a~\ref{graf:X8R4trainlosssegments}. Dále grafy~\ref{graf:X8R4validtrainloss} a~\ref{graf:X4R4validtrainloss} zobrazují trénovací i validační hodnoty loss na konci epoch v~průběhu trénování vybraných modelů.
 
 %\todo{https://www.tablesgenerator.com/}.
 
@@ -882,11 +882,11 @@ Rozměry modelů mají značný vliv na přesnost. V~této části se zaměřím
 \end{tabular}
 \end{table}
 
-Prvním sledovaným parametrem bude počet opakování R. Tabulka~\ref{tab:vliv-R} zobrazuje velikosti sledovaných modelů a výsledky jejich evaluace. Nejlepší model zde dosahuje u~metriky SDR hodnoty až $12.71$~dB. Jak lze vypozorovat, tak model při zvýšení počtu opakování R jeví mírné zhoršení ve sledovaných metrikách. Hodnota SDR se snížila na $12.45$~dB, což je pořád velmi dobrý výsledek v porovnání s menšími modely. Za povšimnutí také stojí zmenšení ostatních metrik -- STOI a PESQ, kde rovněž došlo k mírnému zhoršení při zvýšeném počtu opakování R.
+Prvním sledovaným parametrem bude počet opakování R. Tabulka~\ref{tab:vliv-R} zobrazuje velikosti sledovaných modelů a výsledky jejich evaluace. Nejlepší model zde dosahuje u~metriky SDR hodnoty až $12.71$~dB. Jak lze vypozorovat, tak model při zvýšení počtu opakování R jeví mírné zhoršení ve sledovaných metrikách. Hodnota SDR se snížila na $12.45$~dB, což je pořád velmi dobrý výsledek v~porovnání s~menšími modely. Za povšimnutí také stojí zmenšení ostatních metrik -- STOI a PESQ, kde rovněž došlo k~mírnému zhoršení při zvýšeném počtu opakování R.
 
-Při snížení počtu konvolučních bloků na $X = 6$ a při počtu opakování $R=2$, dosahuje nejlepších výsledků model s hodnotou SDR $10.80$~dB. Oproti modelu s $X=8$ je to již markantnější zhoršení u všech metrik, ale pořád jsou výsledné hodnoty dobré, vzhledem k velikosti modelu. Z tabulky je ale patrné, že při změně počtu opakování R téměř nedochází k žádné změně ve výsledných hodnotách metriky SDR. Metriky PESQ a STOI dokonce vykazují úplně stejné výsledky pro všechny hodnoty $R=2$, $R=3$ a $R=4$.
+Při snížení počtu konvolučních bloků na $X = 6$ a při počtu opakování $R=2$, dosahuje nejlepších výsledků model s~hodnotou SDR $10.80$~dB. Oproti modelu s~$X=8$ je to již markantnější zhoršení u~všech metrik, ale pořád jsou výsledné hodnoty dobré, vzhledem k~velikosti modelu. Z~tabulky je ale patrné, že při změně počtu opakování R téměř nedochází k~žádné změně ve výsledných hodnotách metriky SDR. Metriky PESQ a STOI dokonce vykazují úplně stejné výsledky pro všechny hodnoty $R=2$, $R=3$ a $R=4$.
 
-Podle výsledků zachycených v této tabulce se zdá, že parametr R nemá moc velký vliv na výslednou přesnost sítě. Model s~nižším počtem opakování dokonce dosahuje lehce lepších výsledků než model s~počtem opakování $R = 4$. Jeden z důvodů by mohl být ten, že v~závislosti na velikosti trénovaného modelu by mohla lépe vyhovovat menší či větší hodnota \texttt{learning~rate}, než ta, která byla použita při trénování mých modelů. Pro všechny modely nezávisle na velikosti jsem používal \texttt{learning rate} o velikosti~$0.001$.
+Podle výsledků zachycených v~této tabulce se zdá, že parametr R nemá moc velký vliv na výslednou přesnost sítě. Model s~nižším počtem opakování dokonce dosahuje lehce lepších výsledků než model s~počtem opakování $R = 4$. Jeden z~důvodů by mohl být ten, že v~závislosti na velikosti trénovaného modelu by mohla lépe vyhovovat menší či větší hodnota \texttt{learning~rate}, než ta, která byla použita při trénování mých modelů. Pro všechny modely nezávisle na velikosti jsem používal \texttt{learning rate} o~velikosti~$0.001$.
 
 
 \begin{table}[!htbp]
@@ -902,11 +902,11 @@ Podle výsledků zachycených v této tabulce se zdá, že parametr R nemá moc 
 \end{tabular}
 \end{table}
 
-Druhým sledovaným parametrem bude parametr X. Tabulka~\ref{tab:vliv-X} zobrazuje modely s fixní velikostí počtu opakování $R=4$ a s měnícím se parametrem X. Dále zobrazuje hodnoty sledovaných metrik. Nejlepších výsledků zde jednoznačně dosahuje model s počtem bloků $X = 4$, a to hodnot SDR~$12.45$~dB, STOI~$0.93$ a PESQ~$2.69$. 
+Druhým sledovaným parametrem bude parametr X. Tabulka~\ref{tab:vliv-X} zobrazuje modely s~fixní velikostí počtu opakování $R=4$ a s~měnícím se parametrem X. Dále zobrazuje hodnoty sledovaných metrik. Nejlepších výsledků zde jednoznačně dosahuje model s~počtem bloků $X = 4$, a to hodnot SDR~$12.45$~dB, STOI~$0.93$ a PESQ~$2.69$. 
 
 Při zmenšování počtu konvolučních bloků X lze sledovat znatelný pokles přesnosti ve sledovaných metrikách. Pokles mnohem výraznější, než tomu bylo při úpravách počtu opakování R, kde se hodnoty metrik téměř nelišily. Při dalším zmenšení parametru X na $X=4$, má model nejnižší přesnost z~mých natrénovaných modelů ve všech měřených metrikách, z~nichž největšího rozdílu doznaly metriky SDR a PESQ. 
 
-Zdá se, že příčinou, proč má parametr X takový vliv na výkon, přímo souvisí s~dilatačním faktorem a tím i s velikostí kontextu, který se zvyšuje právě se zvyšujícím se počtem konvolučních bloků.
+Zdá se, že příčinou, proč má parametr X takový vliv na výkon, přímo souvisí s~dilatačním faktorem a tím i s~velikostí kontextu, který se zvyšuje právě se zvyšujícím se počtem konvolučních bloků.
 
 Přestože víme, že nejlépe si vede model o~rozměrech $X=8$ a $R=2$ s~jeho výslednou hodnotou SDR $12.71$~dB ale tato hodnota nám neříká nic o~výsledcích přesnosti jednotlivých směsí, protože je to průměrná hodnota ze všech nahrávek. Histogram~\ref{fig:sdrhistogram} zobrazuje rozdělení hodnoty SDR v~rámci zpracovaných nahrávek.
 
@@ -916,12 +916,12 @@ Přestože víme, že nejlépe si vede model o~rozměrech $X=8$ a $R=2$ s~jeho v
     \caption{\label{fig:sdrhistogram}Histogram hodnot SDR pro jednotlivé separace.}
 \end{figure}
 
-Na první pohled je vidět největší koncentrace nahrávek kolem hodnoty SDR $15$~dB. Některé nahrávky dokonce  dosáhly hodnoty větší než $19$~dB, což by také příjemně zvyšovalo celkovou přesnost modelu, ale vzhledem k levé části od největší koncentrace je vidět, že pro mnoho nahrávek dosahovala síť pouze přesnosti od $0$~dB po $10$~dB. 
+Na první pohled je vidět největší koncentrace nahrávek kolem hodnoty SDR $15$~dB. Některé nahrávky dokonce  dosáhly hodnoty větší než $19$~dB, což by také příjemně zvyšovalo celkovou přesnost modelu, ale vzhledem k~levé části od největší koncentrace je vidět, že pro mnoho nahrávek dosahovala síť pouze přesnosti od $0$~dB po $10$~dB. 
 
 
 %---------------------------------------------------------------------------------------------
 \section{Vliv délky segmentů}
-Pro zjištění, zda--li má různá délka segmentů při trénování vliv na přesnost sítě, byly natrénovány dva modely o~stejných rozměrech, jak ukazuje tabulka~\ref{tab:vliv-segment-length}. Jak je vidět, jeden model při trénování segmentoval nahrávky na délku 16000 vzorků, zatímco druhý na 32000 vzorků.
+Pro zjištění, zda-li má různá délka segmentů při trénování vliv na přesnost sítě, byly natrénovány dva modely o~stejných rozměrech, jak ukazuje tabulka~\ref{tab:vliv-segment-length}. Jak je vidět, jeden model při trénování segmentoval nahrávky na délku 16000 vzorků, zatímco druhý na 32000 vzorků.
 
 \begin{table}[!htbp]
 \centering
@@ -940,12 +940,12 @@ Testování ukázalo, že model, který používal kratší segmenty, dosahoval 
 
 %---------------------------------------------------------------------------------------------
 \section{Úspěšnost s~ohledem na pohlaví mluvčích}
-Testovací nahrávky jsou náhodné kombinace mužských a ženských mluvčích. Pro separaci dvou mluvčích tedy mohou vzniknout až 3 typy nahrávek na základě pohlaví mluvčího -- muž--muž, muž--žena a žena--žena. Jednotlivé kombinace mluvčích mohou být pro síť rozdílně náročné pro separaci. Na mém nejlepším modelu o~rozměru $X=8$ a $R=2$ jsem zkoumal, jaké výsledky mají jednotlivé kombinace.
+Testovací nahrávky jsou náhodné kombinace mužských a ženských mluvčích. Pro separaci dvou mluvčích tedy mohou vzniknout až 3 typy nahrávek na základě pohlaví mluvčího -- muž-muž, muž-žena a žena-žena. Jednotlivé kombinace mluvčích mohou být pro síť rozdílně náročné pro separaci. Na mém nejlepším modelu o~rozměru $X=8$ a $R=2$ jsem zkoumal, jaké výsledky mají jednotlivé kombinace.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{obrazky-figures/sdrpohlaviX8R2.png}
-    \caption{\label{fig:sdrpohlavi}Histogram průměrné hodnoty SDR napříč různou kombinací pohlaví. Zkratka \uv{MM} označuje dvojici mužských mluvčích, zkratka \uv{MZ} označuje kombinovanou nahrávku s mužem a ženou a zkratka \uv{ZZ} označuje směs dvou žen.}
+    \caption{\label{fig:sdrpohlavi}Histogram průměrné hodnoty SDR napříč různou kombinací pohlaví. Zkratka \uv{MM} označuje dvojici mužských mluvčích, zkratka \uv{MZ} označuje kombinovanou nahrávku s~mužem a ženou a zkratka \uv{ZZ} označuje směs dvou žen.}
 \end{figure}
 
 Z~grafu~\ref{fig:sdrpohlavi} lze vypozorovat, jaký vliv má kombinace pohlaví na přesnost sítě. Nejlepších výsledků síť dosahuje v~případě, že na nahrávce jsou zastoupena obě pohlaví. V~takovém případě model dosahuje hodnoty SDR $14.6$~dB. Oproti tomu, v~případě stejných pohlaví si síť vede poměrně hůř. V~případě kombinace dvou žen síť dosahuje hodnoty SDR pouze $9.4$~dB a v~případě kombinace dvou mužů jen o~něco lépe $11.2$~dB. Výsledná hodnota je průměrem hodnot v~dané kombinaci pohlaví.
@@ -964,7 +964,7 @@ Výsledkem pozorování je, že síť od sebe separuje mluvčí mnohem lépe v~p
 
 %---------------------------------------------------------------------------------------------
 \section{Výsledky referenčního modelu TasNet}
-V~referenční studii~\cite{luo2018convtasnet} byly modely trénovány $100$ epoch s~různými hyper--parametry. Já se zaměřím na takové, se kterými experimentuji v~rámci mých modelů. Modely jsou v~nekauzální konfiguraci a používají batch normalizaci (BN).
+V~referenční studii~\cite{luo2018convtasnet} byly modely trénovány $100$ epoch s~různými hyper-parametry. Já se zaměřím na takové, se kterými experimentuji v~rámci mých modelů. Modely jsou v~nekauzální konfiguraci a používají batch normalizaci (BN).
 
 Nejlepší model ze studie TasNet s~hodnotami parametrů $X=8$ a $R=4$ dosahuje hodnoty $SDR = 14.7$~dB při délce filtrů $L = 20$ vzorků. Hodnoty $SDR = 13.0$~dB dosahuje při hodnotě parametru $X = 7$ a délce filtrů $L = 40$ vzorků. Po zvětšení velikosti filtrů a zmenšení počtu konvolučních bloků (což zmenšuje také hodnotu dilatace) je patrný pokles hodnoty SDR. Při dalším zmenšování modelu dále klesá hodnota SDR, jak zobrazuje tabulka~\ref{tab:tasnet}.
 
@@ -991,13 +991,13 @@ Můj nejlepší model v~porovnání s~modely ze studie dosahuje hodnoty SDR $12.
 %\todo{shrnuti a porovnani jednotlivych zmen a vysledku mezi sebou komplexne. Pripadne porovnani vysledku s~ref studii, Okomentovat, co je tedy dulezity parametr, a ktery jde zmensit a neni moc dulezity z~pohledu vysledku evaluace. okomentovat take pohlavi vysledky, prumery sdr, mean, a pod.}
 
 
-Během testování a experimentů jsem sledoval vliv parametrů X, R a délka segmentů na kvalitu sítě, která je vyhodnocována metrikami SDR, STOI a PESQ. Nejlepších hodnot dosahuje model rozměrově téměř největší ($X = 8$, $R=2$), a to SDR $12.71$~dB, STOI $0.94$ a PESQ $2.71$. Při zmenšování hodnoty X se ale přesnost razantně snižuje. Parametr X má tedy dle výsledků největší vliv na přesnost sítě. Oproti tomu změna parametru R přesnost téměř neovlivnila, stejně jako délka segmentů při trénování sítě. Vzhledem k dosaženým přesnostem bych vybral, jako kandidátní, modely o velikosti $R=2$ a $X=8$ nebo $X=6$. Tyto modely dosahují dostatečně dobré kvality separovaných nahrávek.
+Během testování a experimentů jsem sledoval vliv parametrů X, R a délka segmentů na kvalitu sítě, která je vyhodnocována metrikami SDR, STOI a PESQ. Nejlepších hodnot dosahuje model rozměrově téměř největší ($X = 8$, $R=2$), a to SDR $12.71$~dB, STOI $0.94$ a PESQ $2.71$. Při zmenšování hodnoty X se ale přesnost razantně snižuje. Parametr X má tedy dle výsledků největší vliv na přesnost sítě. Oproti tomu změna parametru R přesnost téměř neovlivnila, stejně jako délka segmentů při trénování sítě. Vzhledem k~dosaženým přesnostem bych vybral, jako kandidátní, modely o~velikosti $R=2$ a $X=8$ nebo $X=6$. Tyto modely dosahují dostatečně dobré kvality separovaných nahrávek.
 
 
 
 Graf rozdělení SDR ukázal, že přestože se mnoho hodnot pohybuje lehce pod průměrnou hodnotou SDR daného modelu, tak mnoho separací dosáhlo poměrně větší přesnosti a mnoho separací poměrně menší přesnosti, než je průměrná.
 
-Zajímavý poznatek vyplynul ze sledování hodnoty SDR v rámci ruzných kombinací pohlaví na separovaných nahrávkách. Nejvyšší hodnotu ($14.6$~dB) měly směsi, kde se nacházela dvojice rozdílného pohlaví. Homogenní dvojice dosahovaly mnohem menší přesnosti.
+Zajímavý poznatek vyplynul ze sledování hodnoty SDR v~rámci ruzných kombinací pohlaví na separovaných nahrávkách. Nejvyšší hodnotu ($14.6$~dB) měly směsi, kde se nacházela dvojice rozdílného pohlaví. Homogenní dvojice dosahovaly mnohem menší přesnosti.
 
 
 %---------------------------------------------------------------------------------------------
@@ -1006,7 +1006,7 @@ Zajímavý poznatek vyplynul ze sledování hodnoty SDR v rámci ruzných kombin
 %\todo{Procist studii jaky oni tam navrhuji vylepseni}
 
 %Problémů, které lze v rámci zpracování řeči řešit, je mnoho.
-Práce by mohla být rozšířena o variabilnější dataset pro trénování modelů. Zásadní problém při použití mých naučených modelů v reálném scénáři je ten, že trénovací dataset není variabilní, když nepočítám různé kombinace mluvčích. V případě, že by nahrávky řečníků byly pořízeny ve variabilnějším prostředí s rozdílnou technikou, mikrofony a různým ruchem v pozadí (další hlasy, hudba či tleskot), model by tak byl lépe využitelný. Trénování by také mohlo být rozšířeno o nahrávky s větším počtem mluvčích, což by ale vyžadovalo rozsáhlejší implementační úpravy.
+Práce by mohla být rozšířena o~variabilnější dataset pro trénování modelů. Zásadní problém při použití mých naučených modelů v~reálném scénáři je ten, že trénovací dataset není variabilní, když nepočítám různé kombinace mluvčích. V~případě, že by nahrávky řečníků byly pořízeny ve variabilnějším prostředí s~rozdílnou technikou, mikrofony a různým ruchem v~pozadí (další hlasy, hudba či tleskot), model by tak byl lépe využitelný. Trénování by také mohlo být rozšířeno o~nahrávky s~větším počtem mluvčích, což by ale vyžadovalo rozsáhlejší implementační úpravy.
 
 Přímo na model by se dalo navázat další neuronovou sítí, která by se učila identifikovat řečníka či analyzovat vlastnosti jeho hlasu a na základě toho provádět další operace. Další možností je přepis separované řeči mluvčích na text. 
 
@@ -1019,7 +1019,7 @@ Cílem práce bylo implementovat síť podle architektury TasNet pro separaci ml
 
 Experimenty ukázaly, že během testování nejlépe dopadla síť, která měla 8 konvolučních bloků po 2 opakováních, učena s~délkou vstupních segmentů $L=4$ sekundy. Tento model dosáhl po 60 epochách trénování hodnoty až $12.71$~dB a tím se stal nejúspěšnějším modelem. Při fyzickém poslechu separovaných nahrávek není slyšet téměř žádný náznak druhého mluvčího. Oproti tomu, nejméně přesný model měl pouze 4 konvoluční bloky, 4 opakování a při délce segmentů $L=4$ sekundy dosahoval hodnoty SDR pouze $9.23$~dB. Přestože podmínky pro trénování nebyly ideální, tak bylo natrénováno několik úspěšných modelů.
 
-Zkoušel jsem separovat také nahrávky, které se v datasetu vůbec nenacházely, ale výsledek se nedá hodnotit jako úspěšný, jelikož hraje velkou roli prostředí, mikrofon, šum v~pozadí a další vlivy, na které byla neuronová síť naučena. Tento problém by se dal překonat rozšířením trénovacího datasetu o~větší škálu nahrávek mluvčích, které by byly pořízeny z~různých zařízení a v~různě rušném prostředí.
+Zkoušel jsem separovat také nahrávky, které se v~datasetu vůbec nenacházely, ale výsledek se nedá hodnotit jako úspěšný, jelikož hraje velkou roli prostředí, mikrofon, šum v~pozadí a další vlivy, na které byla neuronová síť naučena. Tento problém by se dal překonat rozšířením trénovacího datasetu o~větší škálu nahrávek mluvčích, které by byly pořízeny z~různých zařízení a v~různě rušném prostředí.
 
 %\todo{co jak dopadlo, vysledky a vyhodnoceni velikosti modelu a jaky byl nejlepsi}
 %\todo{Doplnit ještě neco eh}
